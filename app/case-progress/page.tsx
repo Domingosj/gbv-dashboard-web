@@ -3,6 +3,11 @@
 import useSWR from "swr";
 import { GBVCase } from "@/lib/types";
 import GCRCard from "@/components/ui/GCRCard";
+import GCRBadge from "@/components/ui/GCRBadge";
+import {
+  ClipboardList, UserCheck, ArrowRightLeft, CheckCircle2,
+  Clock, Timer, TrendingUp, Stethoscope, Brain, Gavel, Shield, Home, Baby
+} from "lucide-react";
 
 const fetcher = (url: string) => fetch(url).then(r => r.json());
 
@@ -10,14 +15,18 @@ function compute(cases: GBVCase[]) {
   const open = cases.filter(c => c.case_status === "Aberto");
   const closed = cases.filter(c => c.case_status === "Encerrado");
 
-  const referredTypes: Record<string, number> = {
-    "Médico": open.filter(c => /sim/i.test(c.referred_medical || "")).length,
-    "Psicossocial": open.filter(c => /sim/i.test(c.referred_psychosocial || "")).length,
-    "Polícia": open.filter(c => /sim/i.test(c.referred_police || "")).length,
-    "Jurídico": open.filter(c => /sim/i.test(c.referred_legal || "")).length,
-    "Abrigo": open.filter(c => /sim/i.test(c.referred_safe_house || "")).length,
-    "Proteção Infantil": open.filter(c => /sim/i.test(c.referred_child_protection || "")).length,
-  };
+  const referredTypes = [
+    { key: "referred_medical", label: "Médico", icon: Stethoscope },
+    { key: "referred_psychosocial", label: "Psicossocial", icon: Brain },
+    { key: "referred_legal", label: "Jurídico", icon: Gavel },
+    { key: "referred_police", label: "Polícia", icon: Shield },
+    { key: "referred_safe_house", label: "Abrigo", icon: Home },
+    { key: "referred_child_protection", label: "Protecção Infantil", icon: Baby },
+  ].map(({ key, label, icon }) => ({
+    label,
+    icon,
+    count: open.filter(c => /sim/i.test((c as any)[key] || "")).length,
+  }));
 
   const closureReasons: Record<string, number> = {};
   for (const c of closed) {
@@ -60,91 +69,134 @@ function compute(cases: GBVCase[]) {
 
 export default function CaseProgressPage() {
   const { data: cases } = useSWR<GBVCase[]>("/api/cases", fetcher, { refreshInterval: 300000 });
-  if (!cases) return <p className="text-text-secondary p-8">Carregando...</p>;
+
+  if (!cases) return (
+    <div className="flex items-center justify-center h-[400px]">
+      <div className="animate-pulse flex flex-col items-center gap-3">
+        <div className="w-10 h-10 border-4 border-primary/30 border-t-primary rounded-full animate-spin" />
+        <p className="text-body text-sm">Carregando progresso dos casos...</p>
+      </div>
+    </div>
+  );
 
   const s = compute(cases);
 
-  return (
-    <div>
-      <h1 className="text-page-title text-text-primary mb-6">Case Progress Monitor</h1>
+  const kpis = [
+    { label: "Identificados", value: s.pipeline.identified, icon: ClipboardList, color: "text-primary", bg: "bg-primary/10" },
+    { label: "Entrevistados", value: s.pipeline.interviewed, icon: UserCheck, color: "text-info", bg: "bg-info/10" },
+    { label: "Referenciados", value: s.pipeline.referred, icon: ArrowRightLeft, color: "text-secondary", bg: "bg-secondary/10" },
+    { label: "Encerrados", value: s.pipeline.closed, icon: CheckCircle2, color: "text-success", bg: "bg-success/10" },
+  ];
 
-      <div className="grid grid-cols-4 gap-4 mb-6">
-        {[
-          { label: "Identificados", value: s.pipeline.identified, color: "text-primary" },
-          { label: "Entrevistados", value: s.pipeline.interviewed, color: "text-info" },
-          { label: "Referenciados", value: s.pipeline.referred, color: "text-info" },
-          { label: "Encerrados", value: s.pipeline.closed, color: "text-success" },
-        ].map(({ label, value, color }) => (
-          <div key={label} className="gcr-card p-4 text-center">
-            <p className="text-label text-text-secondary mb-1">{label}</p>
-            <p className={`text-metric ${color}`}>{value}</p>
+  return (
+    <div className="mx-auto max-w-screen-2xl">
+      {/* Page Header */}
+      <div className="mb-8">
+        <h1 className="text-[26px] font-bold text-text-primary">Case Progress Monitor</h1>
+        <p className="text-sm text-body mt-1">Acompanhe o fluxo de casos desde a identificação até ao encerramento.</p>
+      </div>
+
+      {/* KPI Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
+        {kpis.map(({ label, value, icon: Icon, color, bg }) => (
+          <div key={label} className="gcr-card p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <span className="text-sm font-medium text-body">{label}</span>
+                <h4 className="text-[28px] font-bold text-text-primary mt-1">{value}</h4>
+              </div>
+              <div className={`w-12 h-12 rounded-full ${bg} flex items-center justify-center`}>
+                <Icon className={`w-6 h-6 ${color}`} />
+              </div>
+            </div>
           </div>
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-6">
-        <GCRCard title="Progresso do Pipeline">
-          <div className="space-y-4">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6">
+        {/* Pipeline Progress */}
+        <GCRCard title="Progresso do Pipeline" className="lg:col-span-7">
+          <div className="space-y-6 mt-1">
             {[
               { label: "Identificados → Entrevistados", pct: s.pipeline.identified ? (s.pipeline.interviewed / s.pipeline.identified) * 100 : 0, color: "bg-primary" },
-              { label: "Entrevistados → Referenciados", pct: s.pipeline.interviewed ? (s.pipeline.referred / s.pipeline.interviewed) * 100 : 0, color: "bg-info" },
+              { label: "Entrevistados → Referenciados", pct: s.pipeline.interviewed ? (s.pipeline.referred / s.pipeline.interviewed) * 100 : 0, color: "bg-secondary" },
               { label: "Referenciados → Encerrados", pct: s.pipeline.referred ? (s.pipeline.closed / s.pipeline.referred) * 100 : 0, color: "bg-success" },
             ].map(({ label, pct, color }) => (
               <div key={label}>
-                <div className="flex justify-between text-label mb-1">
-                  <span className="text-text-secondary">{label}</span>
-                  <span className="font-semibold">{pct.toFixed(0)}%</span>
+                <div className="flex justify-between text-sm mb-2">
+                  <span className="font-medium text-text-primary">{label}</span>
+                  <span className="font-bold text-text-primary">{pct.toFixed(0)}%</span>
                 </div>
-                <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
-                  <div className={`h-full rounded-full ${color}`} style={{ width: `${Math.min(pct, 100)}%` }} />
+                <div className="h-3 bg-background rounded-full overflow-hidden">
+                  <div className={`h-full rounded-full ${color} transition-all duration-700`} style={{ width: `${Math.min(pct, 100)}%` }} />
                 </div>
               </div>
             ))}
           </div>
-          <div className="flex gap-4 mt-4 pt-4 border-t border-border">
+
+          {/* Performance metrics row */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-8 pt-6 border-t border-stroke">
             {[
-              { label: "Taxa Referência", value: `${s.refRate}%`, color: "text-primary" },
-              { label: "Taxa Encerramento", value: `${s.closeRate}%`, color: "text-success" },
-              { label: "Dias p/ Referência", value: s.avgDaysToRef, color: "text-text-primary" },
-              { label: "Dias p/ Encerramento", value: s.avgDaysToClose, color: "text-text-primary" },
-            ].map(({ label, value, color }) => (
-              <div key={label} className="text-center flex-1">
-                <p className="text-label text-text-secondary">{label}</p>
-                <p className={`text-metric ${color}`}>{value}</p>
+              { label: "Taxa de Referência", value: `${s.refRate}%`, icon: TrendingUp, color: "text-primary" },
+              { label: "Taxa de Encerramento", value: `${s.closeRate}%`, icon: CheckCircle2, color: "text-success" },
+              { label: "Dias até Referência", value: s.avgDaysToRef, icon: Clock, color: "text-body" },
+              { label: "Dias até Encerrar", value: s.avgDaysToClose, icon: Timer, color: "text-body" },
+            ].map(({ label, value, icon: Icon, color }) => (
+              <div key={label} className="text-center p-3 rounded-sm bg-background">
+                <Icon className={`w-5 h-5 ${color} mx-auto mb-2`} />
+                <p className="text-[22px] font-bold text-text-primary">{value}</p>
+                <p className="text-xs text-body mt-1">{label}</p>
               </div>
             ))}
           </div>
         </GCRCard>
 
-        <GCRCard title="Referências por Serviço">
-          <div className="space-y-3">
-            {Object.entries(s.referredTypes).sort((a, b) => b[1] - a[1]).map(([label, value]) => {
-              const max = Math.max(...Object.values(s.referredTypes));
-              return (
-                <div key={label}>
-                  <div className="flex justify-between text-label mb-1">
-                    <span className="text-text-secondary">{label}</span>
-                    <span className="font-semibold">{value}</span>
+        {/* Referrals by Service */}
+        <GCRCard title="Referências por Serviço" className="lg:col-span-5">
+          <div className="space-y-4 mt-1">
+            {s.referredTypes
+              .sort((a, b) => b.count - a.count)
+              .map(({ label, count, icon: Icon }) => {
+                const max = Math.max(...s.referredTypes.map(r => r.count), 1);
+                const pct = (count / max) * 100;
+                return (
+                  <div key={label}>
+                    <div className="flex items-center justify-between text-sm mb-2">
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                          <Icon className="w-4 h-4 text-primary" />
+                        </div>
+                        <span className="font-medium text-text-primary">{label}</span>
+                      </div>
+                      <span className="font-bold">{count}</span>
+                    </div>
+                    <div className="h-2 bg-background rounded-full overflow-hidden ml-10">
+                      <div className="h-full bg-primary/70 rounded-full transition-all duration-700" style={{ width: `${pct}%` }} />
+                    </div>
                   </div>
-                  <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                    <div className="h-full bg-info rounded-full" style={{ width: `${(value / max) * 100}%` }} />
-                  </div>
-                </div>
-              );
-            })}
+                );
+              })}
           </div>
         </GCRCard>
       </div>
 
+      {/* Closure Reasons */}
       {Object.keys(s.closureReasons).length > 0 && (
         <GCRCard title="Motivos de Encerramento">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            {Object.entries(s.closureReasons).sort((a, b) => b[1] - a[1]).map(([reason, count]) => (
-              <div key={reason} className="p-3 rounded-lg bg-gray-50 text-center">
-                <p className="text-metric text-text-primary">{count}</p>
-                <p className="text-caption text-text-secondary mt-1 truncate">{reason}</p>
-              </div>
-            ))}
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+            {Object.entries(s.closureReasons)
+              .sort((a, b) => b[1] - a[1])
+              .map(([reason, count]) => {
+                const totalClosed = s.pipeline.closed || 1;
+                const pct = ((count / totalClosed) * 100).toFixed(0);
+                return (
+                  <div key={reason} className="p-4 rounded-sm bg-background border border-stroke text-center">
+                    <p className="text-[22px] font-bold text-text-primary">{count}</p>
+                    <p className="text-xs text-body mt-1 truncate" title={reason}>{reason}</p>
+                    <GCRBadge color="grey" className="mt-2">{pct}%</GCRBadge>
+                  </div>
+                );
+              })}
           </div>
         </GCRCard>
       )}

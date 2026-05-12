@@ -3,7 +3,7 @@
 > **Document Purpose:** Master strategy document for the GCR GBV Case Management Dashboard.  
 > **Data Source:** ActivityInfo API (1,422+ cases, 74 fields) + services_cleaned.csv (73 services, 18 districts)  
 > **Architecture:** Next.js 14 (React/TypeScript), no database, API-fresh data with SWR client caching  
-> **Author:** Domingos José Domingos | NCS Moçambique  
+> **Author:** Domingos José Domingos  
 > **Version:** 1.0  
 > **Last Updated:** May 2026
 

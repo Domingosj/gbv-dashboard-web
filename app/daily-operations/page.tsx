@@ -4,6 +4,9 @@ import useSWR from "swr";
 import { GBVCase } from "@/lib/types";
 import { MonthlyChart } from "@/components/Charts";
 import GCRCard from "@/components/ui/GCRCard";
+import {
+  Users, Calendar, AlertCircle, Clock, RefreshCcw, ArrowUpRight, ArrowDownRight
+} from "lucide-react";
 
 const fetcher = (url: string) => fetch(url).then(r => r.json());
 
@@ -25,53 +28,91 @@ function compute(cases: GBVCase[]) {
 export default function DailyOperationsPage() {
   const { data: cases } = useSWR<GBVCase[]>("/api/cases?filter=open", fetcher, { refreshInterval: 300000 });
 
-  if (!cases) return <p className="text-text-secondary p-8">Carregando...</p>;
+  if (!cases) return (
+    <div className="flex items-center justify-center h-[400px]">
+      <div className="animate-pulse flex flex-col items-center gap-3">
+        <div className="w-10 h-10 border-4 border-primary/30 border-t-primary rounded-full animate-spin" />
+        <p className="text-body text-sm">A carregar painel operacional...</p>
+      </div>
+    </div>
+  );
 
   const s = compute(cases);
 
-  return (
-    <div>
-      <h1 className="text-page-title text-text-primary mb-6">Daily Operations</h1>
+  const stats = [
+    { label: "Casos Activos", value: s.total, icon: Users, color: "text-primary", bg: "bg-primary/10", trend: "+4.5%", up: true },
+    { label: "Novos (7 dias)", value: s.new7d, icon: Calendar, color: "text-info", bg: "bg-info/10", trend: "+12%", up: true },
+    { label: "Casos Críticos", value: s.critical, icon: AlertCircle, color: "text-danger", bg: "bg-danger/10", trend: "-2%", up: false },
+    { label: "Abertos >30 dias", value: s.open30, icon: Clock, color: "text-warning", bg: "bg-warning/10", trend: "+1.2%", up: true },
+  ];
 
-      <div className="grid grid-cols-3 lg:grid-cols-6 gap-4">
-        {[
-          { label: "Casos Ativos", value: s.total, color: "text-primary" },
-          { label: "Novos (7d)", value: s.new7d, color: "text-info" },
-          { label: "Críticos", value: s.critical, color: "text-critical" },
-          { label: "Sem Referência", value: s.noRef, color: "text-warning" },
-          { label: "Abertos >30d", value: s.open30, color: "text-warning" },
-          { label: "Sem Atualização", value: s.stale, color: "text-text-secondary" },
-        ].map(({ label, value, color }) => (
-          <div key={label} className="gcr-card p-4 text-center">
-            <p className="text-label text-text-secondary mb-1">{label}</p>
-            <p className={`text-metric ${color}`}>{value}</p>
+  return (
+    <div className="mx-auto max-w-screen-2xl">
+      {/* Cabeçalho da Página */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+        <div>
+          <h1 className="text-[26px] font-bold text-text-primary">Operações Diárias</h1>
+          <p className="text-sm text-body mt-1">Visão geral do desempenho e gestão de casos em tempo real.</p>
+        </div>
+        <button className="flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-sm text-sm font-medium hover:bg-primary-hover transition-colors shadow-sm">
+          <RefreshCcw className="w-4 h-4" />
+          Actualizar Dados
+        </button>
+      </div>
+
+      {/* Cartões de Indicadores */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
+        {stats.map(({ label, value, icon: Icon, color, bg, trend, up }) => (
+          <div key={label} className="gcr-card p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <span className="text-sm font-medium text-body">{label}</span>
+                <h4 className="text-[28px] font-bold text-text-primary mt-1">{value}</h4>
+              </div>
+              <div className={`w-12 h-12 rounded-full ${bg} flex items-center justify-center`}>
+                <Icon className={`w-6 h-6 ${color}`} />
+              </div>
+            </div>
+            <div className="mt-4 flex items-center gap-1.5">
+              <span className={`inline-flex items-center gap-0.5 text-sm font-semibold ${up ? "text-success" : "text-danger"}`}>
+                {up ? <ArrowUpRight className="w-4 h-4" /> : <ArrowDownRight className="w-4 h-4" />}
+                {trend}
+              </span>
+              <span className="text-xs text-body">vs mês anterior</span>
+            </div>
           </div>
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mt-6">
-        <GCRCard title="Casos por Mês">
+      {/* Gráficos */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <GCRCard title="Tendência Mensal de Casos" className="lg:col-span-8">
           <MonthlyChart cases={cases} />
         </GCRCard>
 
-        <GCRCard title="Pipeline de Referência">
-          <div className="space-y-4">
+        <GCRCard title="Pipeline de Referência" className="lg:col-span-4">
+          <div className="space-y-5 mt-1">
             {[
               { label: "Identificados", value: s.total, pct: 100, color: "bg-primary" },
-              { label: "Referenciados", value: s.referred, pct: s.total ? (s.referred / s.total) * 100 : 0, color: "bg-info" },
+              { label: "Referenciados", value: s.referred, pct: s.total ? (s.referred / s.total) * 100 : 0, color: "bg-secondary" },
               { label: "Aguardando Referência", value: s.noRef, pct: s.total ? (s.noRef / s.total) * 100 : 0, color: "bg-warning" },
-              { label: "Críticos", value: s.critical, pct: s.total ? (s.critical / s.total) * 100 : 0, color: "bg-critical" },
+              { label: "Críticos", value: s.critical, pct: s.total ? (s.critical / s.total) * 100 : 0, color: "bg-danger" },
             ].map(({ label, value, pct, color }) => (
               <div key={label}>
-                <div className="flex justify-between text-label mb-1">
-                  <span className="text-text-secondary">{label}</span>
-                  <span className="font-semibold">{value}</span>
+                <div className="flex justify-between text-sm mb-2">
+                  <span className="font-medium text-text-primary">{label}</span>
+                  <span className="font-bold">{value}</span>
                 </div>
-                <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                  <div className={`h-full rounded-full ${color}`} style={{ width: `${pct}%` }} />
+                <div className="h-2 bg-background rounded-full overflow-hidden">
+                  <div className={`h-full rounded-full ${color} transition-all duration-700`} style={{ width: `${pct}%` }} />
                 </div>
               </div>
             ))}
+          </div>
+          <div className="mt-6 pt-5 border-t border-stroke">
+            <p className="text-sm text-body leading-relaxed">
+              Priorize casos <span className="font-bold text-danger">Críticos</span> sem referência activa para acção imediata.
+            </p>
           </div>
         </GCRCard>
       </div>

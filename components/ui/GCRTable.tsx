@@ -16,21 +16,21 @@ export function GCRTable({ children, className = "" }: TableProps) {
 }
 
 export function GCRTHead({ children, className = "" }: THeadProps) {
-  return <thead className={`border-b border-border bg-gray-50 ${className}`}>{children}</thead>;
+  return <thead className={`border-b border-stroke ${className}`}>{children}</thead>;
 }
 
 export function GCRTBody({ children, className = "" }: TBodyProps) {
-  return <tbody className={`divide-y divide-border ${className}`}>{children}</tbody>;
+  return <tbody className={`divide-y divide-stroke ${className}`}>{children}</tbody>;
 }
 
 export function GCRTRow({ children, className = "" }: TRowProps) {
-  return <tr className={`hover:bg-gray-50 transition-colors ${className}`}>{children}</tr>;
+  return <tr className={`hover:bg-background/50 transition-colors duration-150 ${className}`}>{children}</tr>;
 }
 
 export function GCRTCell({ children, isHeader = false, className = "", onClick }: TCellProps) {
   const Tag = isHeader ? "th" : "td";
   const base = isHeader
-    ? "px-5 py-3.5 text-left text-label text-text-secondary uppercase tracking-wider"
-    : "px-5 py-3.5 text-body text-text-primary";
+    ? "px-6 py-4 text-left text-[13px] font-semibold text-body uppercase tracking-wider"
+    : "px-6 py-4 text-[14px] text-text-primary";
   return <Tag className={`${base} ${className}`} onClick={onClick}>{children}</Tag>;
 }
