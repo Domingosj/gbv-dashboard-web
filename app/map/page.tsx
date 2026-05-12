@@ -22,6 +22,10 @@ export default function MapPage() {
 
   const markers = Object.entries(byDistrict).map(([label, count]) => ({ label, count }));
 
+  // Compute has_referral from raw referral fields
+  const hasRef = (c: GBVCase) => ["referred_medical","referred_psychosocial","referred_police","referred_legal","referred_safe_house","referred_child_protection"]
+    .some(k => /sim/i.test((c as any)[k] || ""));
+
   const svcCounts: Record<string, number> = {};
   if (services) { for (const s of services as any[]) { svcCounts[s.district] = (svcCounts[s.district] || 0) + 1; } }
 
@@ -33,7 +37,7 @@ export default function MapPage() {
           { label: "Distritos", value: Object.keys(byDistrict).length, color: "text-primary" },
           { label: "Casos Mapeados", value: Object.entries(byDistrict).reduce((s, [, c]) => s + c, 0), color: "text-info" },
           { label: "Casos Abertos", value: open.length, color: "text-success" },
-          { label: "Com Referência", value: open.filter(c => c.has_referral).length, color: "text-success" },
+          { label: "Com Referência", value: open.filter(c => hasRef(c)).length, color: "text-success" },
         ].map(({ label, value, color }) => (
           <div key={label} className="gcr-card p-4 text-center">
             <p className="text-label text-text-secondary mb-1">{label}</p>
