@@ -49,6 +49,7 @@ export interface GBVCase {
   source?: string;
   wants_followup?: string;
   previous_incident?: string;
+  reported_elsewhere?: string;
   referred_by?: string;
   // Calculated
   days_since_identification?: number;
