@@ -6,6 +6,7 @@ import { GBVCase } from "@/lib/types";
 import ModuleTabs from "@/components/ModuleTabs";
 import GCRCard from "@/components/ui/GCRCard";
 import GCRBadge from "@/components/ui/GCRBadge";
+import FilterBar from "@/components/FilterBar";
 import { MonthlyChart } from "@/components/Charts";
 
 const fetcher = (url: string) => fetch(url).then(r => r.json());
@@ -31,17 +32,27 @@ const CHECKS = [
 
 export default function AnalyticsPage() {
   const [tab, setTab] = useState("trends");
-  const { data: cases } = useSWR<GBVCase[]>("/api/cases", fetcher, { refreshInterval: 300000 });
-  if (!cases) return <p className="text-text-secondary p-8">Carregando...</p>;
+  const [provFilter, setProvFilter] = useState("");
+  const { data: allCases } = useSWR<GBVCase[]>("/api/cases", fetcher, { refreshInterval: 300000 });
+  if (!allCases) return <p className="text-text-secondary p-8">Carregando...</p>;
+
+  const provinces = Array.from(new Set(allCases.map(c => c.province).filter((d): d is string => !!d))).sort();
+  const filtered = provFilter ? allCases.filter(c => c.province === provFilter) : allCases;
 
   return (
     <div>
       <h1 className="text-page-title text-text-primary mb-1">Análises</h1>
       <ModuleTabs tabs={TABS} activeTab={tab} onTabChange={setTab} />
-      {tab === "trends" && <TrendsTab cases={cases} />}
-      {tab === "quality" && <QualityTab cases={cases} />}
-      {tab === "pathways" && <PathwaysTab cases={cases} />}
-      {tab === "partners" && <PartnersTab cases={cases} />}
+      <FilterBar>
+        <select className="genesis-input w-56" value={provFilter} onChange={e => setProvFilter(e.target.value)}>
+          <option value="">Todas as províncias</option>
+          {provinces.map(p => <option key={p} value={p}>{p}</option>)}
+        </select>
+      </FilterBar>
+      {tab === "trends" && <TrendsTab cases={filtered} />}
+      {tab === "quality" && <QualityTab cases={filtered} />}
+      {tab === "pathways" && <PathwaysTab cases={filtered} />}
+      {tab === "partners" && <PartnersTab cases={filtered} />}
     </div>
   );
 }
