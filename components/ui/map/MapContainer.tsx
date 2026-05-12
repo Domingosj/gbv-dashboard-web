@@ -13,8 +13,8 @@ const DISTRICT_COORDS: Record<string, [number, number]> = {
   "Palma": [-10.7833, 40.4667], "Cuamba": [-14.8, 36.55], "Moatize": [-16.1, 33.7167],
   "Angoche": [-16.2333, 39.9167], "Mocuba": [-16.85, 36.9833], "Gurúè": [-15.45, 36.9833],
   "Malema": [-14.95, 37.1], "Changara": [-16.6, 33.0], "Zumbo": [-15.6167, 31.6667],
-  "Milange": [-16.1, 35.3], "Marrumeu": [-15.4667, 38.65], "Ribáuè": [-14.95, 38.3167],
-  "Mágoe": [-15.3833, 32.75], "Cahora-Bassa": [-15.5833, 32.6833], "Alto Molócuè": [-15.65, 37.6833],
+  "Milange": [-16.1, 35.3], "Ribáuè": [-14.95, 38.3167], "Mágoe": [-15.3833, 32.75],
+  "Cahora-Bassa": [-15.5833, 32.6833], "Alto Molócuè": [-15.65, 37.6833],
   "Moma": [-16.75, 39.2167], "Mogovolas": [-15.7333, 39.3667], "Mecubúri": [-14.8333, 39.8],
   "Memba": [-14.1667, 40.55], "Eráti": [-14.6833, 40.55], "Nacala": [-14.55, 40.6833],
   "Nacarôa": [-14.4, 40.35], "Rapale": [-14.55, 36.9167], "Mecula": [-12.1, 37.6667],
@@ -32,83 +32,99 @@ export default function MapContainer({ markers }: Props) {
 
   useEffect(() => {
     if (mapRef.current || !ref.current) return;
+    if (!markers || markers.length === 0) return;
 
-    const loadMap = async () => {
-      const L = (await import("leaflet")).default;
-      await import("leaflet/dist/leaflet.css");
+    let map: any = null;
 
-      // Fix default icons
-      delete (L.Icon.Default.prototype as any)._getIconUrl;
-      L.Icon.Default.mergeOptions({
-        iconRetinaUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png",
-        iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png",
-        shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png",
-      });
-
-      const map = L.map(ref.current!, { zoomControl: true }).setView([-17.5, 36.5], 6);
-
-      L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-      }).addTo(map);
-
-      const points = markers
-        .filter(m => DISTRICT_COORDS[m.label])
-        .map(m => ({ position: DISTRICT_COORDS[m.label], label: m.label, count: m.count }));
-
-      // Try marker clustering, fallback to individual markers
+    const load = async () => {
       try {
-        await import("leaflet.markercluster");
-        const cluster = L.markerClusterGroup({
-          chunkedLoading: true,
-          showCoverageOnHover: false,
-          spiderfyOnMaxZoom: true,
-          maxClusterRadius: 50,
-          zoomToBoundsOnClick: true,
-          iconCreateFunction: (c: any) => {
-            const cnt = c.getChildCount();
-            const clr = cnt > 15 ? "#C65A5A" : cnt > 8 ? "#D9A441" : "#256B5A";
-            return L.divIcon({
-              html: `<div style="background:${clr};color:white;border-radius:50%;width:42px;height:42px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;border:3px solid white;box-shadow:0 3px 8px rgba(0,0,0,0.2)">${cnt}</div>`,
-              className: "", iconSize: [42, 42], iconAnchor: [21, 21],
-            });
-          },
+        // 1. Load Leaflet CSS via link tag (most reliable)
+        const link = document.createElement("link");
+        link.rel = "stylesheet";
+        link.href = "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css";
+        document.head.appendChild(link);
+
+        // 2. Import Leaflet JS
+        const L = (await import("leaflet")).default;
+
+        // Fix default icons
+        delete (L.Icon.Default.prototype as any)._getIconUrl;
+        L.Icon.Default.mergeOptions({
+          iconRetinaUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png",
+          iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png",
+          shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png",
         });
 
-        points.forEach(({ position: [lat, lng], label, count }) => {
-          const color = count > 20 ? "#C65A5A" : count > 10 ? "#D9A441" : "#256B5A";
-          const icon = L.divIcon({
-            html: `<div style="background:${color};color:white;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;border:3px solid white;box-shadow:0 2px 6px rgba(0,0,0,0.15)">${count}</div>`,
-            className: "", iconSize: [32, 32], iconAnchor: [16, 16],
+        map = L.map(ref.current!, { zoomControl: true }).setView([-17.5, 36.5], 6);
+
+        L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+        }).addTo(map);
+
+        const points = markers
+          .filter(m => DISTRICT_COORDS[m.label])
+          .map(m => ({ position: DISTRICT_COORDS[m.label], label: m.label, count: m.count }));
+
+        if (points.length === 0) return;
+
+        const color = (count: number) => count > 20 ? "#C65A5A" : count > 10 ? "#D9A441" : "#256B5A";
+
+        // Try marker clustering
+        try {
+          await import("leaflet.markercluster");
+          const cluster = L.markerClusterGroup({
+            chunkedLoading: true,
+            showCoverageOnHover: false,
+            maxClusterRadius: 50,
+            iconCreateFunction: (c: any) => {
+              const cnt = c.getChildCount();
+              return L.divIcon({
+                html: `<div style="background:${color(cnt)};color:white;border-radius:50%;width:42px;height:42px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;border:3px solid white;box-shadow:0 3px 8px rgba(0,0,0,0.2)">${cnt}</div>`,
+                className: "", iconSize: [42, 42], iconAnchor: [21, 21],
+              });
+            },
           });
-          const marker = L.marker([lat, lng], { icon }).bindPopup(`<b>${label}</b><br/>${count} casos`);
-          cluster.addLayer(marker);
-        });
-
-        map.addLayer(cluster);
-      } catch {
-        // Fallback: individual markers without clustering
-        points.forEach(({ position: [lat, lng], label, count }) => {
-          const color = count > 20 ? "#C65A5A" : count > 10 ? "#D9A441" : "#256B5A";
-          const icon = L.divIcon({
-            html: `<div style="background:${color};color:white;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;border:3px solid white;box-shadow:0 2px 6px rgba(0,0,0,0.15)">${count}</div>`,
-            className: "", iconSize: [32, 32], iconAnchor: [16, 16],
+          points.forEach((p) => {
+            cluster.addLayer(
+              L.marker(p.position, {
+                icon: L.divIcon({
+                  html: `<div style="background:${color(p.count)};color:white;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;border:3px solid white;box-shadow:0 2px 6px rgba(0,0,0,0.15)">${p.count}</div>`,
+                  className: "", iconSize: [32, 32], iconAnchor: [16, 16],
+                }),
+              }).bindPopup(`<b>${p.label}</b><br/>${p.count} casos`)
+            );
           });
-          L.marker([lat, lng], { icon }).addTo(map).bindPopup(`<b>${label}</b><br/>${count} casos`);
-        });
-      }
+          map.addLayer(cluster);
+        } catch {
+          // Fallback: individual markers
+          points.forEach((p) => {
+            L.marker(p.position, {
+              icon: L.divIcon({
+                html: `<div style="background:${color(p.count)};color:white;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;border:3px solid white;box-shadow:0 2px 6px rgba(0,0,0,0.15)">${p.count}</div>`,
+                className: "", iconSize: [32, 32], iconAnchor: [16, 16],
+              }),
+            }).addTo(map).bindPopup(`<b>${p.label}</b><br/>${p.count} casos`);
+          });
+        }
 
-      // Fit bounds to markers
-      if (points.length > 1) {
-        const bounds = L.latLngBounds(points.map(p => [p.position[0], p.position[1]]));
-        map.fitBounds(bounds, { padding: [30, 30], maxZoom: 7 });
-      }
+        // Fit bounds
+        if (points.length > 1) {
+          const bounds = L.latLngBounds(points.map(p => [p.position[0], p.position[1]]));
+          map.fitBounds(bounds, { padding: [30, 30], maxZoom: 7 });
+        }
 
-      mapRef.current = map;
+        mapRef.current = map;
+      } catch (e) {
+        console.error("Map load error:", e);
+      }
     };
 
-    loadMap();
+    load();
 
-    return () => { if (mapRef.current) { mapRef.current.remove(); mapRef.current = null; } };
+    return () => {
+      if (map) { try { map.remove(); } catch {} }
+      mapRef.current = null;
+    };
   }, []);
 
   if (!markers || markers.length === 0) {
