@@ -7,6 +7,7 @@ import { fmtViolence, getTimeSinceIdentif, calculateDaysSinceReferral } from "@/
 import ModuleTabs from "@/components/ModuleTabs";
 import GCRCard from "@/components/ui/GCRCard";
 import GCRBadge from "@/components/ui/GCRBadge";
+import FilterBar from "@/components/FilterBar";
 import { GCRTable, GCRTHead, GCRTBody, GCRTRow, GCRTCell } from "@/components/ui/GCRTable";
 import CaseTable from "@/components/CaseTable";
 
@@ -20,17 +21,28 @@ const TABS = [
 
 export default function CasesPage() {
   const [tab, setTab] = useState("explorer");
+  const [provFilter, setProvFilter] = useState("");
   const { data: allCases } = useSWR<GBVCase[]>("/api/cases", fetcher, { refreshInterval: 300000 });
   const { data: openCases } = useSWR<GBVCase[]>("/api/cases?filter=open", fetcher, { refreshInterval: 300000 });
   if (!allCases || !openCases) return <p className="text-text-secondary p-8">Carregando...</p>;
+
+  const provinces = Array.from(new Set(allCases.map(c => c.province).filter((d): d is string => !!d))).sort();
+  const filteredAll = provFilter ? allCases.filter(c => c.province === provFilter) : allCases;
+  const filteredOpen = provFilter ? openCases.filter(c => c.province === provFilter) : openCases;
 
   return (
     <div>
       <h1 className="text-page-title text-text-primary mb-1">Casos</h1>
       <ModuleTabs tabs={TABS} activeTab={tab} onTabChange={setTab} />
-      {tab === "priority" && <PriorityTab cases={openCases} />}
-      {tab === "explorer" && <ExplorerTab cases={allCases} />}
-      {tab === "referrals" && <ReferralsTab cases={allCases} />}
+      <FilterBar>
+        <select className="genesis-input w-56" value={provFilter} onChange={e => setProvFilter(e.target.value)}>
+          <option value="">Todas as províncias</option>
+          {provinces.map(p => <option key={p} value={p}>{p}</option>)}
+        </select>
+      </FilterBar>
+      {tab === "priority" && <PriorityTab cases={filteredOpen} />}
+      {tab === "explorer" && <ExplorerTab cases={filteredAll} />}
+      {tab === "referrals" && <ReferralsTab cases={filteredAll} />}
     </div>
   );
 }
