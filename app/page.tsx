@@ -5,6 +5,6 @@ import { useRouter } from "next/navigation";
 
 export default function HomePage() {
   const router = useRouter();
-  useEffect(() => { router.replace("/daily-operations"); }, []);
+  useEffect(() => { router.replace("/summary"); }, []);
   return null;
 }
