@@ -14,6 +14,7 @@ const NAV = [
   { href: "/operations", label: "Operações", icon: Activity },
   { href: "/cases", label: "Casos", icon: Search },
   { href: "/analytics", label: "Análises", icon: BarChart3 },
+  { href: "/map", label: "Mapa", icon: Map },
   { href: "/strategy", label: "Estratégia", icon: TrendingUp },
   { href: "/carousel", label: "Carrossel", icon: Play },
   { href: "/ai", label: "Assistente IA", icon: Bot },
