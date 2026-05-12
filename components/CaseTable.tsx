@@ -83,7 +83,7 @@ export default function CaseTable({ cases }: Props) {
           <GCRTBody>
             {paged.map((c, i) => (
               <GCRTRow key={c.case_id || i}>
-                <GCRTCell>{c.priority_icon || "⚪"}</GCRTCell>
+                <GCRTCell>{c.priority_icon || "–"}</GCRTCell>
                 <GCRTCell className="font-mono text-caption">
                   <a href={`/cases/${c.case_id}`} className="text-primary hover:underline font-semibold">
                     {c.case_id?.slice(0, 22)}

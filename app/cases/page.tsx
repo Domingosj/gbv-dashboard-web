@@ -76,7 +76,7 @@ function PriorityTab({ cases }: { cases: GBVCase[] }) {
                 const safe = (c.is_safe || "").toLowerCase() === "sim" || !c.is_safe;
                 return (
                   <GCRTRow key={c.case_id || i}>
-                    <GCRTCell>{c.priority_icon || "⚪"}</GCRTCell>
+                    <GCRTCell>{c.priority_icon || "–"}</GCRTCell>
                     <GCRTCell className="font-mono text-caption"><a href={`/cases/${encodeURIComponent(c.case_id || "")}`} className="text-primary hover:underline">{c.case_id?.slice(0, 18)}</a></GCRTCell>
                     <GCRTCell>{c.district || "N/A"}</GCRTCell>
                     <GCRTCell>{fmtViolence(c.violence_type)}</GCRTCell>

@@ -24,7 +24,7 @@ export default function CaseCard({ case: c, index }: Props) {
           <span className="ml-3 text-caption text-text-secondary bg-gray-100 px-2 py-0.5 rounded-full">Caso #{index}</span>
         </div>
         <span className="text-small font-medium" style={{ color: config.color }}>
-          Score: {c.risk_score || 0}/100
+          Risco: {c.risk_score || 0}/100
         </span>
       </div>
 

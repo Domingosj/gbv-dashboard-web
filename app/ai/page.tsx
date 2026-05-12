@@ -23,7 +23,7 @@ function answerQuery(query: string, allCases: GBVCase[], openCases: GBVCase[]): 
   if (q.includes("crítico") || q.includes("critico") || q.includes("urgente")) {
     const critical = openCases.filter(c => c.priority_level === "CRÍTICO");
     if (critical.length === 0) return "**Nenhum caso crítico** no momento.";
-    const top = critical.slice(0, 5).map(c => `• ${c.case_id} — ${c.district || "N/A"} (Score: ${c.risk_score})`).join("\n");
+    const top = critical.slice(0, 5).map(c => `• ${c.case_id} — ${c.district || "N/A"} (Risco: ${c.risk_score})`).join("\n");
     return `**${critical.length} casos críticos** necessitam ação imediata:\n\n${top}\n\n_Ver Lista Prioritária para detalhes completos._`;
   }
 

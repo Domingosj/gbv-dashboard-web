@@ -73,7 +73,7 @@ export default function PriorityListPage() {
                 <GCRTCell isHeader>Tempo</GCRTCell>
                 <GCRTCell isHeader>Referência</GCRTCell>
                 <GCRTCell isHeader>Segurança</GCRTCell>
-                <GCRTCell isHeader>Score</GCRTCell>
+                <GCRTCell isHeader>Risco</GCRTCell>
               </GCRTRow>
             </GCRTHead>
             <GCRTBody>
@@ -83,7 +83,7 @@ export default function PriorityListPage() {
                 const safe = (c.is_safe || "").toLowerCase() === "sim" || !c.is_safe;
                 return (
                   <GCRTRow key={c.case_id || i}>
-                    <GCRTCell>{c.priority_icon || "⚪"}</GCRTCell>
+                    <GCRTCell>{c.priority_icon || "–"}</GCRTCell>
                     <GCRTCell className="font-mono text-caption text-text-secondary">{c.case_id?.slice(0, 18)}</GCRTCell>
                     <GCRTCell>{c.district || "N/A"}</GCRTCell>
                     <GCRTCell>{fmtViolence(c.violence_type)}</GCRTCell>

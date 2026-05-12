@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import useSWR from "swr";
 import { GBVCase } from "@/lib/types";
 import { calcStats } from "@/lib/risk-calculator";
@@ -79,6 +79,12 @@ function computeProgress(cases: GBVCase[]) {
 
 export default function OperationsPage() {
   const [tab, setTab] = useState("daily");
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const t = params.get("tab");
+    if (t && ["daily", "workload", "risk", "progress"].includes(t)) setTab(t);
+  }, []);
   const { data: cases } = useSWR<GBVCase[]>("/api/cases", fetcher, { refreshInterval: 300000 });
   const { data: openCases } = useSWR<GBVCase[]>("/api/cases?filter=open", fetcher, { refreshInterval: 300000 });
   if (!cases || !openCases) return <p className="text-text-secondary p-8">Carregando...</p>;
