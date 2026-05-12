@@ -988,11 +988,11 @@ components/
 
 | Item | Status | Notes |
 |---|---|---|
-| Data Quality Monitor | 🔲 Not started | |
-| Referral Pathway Performance | 🔲 Not started | |
-| Geographic Map | 🔲 Not started | |
-| Trends and Patterns | 🔲 Not started | |
-| Partner / Implementation Performance | 🔲 Not started | |
+| Data Quality Monitor | ✅ Implemented | 12 quality checks with counts, percentages, severity badges |
+| Referral Pathway Performance | ✅ Implemented | Referral by service type, district referral rates, pipeline overview |
+| Geographic Map | ✅ Implemented | District-level case/service coverage table, gap alerts |
+| Trends and Patterns | ✅ Implemented | Monthly chart, violence type, age, project, province distributions |
+| Partner / Implementation Performance | ✅ Implemented | Per-partner case counts, close rate, referral rate |
 
 ### Phase 4 — Strategy Screens
 
