@@ -1005,6 +1005,16 @@ components/
 | Donor Reporting | 🔲 Not started | |
 | AI Assistant (full) | 🔲 Not started | |
 
+### Reusable UI Components (adapted from TailAdmin patterns)
+
+| Component | Status | Notes |
+|---|---|---|
+| GCRCard | ✅ Implemented | Title + body layout, 16px radius, GCR palette |
+| GCRBadge | ✅ Implemented | Pill-style, 5 semantic colors |
+| GCRTable / GCRTHead / GCRTBody / GCRTRow / GCRTCell | ✅ Implemented | Full table component set with onClick support |
+| GCRTabToggle | ✅ Implemented | Period toggle (7d/30d/All style) |
+| Dark mode support | 🔲 Not started | TailAdmin has this pattern |
+
 ### Known Technical Debt
 
 | Issue | Impact | Plan |
