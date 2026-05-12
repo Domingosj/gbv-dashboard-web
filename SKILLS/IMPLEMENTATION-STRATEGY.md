@@ -976,12 +976,12 @@ components/
 
 | Item | Status | Notes |
 |---|---|---|
-| My Priority List / Action Queue | 🔲 Not started | |
-| Case Explorer (searchable table) | 🔲 Not started | |
-| Survivor Journey (case detail) | 🔲 Not started | |
-| Case Timeline component | 🔲 Not started | |
-| Referral Assistant | 🔲 Not started | |
-| AI Assistant (basic) | 🔲 Not started | |
+| My Priority List / Action Queue | ✅ Implemented | Priority queue table, alert cards, summary metrics |
+| Case Explorer (searchable table) | ✅ Implemented | Links to Survivor Journey |
+| Survivor Journey (case detail) | ✅ Implemented | Full detail: overview, timeline, risk, referrals, perpetrator, alerts |
+| Case Timeline component | ✅ Implemented | Vertical timeline with dates |
+| Referral Assistant | ✅ Implemented | Service catalog, district coverage map, service needs analysis |
+| AI Assistant (basic) | 🔲 Not started |
 | `/api/ai/chat` endpoint | 🔲 Not started | |
 
 ### Phase 3 — Analysis Screens

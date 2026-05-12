@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { GBVCase } from "@/lib/types";
-import { fmtViolence } from "@/lib/risk-calculator";
+import { fmtViolence, calculateDaysSinceReferral } from "@/lib/risk-calculator";
 import { GCRTable, GCRTHead, GCRTBody, GCRTRow, GCRTCell } from "@/components/ui/GCRTable";
 import GCRBadge from "@/components/ui/GCRBadge";
 
@@ -40,9 +40,6 @@ export default function CaseTable({ cases }: Props) {
     </GCRTCell>
   );
 
-  const badgeColor = (s?: string) =>
-    s === "Aberto" ? "green" : s === "Encerrado" ? "grey" : "grey";
-
   return (
     <div>
       <div className="flex gap-4 mb-5">
@@ -78,14 +75,18 @@ export default function CaseTable({ cases }: Props) {
             {filtered.slice(0, 100).map((c, i) => (
               <GCRTRow key={c.case_id || i}>
                 <GCRTCell>{c.priority_icon || "⚪"}</GCRTCell>
-                <GCRTCell className="font-mono text-caption text-text-secondary">{c.case_id?.slice(0, 20)}</GCRTCell>
+                <GCRTCell className="font-mono text-caption">
+                  <a href={`/cases/${encodeURIComponent(c.case_id || "")}`} className="text-primary hover:underline">
+                    {c.case_id?.slice(0, 20)}
+                  </a>
+                </GCRTCell>
                 <GCRTCell>{c.district || "N/A"}</GCRTCell>
                 <GCRTCell>{fmtViolence(c.violence_type)}</GCRTCell>
                 <GCRTCell>{c.age_group || "N/A"}</GCRTCell>
                 <GCRTCell>{c.project || "N/A"}</GCRTCell>
                 <GCRTCell>{c.case_manager || "N/A"}</GCRTCell>
                 <GCRTCell>
-                  <GCRBadge color={badgeColor(c.case_status)}>{c.case_status || "N/A"}</GCRBadge>
+                  <GCRBadge color={c.case_status === "Aberto" ? "green" : "grey"}>{c.case_status || "N/A"}</GCRBadge>
                 </GCRTCell>
                 <GCRTCell className="font-semibold">{c.risk_score || 0}</GCRTCell>
               </GCRTRow>
