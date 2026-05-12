@@ -98,12 +98,12 @@ export default function SummaryPage() {
         ))}
       </div>
 
-      <GCRCard title="📈 Casos por Mês/Ano" className="mb-6">
+      <GCRCard title="Casos por Mês/Ano" className="mb-6">
         <MonthlyChart cases={filtered} />
       </GCRCard>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-6">
-        <GCRCard title="⚥ Casos por Sexo">
+        <GCRCard title="Casos por Sexo">
           <div className="space-y-3">{sexData.length > 0 ? sexData.map(([l, c], i) => (
             <div key={l}>
               <div className="flex justify-between text-label mb-1"><span className="text-text-secondary">{l}</span><span className="font-semibold">{c}</span></div>
@@ -111,7 +111,7 @@ export default function SummaryPage() {
             </div>
           )) : <p className="text-text-secondary">Nenhum dado</p>}</div>
         </GCRCard>
-        <GCRCard title="📊 Casos por Faixa Etária">
+        <GCRCard title="Casos por Faixa Etária">
           <div className="space-y-3">{ageData.length > 0 ? ageData.map(([l, c]) => (
             <div key={l}>
               <div className="flex justify-between text-label mb-1"><span className="text-text-secondary">{l}</span><span className="font-semibold">{c}</span></div>
@@ -122,7 +122,7 @@ export default function SummaryPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-6">
-        <GCRCard title="♿ Pessoa com Deficiência">
+        <GCRCard title="Pessoa com Deficiência">
           <div className="flex items-center justify-center gap-8 py-4">
             <div className="text-center">
               <p className="text-metric text-critical">{disabilitySim}</p>
@@ -137,7 +137,7 @@ export default function SummaryPage() {
           </div>
           <div className="text-center mt-2"><p className="text-caption text-text-secondary">{(disabilitySim / Math.max(disabilitySim + disabilityNao, 1) * 100).toFixed(1)}% dos casos envolvem pessoas com deficiência</p></div>
         </GCRCard>
-        <GCRCard title="📍 Casos por Província">
+        <GCRCard title="Casos por Província">
           <div className="space-y-3">{provData.length > 0 ? provData.map(([l, c]) => (
             <div key={l}>
               <div className="flex justify-between text-label mb-1"><span className="text-text-secondary">{l}</span><span className="font-semibold">{c}</span></div>
@@ -169,23 +169,23 @@ export default function SummaryPage() {
             </div>
           ))}</div> : <p className="text-text-secondary">Sem dados</p>}
         </GCRCard>
-        <GCRCard title="🔴 Alertas">
+        <GCRCard title="Alertas">
           <div className="space-y-2">
             <a href="/cases" className={`block p-3 rounded-lg ${open.critical > 0 ? "bg-critical/10" : "bg-success/10"} hover:opacity-80 transition-opacity`}>
               <p className={`text-body font-medium ${open.critical > 0 ? "text-critical" : "text-success"}`}>
-                {open.critical > 0 ? `🔴 ${open.critical} casos críticos` : "✅ Nenhum caso crítico"}
+                {open.critical > 0 ? `${open.critical} casos críticos` : "Nenhum caso crítico"}
                 <span className="text-caption ml-2">Clique para ver →</span>
               </p>
             </a>
             <a href="/cases" className={`block p-3 rounded-lg ${open.no_ref > 0 ? "bg-warning/10" : "bg-success/10"} hover:opacity-80 transition-opacity`}>
               <p className={`text-body font-medium ${open.no_ref > 0 ? "text-warning" : "text-success"}`}>
-                {open.no_ref > 0 ? `⚠️ ${open.no_ref} sem referência` : "✅ Todos referenciados"}
+                {open.no_ref > 0 ? `${open.no_ref} sem referência` : "Todos referenciados"}
                 <span className="text-caption ml-2">Clique para ver →</span>
               </p>
             </a>
             <a href="/operations" className={`block p-3 rounded-lg ${open.delayed > 0 ? "bg-critical/10" : "bg-success/10"} hover:opacity-80 transition-opacity`}>
               <p className={`text-body font-medium ${open.delayed > 0 ? "text-critical" : "text-success"}`}>
-                {open.delayed > 0 ? `🕐 ${open.delayed} atrasados >30d` : "✅ Sem atrasos"}
+                {open.delayed > 0 ? `${open.delayed} atrasados >30d` : "Sem atrasos"}
                 <span className="text-caption ml-2">Clique para ver →</span>
               </p>
             </a>

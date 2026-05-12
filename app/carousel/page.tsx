@@ -215,10 +215,10 @@ export default function CarouselPage() {
           <div className="flex items-center gap-4">
             <span className="text-lg text-text-secondary font-mono">{clock}</span>
             <button onClick={() => setPaused(p => !p)} className="px-4 py-2 rounded-lg bg-gray-100 text-text-secondary hover:bg-gray-200 text-sm">
-              {paused ? "▶ Continuar" : "⏸ Pausar"}
+              {paused ? "Continuar" : "Pausar"}
             </button>
             <button onClick={() => setFullscreen(f => !f)} className="px-4 py-2 rounded-lg bg-gray-100 text-text-secondary hover:bg-gray-200 text-sm">
-              {fullscreen ? "✕ Sair" : "⛶ Tela Cheia"}
+              {fullscreen ? "Sair" : "Tela Cheia"}
             </button>
             <button onClick={() => setCurrent((current - 1 + slides.length) % slides.length)} className="px-3 py-2 rounded-lg bg-gray-100 text-text-secondary hover:bg-gray-200 text-lg">‹</button>
             <button onClick={next} className="px-3 py-2 rounded-lg bg-gray-100 text-text-secondary hover:bg-gray-200 text-lg">›</button>
