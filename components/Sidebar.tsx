@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard, AlertTriangle, BarChart3, Search,
-  FolderKanban, Users, Shield
+  FolderKanban, Users, Shield,
 } from "lucide-react";
 
 const NAV_ITEMS = [
@@ -20,13 +20,13 @@ export default function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="w-64 bg-white border-r border-gray-200 min-h-screen p-4 flex flex-col">
-      <div className="mb-8">
-        <h1 className="text-xl font-bold text-blue-700 flex items-center gap-2">
-          <Shield className="w-6 h-6" />
+    <aside className="w-64 bg-surface border-r border-border min-h-screen p-6base flex flex-col">
+      <div className="mb-10base">
+        <h1 className="font-display text-subhead text-text-primary flex items-center gap-3">
+          <Shield className="w-6 h-6 text-primary" />
           GBV Dashboard
         </h1>
-        <p className="text-xs text-gray-500 mt-1">Sistema de Gestão de Casos</p>
+        <p className="text-caption text-neutral mt-2">Sistema de Gestão de Casos</p>
       </div>
 
       <nav className="flex-1 space-y-1">
@@ -36,11 +36,12 @@ export default function Sidebar() {
             <Link
               key={href}
               href={href}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+              className={`flex items-center gap-3 px-4 py-3 rounded-button text-small font-medium transition-all duration-200 ${
                 active
-                  ? "bg-blue-50 text-blue-700"
-                  : "text-gray-600 hover:bg-gray-50"
+                  ? "text-primary"
+                  : "text-text-secondary hover:text-text-primary hover:bg-gray-50"
               }`}
+              style={active ? { backgroundColor: "rgba(99,102,241,0.12)" } : undefined}
             >
               <Icon className="w-5 h-5" />
               {label}
@@ -49,7 +50,7 @@ export default function Sidebar() {
         })}
       </nav>
 
-      <div className="pt-4 border-t border-gray-200 text-xs text-gray-400">
+      <div className="pt-6base border-t border-border text-caption text-neutral">
         <p>NCS Moçambique</p>
       </div>
     </aside>

@@ -11,8 +11,8 @@ export default function ProjectsPage() {
   const { data: allCases, error } = useSWR<GBVCase[]>("/api/cases", fetcher, { refreshInterval: 300000 });
   const [selected, setSelected] = useState<string>("");
 
-  if (error) return <div className="text-red-500">Erro: {error.message}</div>;
-  if (!allCases) return <div className="text-gray-400">Carregando...</div>;
+  if (error) return <div className="text-error">Erro: {error.message}</div>;
+  if (!allCases) return <div className="text-text-secondary">Carregando...</div>;
 
   const projects = Array.from(new Set(allCases.map(c => c.project).filter(Boolean))).sort() as string[];
   const projectCases = selected ? allCases.filter(c => c.project === selected) : [];
@@ -25,13 +25,13 @@ export default function ProjectsPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-800 border-b-2 border-blue-600 pb-2 mb-6">
+      <h1 className="font-display text-section-title text-text-primary mb-8">
         📂 Análise por Projeto
       </h1>
 
       <div className="mb-6">
         <select
-          className="w-full max-w-md px-3 py-2 border border-gray-300 rounded-lg text-sm"
+          className="genesis-input max-w-md"
           value={selected}
           onChange={e => setSelected(e.target.value)}
         >
@@ -42,47 +42,49 @@ export default function ProjectsPage() {
 
       {stats && (
         <>
-          <div className="grid grid-cols-4 gap-4 mb-6">
-            <div className="bg-white rounded-xl border p-4">
-              <p className="text-xs text-gray-500">Total</p>
-              <p className="text-2xl font-semibold">{stats.total}</p>
-            </div>
-            <div className="bg-white rounded-xl border p-4">
-              <p className="text-xs text-gray-500">Abertos</p>
-              <p className="text-2xl font-semibold text-green-600">{stats.open}</p>
-            </div>
-            <div className="bg-white rounded-xl border p-4">
-              <p className="text-xs text-gray-500">Fechados</p>
-              <p className="text-2xl font-semibold text-gray-600">{stats.closed}</p>
-            </div>
-            <div className="bg-white rounded-xl border p-4">
-              <p className="text-xs text-gray-500">Taxa</p>
-              <p className="text-2xl font-semibold text-blue-600">
-                {stats.total > 0 ? `${(stats.closed / stats.total * 100).toFixed(1)}%` : "0%"}
-              </p>
-            </div>
+          <div className="grid grid-cols-4 gap-5 mb-6">
+            {[
+              { label: "Total", value: stats.total, color: "text-text-primary" },
+              { label: "Abertos", value: stats.open, color: "text-low" },
+              { label: "Fechados", value: stats.closed, color: "text-text-secondary" },
+              {
+                label: "Taxa",
+                value: stats.total > 0 ? `${(stats.closed / stats.total * 100).toFixed(1)}%` : "0%",
+                color: "text-primary",
+              },
+            ].map(({ label, value, color }) => (
+              <div key={label} className="genesis-card p-5">
+                <p className="text-caption text-neutral mb-1">{label}</p>
+                <p className={`font-display text-subhead font-bold ${color}`}>{value}</p>
+              </div>
+            ))}
           </div>
 
           {Object.keys(provCounts).length > 0 && (
-            <div className="bg-white rounded-xl border border-gray-200 p-4">
-              <h2 className="text-lg font-semibold mb-4">📍 Cobertura por Província</h2>
-              <div className="space-y-2">
-                {Object.entries(provCounts).sort((a, b) => b[1] - a[1]).map(([prov, count]) => (
-                  <div key={prov} className="flex items-center gap-2">
-                    <span className="text-sm">{prov}</span>
-                    <div className="flex-1 bg-gray-100 rounded-full h-2">
-                      <div className="bg-blue-500 h-2 rounded-full" style={{ width: `${(count / stats.total) * 100}%` }} />
+            <div className="genesis-card p-5">
+              <h2 className="font-display text-subhead text-text-primary mb-5">📍 Cobertura por Província</h2>
+              <div className="space-y-3">
+                {Object.entries(provCounts)
+                  .sort((a, b) => b[1] - a[1])
+                  .map(([prov, count]) => (
+                    <div key={prov} className="flex items-center gap-3">
+                      <span className="text-small w-32">{prov}</span>
+                      <div className="flex-1 bg-gray-100 rounded-full h-2.5">
+                        <div
+                          className="bg-primary h-2.5 rounded-full transition-all"
+                          style={{ width: `${(count / stats.total) * 100}%` }}
+                        />
+                      </div>
+                      <span className="text-small text-text-secondary w-8 text-right">{count}</span>
                     </div>
-                    <span className="text-sm text-gray-500">{count}</span>
-                  </div>
-                ))}
+                  ))}
               </div>
             </div>
           )}
         </>
       )}
 
-      {selected && !stats && <p className="text-gray-400">Nenhum dado disponível</p>}
+      {selected && !stats && <p className="text-text-secondary">Nenhum dado disponível</p>}
     </div>
   );
 }

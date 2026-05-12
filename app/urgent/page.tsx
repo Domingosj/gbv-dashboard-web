@@ -10,45 +10,40 @@ const fetcher = (url: string) => fetch(url).then(r => r.json());
 export default function UrgentPage() {
   const { data: cases, error } = useSWR<GBVCase[]>("/api/cases?filter=open", fetcher, { refreshInterval: 300000 });
 
-  if (error) return <div className="text-red-500">Erro: {error.message}</div>;
-  if (!cases) return <div className="text-gray-400">Carregando...</div>;
+  if (error) return <div className="text-error">Erro: {error.message}</div>;
+  if (!cases) return <div className="text-text-secondary">Carregando...</div>;
 
   const stats = calcStats(cases);
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-800 border-b-2 border-red-500 pb-2 mb-6">
+      <h1 className="font-display text-section-title text-text-primary mb-8">
         🚨 Casos Urgentes — Ação Imediata
       </h1>
 
-      <div className="grid grid-cols-4 gap-4 mb-6">
-        <div className="bg-red-50 rounded-xl border border-red-200 p-4 text-center">
-          <p className="text-2xl font-bold text-red-600">{stats.critical}</p>
-          <p className="text-sm text-red-700">🔴 Crítico</p>
-        </div>
-        <div className="bg-orange-50 rounded-xl border border-orange-200 p-4 text-center">
-          <p className="text-2xl font-bold text-orange-600">{stats.high}</p>
-          <p className="text-sm text-orange-700">🟠 Alto</p>
-        </div>
-        <div className="bg-yellow-50 rounded-xl border border-yellow-200 p-4 text-center">
-          <p className="text-2xl font-bold text-yellow-600">{stats.no_ref}</p>
-          <p className="text-sm text-yellow-700">⚠️ Sem Ref</p>
-        </div>
-        <div className="bg-red-50 rounded-xl border border-red-200 p-4 text-center">
-          <p className="text-2xl font-bold text-red-600">{stats.delayed}</p>
-          <p className="text-sm text-red-700">⏰ &gt;30d</p>
-        </div>
+      <div className="grid grid-cols-4 gap-5 mb-8">
+        {[
+          { label: "🔴 Crítico", value: stats.critical, color: "text-critical", bg: "bg-red-50" },
+          { label: "🟠 Alto", value: stats.high, color: "text-high", bg: "bg-orange-50" },
+          { label: "⚠️ Sem Ref", value: stats.no_ref, color: "text-medium", bg: "bg-yellow-50" },
+          { label: "⏰ >30d", value: stats.delayed, color: "text-critical", bg: "bg-red-50" },
+        ].map(({ label, value, color, bg }) => (
+          <div key={label} className={`${bg} rounded-card border border-border p-5 text-center`}>
+            <p className={`font-display text-subhead font-bold ${color}`}>{value}</p>
+            <p className="text-small text-text-secondary mt-1">{label}</p>
+          </div>
+        ))}
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-5">
         {cases.slice(0, 10).map((c, i) => (
           <CaseCard key={c.case_id || i} case={c} index={i + 1} />
         ))}
       </div>
 
       {cases.length === 0 && (
-        <div className="bg-green-50 text-green-700 p-8 rounded-xl text-center text-lg">
-          ✅ Nenhum caso urgente!
+        <div className="genesis-card p-10 text-center">
+          <p className="text-success text-subhead font-semibold">✅ Nenhum caso urgente!</p>
         </div>
       )}
     </div>

@@ -9,18 +9,18 @@ const fetcher = (url: string) => fetch(url).then(r => r.json());
 export default function CasesPage() {
   const { data: allCases, error } = useSWR<GBVCase[]>("/api/cases", fetcher, { refreshInterval: 300000 });
 
-  if (error) return <div className="text-red-500">Erro: {error.message}</div>;
-  if (!allCases) return <div className="text-gray-400">Carregando...</div>;
+  if (error) return <div className="text-error">Erro: {error.message}</div>;
+  if (!allCases) return <div className="text-text-secondary">Carregando...</div>;
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-800 border-b-2 border-blue-600 pb-2 mb-6">
+      <h1 className="font-display text-section-title text-text-primary mb-8">
         🔍 Explorador de Casos
       </h1>
 
-      <p className="text-sm text-gray-500 mb-4">📊 {allCases.length} casos no total</p>
+      <p className="text-small text-text-secondary mb-5">📊 {allCases.length} casos no total</p>
 
-      <div className="bg-white rounded-xl border border-gray-200 p-4">
+      <div className="genesis-card p-5">
         <CaseTable cases={allCases} />
       </div>
     </div>

@@ -1,21 +1,118 @@
+@import url('https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600,700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --critical: #dc3545;
-  --high: #fd7e14;
-  --medium: #ffc107;
-  --low: #28a745;
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    font-family: 'DM Sans', system-ui, sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    color: #0A0A0A;
+    background-color: #FAFAFA;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'General Sans', system-ui, sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: #0A0A0A;
+  }
+
+  ::selection {
+    background-color: rgba(99, 102, 241, 0.2);
+    color: #0A0A0A;
+  }
+
+  /* Focus ring */
+  *:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+  }
 }
 
-body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  background: #f8f9fa;
-  color: #1a1a2e;
-}
+@layer components {
+  .genesis-card {
+    @apply bg-surface border border-border rounded-card;
+    box-shadow: none;
+    transition: box-shadow 200ms ease, transform 200ms ease;
+  }
 
-.priority-critical { border-left: 4px solid var(--critical); }
-.priority-high { border-left: 4px solid var(--high); }
-.priority-medium { border-left: 4px solid var(--medium); }
-.priority-low { border-left: 4px solid var(--low); }
+  .genesis-card:hover {
+    box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+    transform: translateY(-2px);
+  }
+
+  .genesis-btn {
+    @apply inline-flex items-center justify-center font-medium rounded-button transition-all duration-200;
+    font-family: 'DM Sans', system-ui, sans-serif;
+  }
+
+  .genesis-btn-primary {
+    @apply genesis-btn text-white;
+    background-color: #6366F1;
+  }
+
+  .genesis-btn-primary:hover {
+    background-color: #4F46E5;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.35);
+    transform: translateY(-1px);
+  }
+
+  .genesis-btn-secondary {
+    @apply genesis-btn;
+    background-color: transparent;
+    border: 1px solid #E8E8EC;
+    color: #0A0A0A;
+  }
+
+  .genesis-btn-secondary:hover {
+    border-color: #6366F1;
+    color: #6366F1;
+    transform: translateY(-1px);
+  }
+
+  .genesis-input {
+    @apply w-full rounded-input border px-[14px] py-[10px] text-body transition-all duration-200;
+    border-color: #E8E8EC;
+    background-color: #FFFFFF;
+    font-family: 'DM Sans', system-ui, sans-serif;
+  }
+
+  .genesis-input:focus {
+    border-color: #6366F1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+    outline: none;
+  }
+
+  .genesis-input::placeholder {
+    color: #9C9C9C;
+  }
+
+  .genesis-chip {
+    @apply inline-flex items-center rounded-full px-3 py-1 text-caption font-medium;
+  }
+
+  .genesis-chip-active {
+    @apply genesis-chip;
+    background-color: #6366F1;
+    color: white;
+  }
+
+  .genesis-chip-default {
+    @apply genesis-chip;
+    background-color: #f3f4f6;
+    color: #6B6B6B;
+  }
+
+  .priority-critical { border-left: 4px solid #dc3545; }
+  .priority-alto { border-left: 4px solid #fd7e14; }
+  .priority-medio { border-left: 4px solid #eab308; }
+  .priority-baixo { border-left: 4px solid #22c55e; }
+}

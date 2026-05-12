@@ -2,3 +2,4 @@ node_modules/
 .next/
 .env.local
 *.csv
+*.DS_Store
