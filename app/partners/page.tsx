@@ -34,7 +34,7 @@ export default function PartnersPage() {
 
   return (
     <div>
-      <h1 className="text-page-title text-text-primary mb-6">Partner Performance</h1>
+      <h1 className="text-page-title text-text-primary mb-6">Desempenho de Projetos</h1>
 
       <div className="grid grid-cols-4 gap-4 mb-6">
         {[

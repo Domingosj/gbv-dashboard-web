@@ -40,7 +40,7 @@ export default function StrategicAnalysisPage() {
 
   return (
     <div>
-      <h1 className="text-page-title text-text-primary mb-6">Strategic Protection Analysis</h1>
+      <h1 className="text-page-title text-text-primary mb-6">Análise Estratégica de Proteção</h1>
 
       <div className="grid grid-cols-4 gap-4 mb-6">
         {[

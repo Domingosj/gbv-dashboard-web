@@ -58,6 +58,10 @@ export default function SummaryPage() {
   for (const c of filtered) { const v = c.violence_type_short || c.violence_type || "N/E"; violCounts[v] = (violCounts[v] || 0) + 1; }
   const violData = Object.entries(violCounts).sort((a, b) => b[1] - a[1]).slice(0, 6);
 
+  const perpCounts: Record<string, number> = {};
+  for (const c of filtered) { const r = c.perpetrator_relationship || "N/E"; perpCounts[r] = (perpCounts[r] || 0) + 1; }
+  const perpData = Object.entries(perpCounts).sort((a, b) => b[1] - a[1]).slice(0, 6);
+
   const topDistricts: Record<string, number> = {};
   for (const c of filteredOpen) { const d = c.district || "Desconhecido"; topDistricts[d] = (topDistricts[d] || 0) + 1; }
   const topDist = Object.entries(topDistricts).sort((a, b) => b[1] - a[1]).slice(0, 5);
@@ -143,13 +147,21 @@ export default function SummaryPage() {
         </GCRCard>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-6">
-        <GCRCard title="🥧 Tipos de Violência">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-6">
+        <GCRCard title="Padrões de Violência">
           {violData.length > 0 ? <div className="space-y-2">{violData.map(([l, c]) => (
+            <div key={l} className="flex items-center justify-between py-1.5 border-b border-border last:border-0"><span className="text-body text-text-secondary truncate mr-2">{l}</span><GCRBadge color={c > 10 ? "red" : "amber"}>{c}</GCRBadge></div>
+          ))}</div> : <p className="text-text-secondary">Nenhum dado</p>}
+        </GCRCard>
+        <GCRCard title="Relação com Perpetrador">
+          {perpData.length > 0 ? <div className="space-y-2">{perpData.map(([l, c]) => (
             <div key={l} className="flex items-center justify-between py-1.5 border-b border-border last:border-0"><span className="text-body text-text-secondary truncate mr-2">{l}</span><GCRBadge color="blue">{c}</GCRBadge></div>
           ))}</div> : <p className="text-text-secondary">Nenhum dado</p>}
         </GCRCard>
-        <GCRCard title="📍 Distritos com Mais Casos">
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-6">
+        <GCRCard title="Distritos com Mais Casos">
           {topDist.length > 0 ? <div className="space-y-3">{topDist.map(([d, c], i) => (
             <div key={d}>
               <div className="flex justify-between text-label mb-1"><span className="text-text-secondary">{i + 1}. {d}</span><span className="font-semibold">{c}</span></div>

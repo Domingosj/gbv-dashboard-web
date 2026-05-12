@@ -48,7 +48,7 @@ export default function DataQualityPage() {
 
   return (
     <div>
-      <h1 className="text-page-title text-text-primary mb-6">Data Quality Monitor</h1>
+      <h1 className="text-page-title text-text-primary mb-6">Monitor de Qualidade de Dados</h1>
 
       <div className="grid grid-cols-4 gap-4 mb-6">
         {[

@@ -39,7 +39,7 @@ export default function PortfolioPage() {
 
   return (
     <div>
-      <h1 className="text-page-title text-text-primary mb-6">Portfolio Analysis</h1>
+      <h1 className="text-page-title text-text-primary mb-6">Análise de Portfólio</h1>
 
       <div className="grid grid-cols-4 gap-4 mb-6">
         {[

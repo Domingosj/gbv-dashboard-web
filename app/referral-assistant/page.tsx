@@ -43,7 +43,7 @@ export default function ReferralAssistantPage() {
 
   return (
     <div>
-      <h1 className="text-page-title text-text-primary mb-6">Referral Assistant</h1>
+      <h1 className="text-page-title text-text-primary mb-6">Assistente de Referência</h1>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-6">
         <GCRCard title="Necessidades de Serviço (Casos Abertos)">

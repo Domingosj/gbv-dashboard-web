@@ -33,7 +33,7 @@ export default function PriorityListPage() {
 
   return (
     <div>
-      <h1 className="text-page-title text-text-primary mb-6">Priority List</h1>
+      <h1 className="text-page-title text-text-primary mb-6">Lista Prioritária</h1>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         {[

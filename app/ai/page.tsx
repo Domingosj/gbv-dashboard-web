@@ -142,7 +142,7 @@ export default function AIPage() {
 
   return (
     <div className="max-w-4xl mx-auto">
-      <h1 className="text-page-title text-text-primary mb-6">AI Assistant</h1>
+      <h1 className="text-page-title text-text-primary mb-6">Assistente IA</h1>
 
       <GCRCard>
         <div className="h-[500px] overflow-y-auto space-y-4 pr-2 mb-4">
