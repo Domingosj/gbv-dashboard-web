@@ -13,7 +13,7 @@ export default function PartnersPage() {
 
   const partners: Record<string, { total: number; open: number; closed: number; ref: number }> = {};
   for (const c of cases) {
-    const p = c.partner || c.project || "Sem parceiro";
+    const p = c.project || "Sem projeto";
     if (!partners[p]) partners[p] = { total: 0, open: 0, closed: 0, ref: 0 };
     partners[p].total++;
     if (c.case_status === "Aberto") partners[p].open++;
@@ -38,7 +38,7 @@ export default function PartnersPage() {
 
       <div className="grid grid-cols-4 gap-4 mb-6">
         {[
-          { label: "Total de Parceiros", value: rows.length, color: "text-primary" },
+          { label: "Total de Projetos", value: rows.length, color: "text-primary" },
           { label: "Total de Casos", value: totalCases, color: "text-info" },
           { label: "Casos Abertos", value: rows.reduce((s, r) => s + r.open, 0), color: "text-warning" },
           { label: "Casos Encerrados", value: rows.reduce((s, r) => s + r.closed, 0), color: "text-success" },
@@ -50,12 +50,12 @@ export default function PartnersPage() {
         ))}
       </div>
 
-      <GCRCard title="Desempenho por Parceiro/Projeto">
+      <GCRCard title="Desempenho por Projeto">
         <div className="overflow-x-auto">
           <table className="w-full text-body">
             <thead className="bg-gray-50 border-b border-border">
               <tr>
-                <th className="text-left px-4 py-3 text-label text-text-secondary">Parceiro</th>
+                <th className="text-left px-4 py-3 text-label text-text-secondary">Projeto</th>
                 <th className="text-right px-4 py-3 text-label text-text-secondary">Total</th>
                 <th className="text-right px-4 py-3 text-label text-text-secondary">Abertos</th>
                 <th className="text-right px-4 py-3 text-label text-text-secondary">Encerrados</th>
