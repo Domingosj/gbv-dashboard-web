@@ -115,10 +115,10 @@ function DailyTab({ cases }: { cases: GBVCase[] }) {
           { label: "Abertos >30d", value: s.open30, color: "text-warning" },
           { label: "Sem Atualização", value: s.stale, color: "text-text-secondary" },
         ].map(({ label, value, color }) => (
-          <div key={label} className="gcr-card p-4 text-center">
+          <a key={label} href="/cases" className="gcr-card p-4 text-center block hover:shadow-card-hover transition-shadow">
             <p className="text-label text-text-secondary mb-1">{label}</p>
             <p className={`text-metric ${color}`}>{value}</p>
-          </div>
+          </a>
         ))}
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
@@ -208,10 +208,10 @@ function RiskTab({ cases }: { cases: GBVCase[] }) {
           { label: "Incidentes Anteriores", value: s.prev, color: "text-warning" },
           { label: "Perpetrador Familiar", value: s.familyPerp, color: "text-critical" },
         ].map(({ label, value, color }) => (
-          <div key={label} className="gcr-card p-4 text-center">
+          <a key={label} href="/cases" className="gcr-card p-4 text-center block hover:shadow-card-hover transition-shadow">
             <p className="text-label text-text-secondary mb-1">{label}</p>
             <p className={`text-metric ${color}`}>{value}</p>
-          </div>
+          </a>
         ))}
       </div>
       <GCRCard title="Gaps de Segurança">
@@ -244,10 +244,10 @@ function ProgressTab({ cases }: { cases: GBVCase[] }) {
           { label: "Referenciados", value: s.referred, color: "text-info" },
           { label: "Encerrados", value: s.closed, color: "text-success" },
         ].map(({ label, value, color }) => (
-          <div key={label} className="gcr-card p-4 text-center">
+          <a key={label} href="/cases" className="gcr-card p-4 text-center block hover:shadow-card-hover transition-shadow">
             <p className="text-label text-text-secondary mb-1">{label}</p>
             <p className={`text-metric ${color}`}>{value}</p>
-          </div>
+          </a>
         ))}
       </div>
       <GCRCard title="Progresso do Pipeline">
