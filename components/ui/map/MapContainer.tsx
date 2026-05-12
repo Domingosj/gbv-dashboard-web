@@ -53,50 +53,37 @@ function ClusterGroup({ markers }: { markers: { position: [number, number]; labe
   const clusterRef = useRef<any>(null);
 
   useEffect(() => {
-    let cluster: any;
     let mounted = true;
+    let cluster: any;
 
-    (async () => {
+    // Load markercluster and create cluster group
+    const init = async () => {
       try {
-        const MCG = (await import("leaflet.markercluster")).default;
+        await import("leaflet.markercluster");
         cluster = L.markerClusterGroup({
           chunkedLoading: true,
           showCoverageOnHover: false,
           spiderfyOnMaxZoom: true,
           maxClusterRadius: 50,
           zoomToBoundsOnClick: true,
-          iconCreateFunction: (c: any) => {
-            const count = c.getChildCount();
-            const color = count > 10 ? "#C65A5A" : count > 5 ? "#D9A441" : "#256B5A";
-            return L.divIcon({
-              html: `<div style="background:${color};color:white;border-radius:50%;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.2)">${count}</div>`,
-              className: "",
-              iconSize: [40, 40],
-              iconAnchor: [20, 20],
-            });
-          },
         });
-
         markers.forEach(({ position: [lat, lng], label, count }) => {
           const marker = L.marker([lat, lng], { icon: createMarkerIcon(count) });
           marker.bindPopup(`<b>${label}</b><br/>${count} casos`);
-          if (mounted) cluster.addLayer(marker);
+          cluster.addLayer(marker);
         });
-
-        if (mounted) {
-          map.addLayer(cluster);
-          clusterRef.current = cluster;
-        }
+        if (mounted) { map.addLayer(cluster); clusterRef.current = cluster; }
       } catch {
-        // fallback: add markers directly
+        // Fallback: add markers directly to map
         markers.forEach(({ position: [lat, lng], label, count }) => {
           L.marker([lat, lng], { icon: createMarkerIcon(count) })
             .addTo(map)
             .bindPopup(`<b>${label}</b><br/>${count} casos`);
         });
       }
-    })();
+    };
 
+    init();
     return () => { mounted = false; if (clusterRef.current) map.removeLayer(clusterRef.current); };
   }, [map]);
 
