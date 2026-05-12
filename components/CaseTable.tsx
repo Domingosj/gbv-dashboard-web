@@ -85,7 +85,7 @@ export default function CaseTable({ cases }: Props) {
               <GCRTRow key={c.case_id || i}>
                 <GCRTCell>{c.priority_icon || "–"}</GCRTCell>
                 <GCRTCell className="font-mono text-caption">
-                  <a href={`/cases/${encodeURIComponent(c.case_id || "")}`} className="text-primary hover:underline font-semibold">
+                  <a href={`/cases/${c.record_id || encodeURIComponent(c.case_id || "")}`} className="text-primary hover:underline font-semibold">
                     {c.case_id?.slice(0, 22)}
                   </a>
                 </GCRTCell>

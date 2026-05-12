@@ -15,7 +15,7 @@ export default function SurvivorJourneyPage() {
   const { data: cases } = useSWR<GBVCase[]>("/api/cases", fetcher);
   if (!cases) return <p className="text-text-secondary p-8">Carregando...</p>;
 
-  const c = cases.find(c => c.case_id === id);
+  const c = cases.find(c => c.case_id === id || c.record_id === id);
   if (!c) return <p className="text-text-secondary p-8">Caso não encontrado</p>;
 
   const ref = calculateDaysSinceReferral(c);
