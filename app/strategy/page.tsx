@@ -6,6 +6,7 @@ import { GBVCase } from "@/lib/types";
 import ModuleTabs from "@/components/ModuleTabs";
 import GCRCard from "@/components/ui/GCRCard";
 import GCRBadge from "@/components/ui/GCRBadge";
+import FilterBar from "@/components/FilterBar";
 
 const fetcher = (url: string) => fetch(url).then(r => r.json());
 
@@ -16,15 +17,25 @@ const TABS = [
 
 export default function StrategyPage() {
   const [tab, setTab] = useState("portfolio");
+  const [provFilter, setProvFilter] = useState("");
   const { data: cases } = useSWR<GBVCase[]>("/api/cases", fetcher, { refreshInterval: 300000 });
   if (!cases) return <p className="text-text-secondary p-8">Carregando...</p>;
+
+  const provinces = Array.from(new Set(cases.map(c => c.province).filter((d): d is string => !!d))).sort();
+  const filtered = provFilter ? cases.filter(c => c.province === provFilter) : cases;
 
   return (
     <div>
       <h1 className="text-page-title text-text-primary mb-1">Estratégia</h1>
       <ModuleTabs tabs={TABS} activeTab={tab} onTabChange={setTab} />
-      {tab === "portfolio" && <PortfolioTab cases={cases} />}
-      {tab === "protection" && <ProtectionTab cases={cases} />}
+      <FilterBar>
+        <select className="genesis-input w-56" value={provFilter} onChange={e => setProvFilter(e.target.value)}>
+          <option value="">Todas as províncias</option>
+          {provinces.map(p => <option key={p} value={p}>{p}</option>)}
+        </select>
+      </FilterBar>
+      {tab === "portfolio" && <PortfolioTab cases={filtered} />}
+      {tab === "protection" && <ProtectionTab cases={filtered} />}
     </div>
   );
 }
