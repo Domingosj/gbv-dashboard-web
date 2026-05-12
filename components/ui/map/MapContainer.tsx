@@ -1,15 +1,6 @@
-import { MapContainer as LeafletMap, TileLayer, useMap } from "react-leaflet";
-import L from "leaflet";
-import "leaflet/dist/leaflet.css";
-import { useEffect, useRef } from "react";
+"use client";
 
-// Fix Leaflet default icon
-delete (L.Icon.Default.prototype as any)._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png",
-  iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png",
-  shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png",
-});
+import { useEffect, useRef } from "react";
 
 const DISTRICT_COORDS: Record<string, [number, number]> = {
   "Beira": [-19.8333, 34.8333], "Mueda": [-11.6667, 39.5], "Montepuez": [-13.1167, 39.0],
@@ -23,94 +14,88 @@ const DISTRICT_COORDS: Record<string, [number, number]> = {
   "Angoche": [-16.2333, 39.9167], "Mocuba": [-16.85, 36.9833], "Gurúè": [-15.45, 36.9833],
 };
 
-const COLORS = ["#256B5A", "#4B7BE5", "#D9A441", "#C65A5A", "#5E9C8A"];
+interface Props { markers: { label: string; count: number }[] }
 
-function createMarkerIcon(count: number): L.DivIcon {
-  const color = count > 20 ? "#C65A5A" : count > 10 ? "#D9A441" : "#256B5A";
-  return L.divIcon({
-    html: `<div style="background:${color};color:white;border-radius:50%;width:34px;height:34px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;border:3px solid white;box-shadow:0 2px 6px rgba(0,0,0,0.15)">${count}</div>`,
-    className: "",
-    iconSize: [34, 34],
-    iconAnchor: [17, 17],
-  });
-}
-
-// Sub-component that auto-fits map bounds to markers
-function FitBounds({ coords }: { coords: [number, number][] }) {
-  const map = useMap();
-  useEffect(() => {
-    if (coords.length > 0) {
-      const bounds = L.latLngBounds(coords.map(c => [c[0], c[1]] as L.LatLngTuple));
-      map.fitBounds(bounds, { padding: [40, 40], maxZoom: 7 });
-    }
-  }, [map, coords.length]);
-  return null;
-}
-
-// Sub-component for marker cluster using leaflet.markercluster
-function ClusterGroup({ markers }: { markers: { position: [number, number]; label: string; count: number }[] }) {
-  const map = useMap();
-  const clusterRef = useRef<any>(null);
+export default function MapContainer({ markers }: Props) {
+  const ref = useRef<HTMLDivElement>(null);
+  const mapRef = useRef<any>(null);
 
   useEffect(() => {
-    let mounted = true;
-    let cluster: any;
+    if (mapRef.current || !ref.current) return;
 
-    // Load markercluster and create cluster group
-    const init = async () => {
+    const loadMap = async () => {
+      const L = (await import("leaflet")).default;
+      await import("leaflet/dist/leaflet.css");
+
+      // Fix default icons
+      delete (L.Icon.Default.prototype as any)._getIconUrl;
+      L.Icon.Default.mergeOptions({
+        iconRetinaUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png",
+        iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png",
+        shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png",
+      });
+
+      const map = L.map(ref.current, { zoomControl: true }).setView([-17.5, 36.5], 6);
+
+      L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+      }).addTo(map);
+
+      const points = markers
+        .filter(m => DISTRICT_COORDS[m.label])
+        .map(m => ({ position: DISTRICT_COORDS[m.label], label: m.label, count: m.count }));
+
+      // Try marker clustering, fallback to individual markers
       try {
         await import("leaflet.markercluster");
-        cluster = L.markerClusterGroup({
+        const cluster = L.markerClusterGroup({
           chunkedLoading: true,
           showCoverageOnHover: false,
           spiderfyOnMaxZoom: true,
           maxClusterRadius: 50,
           zoomToBoundsOnClick: true,
         });
-        markers.forEach(({ position: [lat, lng], label, count }) => {
-          const marker = L.marker([lat, lng], { icon: createMarkerIcon(count) });
-          marker.bindPopup(`<b>${label}</b><br/>${count} casos`);
+
+        points.forEach(({ position: [lat, lng], label, count }) => {
+          const color = count > 20 ? "#C65A5A" : count > 10 ? "#D9A441" : "#256B5A";
+          const icon = L.divIcon({
+            html: `<div style="background:${color};color:white;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;border:3px solid white;box-shadow:0 2px 6px rgba(0,0,0,0.15)">${count}</div>`,
+            className: "", iconSize: [32, 32], iconAnchor: [16, 16],
+          });
+          const marker = L.marker([lat, lng], { icon }).bindPopup(`<b>${label}</b><br/>${count} casos`);
           cluster.addLayer(marker);
         });
-        if (mounted) { map.addLayer(cluster); clusterRef.current = cluster; }
+
+        map.addLayer(cluster);
       } catch {
-        // Fallback: add markers directly to map
-        markers.forEach(({ position: [lat, lng], label, count }) => {
-          L.marker([lat, lng], { icon: createMarkerIcon(count) })
-            .addTo(map)
-            .bindPopup(`<b>${label}</b><br/>${count} casos`);
+        // Fallback: individual markers without clustering
+        points.forEach(({ position: [lat, lng], label, count }) => {
+          const color = count > 20 ? "#C65A5A" : count > 10 ? "#D9A441" : "#256B5A";
+          const icon = L.divIcon({
+            html: `<div style="background:${color};color:white;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;border:3px solid white;box-shadow:0 2px 6px rgba(0,0,0,0.15)">${count}</div>`,
+            className: "", iconSize: [32, 32], iconAnchor: [16, 16],
+          });
+          L.marker([lat, lng], { icon }).addTo(map).bindPopup(`<b>${label}</b><br/>${count} casos`);
         });
       }
+
+      // Fit bounds to markers
+      if (points.length > 1) {
+        const bounds = L.latLngBounds(points.map(p => [p.position[0], p.position[1]]));
+        map.fitBounds(bounds, { padding: [30, 30], maxZoom: 7 });
+      }
+
+      mapRef.current = map;
     };
 
-    init();
-    return () => { mounted = false; if (clusterRef.current) map.removeLayer(clusterRef.current); };
-  }, [map]);
+    loadMap();
 
-  return null;
-}
+    return () => { if (mapRef.current) { mapRef.current.remove(); mapRef.current = null; } };
+  }, []);
 
-interface Props { markers: { label: string; count: number }[] }
-
-export default function MapContainer({ markers }: Props) {
-  const points = markers
-    .filter(m => DISTRICT_COORDS[m.label])
-    .map(m => ({ position: DISTRICT_COORDS[m.label], label: m.label, count: m.count }));
-
-  if (points.length === 0) {
-    return <div className="h-[500px] rounded-2xl border border-border bg-gray-50 flex items-center justify-center text-text-secondary">Sem distritos para exibir</div>;
+  if (!markers || markers.length === 0) {
+    return <div className="h-[500px] rounded-2xl border border-border bg-gray-50 flex items-center justify-center text-text-secondary">Sem dados para exibir</div>;
   }
 
-  return (
-    <div className="h-[500px] rounded-2xl overflow-hidden border border-border">
-      <LeafletMap center={[-17.5, 36.5]} zoom={6} scrollWheelZoom={true} className="h-full w-full">
-        <TileLayer
-          url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        />
-        <ClusterGroup markers={points} />
-        <FitBounds coords={points.map(p => p.position)} />
-      </LeafletMap>
-    </div>
-  );
+  return <div ref={ref} className="h-[500px] w-full rounded-2xl border border-border" />;
 }
