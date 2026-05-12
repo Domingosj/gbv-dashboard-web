@@ -35,7 +35,7 @@ export default function MapContainer({ markers }: Props) {
         shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png",
       });
 
-      const map = L.map(ref.current, { zoomControl: true }).setView([-17.5, 36.5], 6);
+      const map = L.map(ref.current!, { zoomControl: true }).setView([-17.5, 36.5], 6);
 
       L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',

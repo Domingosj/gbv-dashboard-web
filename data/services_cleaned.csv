@@ -1,0 +1,74 @@
+id,organization,service_category,service_type,province,district,location,focal_point_name,focal_point_phone,focal_point_email,active,source,created_at,updated_at
+7,SERVIÇO DISTRITAL DE SAÚDE,Saúde Mental e Apoio Psicosocial,Apoio psicossocial,Cabo Delgado,Ibo,Ibo,Namuenta Ambrsoio,860485941,,t,Referral Pathway Junho 2025,2025-12-11 02:53:56,2025-12-11 02:53:56
+8,AVSI,Saúde Mental e Apoio Psicosocial,PFA e actividades reacriativas,Cabo Delgado,Ibo,Ibo,Abradji Canivete,868459249,,t,Referral Pathway Junho 2025,2025-12-11 02:53:56,2025-12-11 02:53:56
+9,OIM,Saúde Mental e Apoio Psicosocial,Sensibilização e capacitação,Cabo Delgado,Ibo,Ibo,Acio Bende,842423566,abende@iom.int,t,Referral Pathway Junho 2025,2025-12-11 02:53:56,2025-12-11 02:53:56
+10,SERVIÇO DISTRITAL DE SAÚDE,Saúde e Nutrição,Serviços de saúde de emergência,Cabo Delgado,Ibo,Ibo,Caitume,870796164,,t,Referral Pathway Junho 2025,2025-12-11 02:53:56,2025-12-11 02:53:56
+11,AVSI,Violência Baseada no Gênero - VBG,Gestão de casos e PSS,Cabo Delgado,Ibo,Ibo,Rajabo Faque,878713890,,t,Referral Pathway Junho 2025,2025-12-11 02:53:56,2025-12-11 02:53:56
+12,OIM,Violência Baseada no Gênero - VBG,Sensibilização e encaminhamento,Cabo Delgado,Ibo,Ibo,Acio Bende,842423566,abende@iom.int,t,Referral Pathway Junho 2025,2025-12-11 02:53:56,2025-12-11 02:53:56
+13,AVSI,Proteção da Criança,Gestão de casos,Cabo Delgado,Ibo,Ibo,Lito Adriano,878143779,lito.adriano@avsi.org,t,Referral Pathway Junho 2025,2025-12-11 02:53:56,2025-12-11 02:53:56
+14,OIM,Proteção da Criança,Rastreio e reunificação familiar,Cabo Delgado,Ibo,Ibo,Acio Bende,842423566,abende@iom.int,t,Referral Pathway Junho 2025,2025-12-11 02:53:56,2025-12-11 02:53:56
+15,POLÍCIA DA REPUBLICA DE MOÇAMBIQUE (PRM),Assistência Legal,Atendimento,Cabo Delgado,Ibo,Ibo,Juma Abdala,868987876,,t,Referral Pathway Junho 2025,2025-12-11 02:53:56,2025-12-11 02:53:56
+16,SERVIÇO DISTRITAL DE SAÚDE,Saúde Mental e Apoio Psicosocial,Assistência a saúde mental,Cabo Delgado,Macomia,Macomia,Técnicos de Saúde Mental,871722994,,t,Referral Pathway Junho 2025,2025-12-11 02:53:56,2025-12-11 02:53:56
+17,AVSI,Saúde Mental e Apoio Psicosocial,Sensibilização,Cabo Delgado,Macomia,Macomia,Eduardo Caponde,861779505,eduardo.caponde@avsi.org,t,Referral Pathway Junho 2025,2025-12-11 02:53:56,2025-12-11 02:53:56
+18,HELPCODE,Saúde Mental e Apoio Psicosocial,Gestão de casos,Cabo Delgado,Macomia,Macomia,Rosamilde Lourenço,848250596,,t,Referral Pathway Junho 2025,2025-12-11 02:53:56,2025-12-11 02:53:56
+19,OIM,Saúde Mental e Apoio Psicosocial,PFA e actividades reacriativas,Cabo Delgado,Macomia,Xinavane,Acio Wiliam Rato Bende,877223566,abende@iom.int,t,Referral Pathway Junho 2025,2025-12-11 02:53:56,2025-12-11 02:53:56
+20,SERVIÇO DISTRITAL DE SAÚDE,Saúde e Nutrição,Cuidados primários em VBG,Cabo Delgado,Macomia,Macomia,Wester José Paiva Baessa,866116998,,t,Referral Pathway Junho 2025,2025-12-11 02:53:56,2025-12-11 02:53:56
+21,MULEIDE,Violência Baseada no Gênero - VBG,Gestão de casos,Cabo Delgado,Macomia,Xinavane,Lercina Joao Jamal,877237727,,t,Referral Pathway Junho 2025,2025-12-11 02:53:56,2025-12-11 02:53:56
+22,HELPCODE,Violência Baseada no Gênero - VBG,Gestão de WGSS,Cabo Delgado,Macomia,Macomia,Baldomiro Marquez,850260765,marquez@helpcode.org,t,Referral Pathway Junho 2025,2025-12-11 02:53:56,2025-12-11 02:53:56
+23,SAVE THE CHILDREN,Proteção da Criança,Gestão de casos,Cabo Delgado,Macomia,Macomia sede,Wiliamo Francisco,840269527,,t,Referral Pathway Junho 2025,2025-12-11 02:53:56,2025-12-11 02:53:56
+24,PLAN INTERNACIONAL,Proteção da Criança,Rastreio e reunificação,Cabo Delgado,Macomia,Macomia,Lucia Vilanculos,846190494,,t,Referral Pathway Junho 2025,2025-12-11 02:53:56,2025-12-11 02:53:56
+25,POLÍCIA DA REPÚBLICA DE MOÇAMBIQUE (PRM),Assistência Legal,Atendimento,Cabo Delgado,Macomia,Macomia Sede,Ernesto Francisco,846939210,,t,Referral Pathway Junho 2025,2025-12-11 02:53:56,2025-12-11 02:53:56
+26,SERVIÇO DISTRITAL DE SAÚDE,Saúde Mental e Apoio Psicosocial,Apoio psicossocial,Cabo Delgado,Mecufi,Mecufi,Olga Mucelo,840345430,,t,Referral Pathway Junho 2025,2025-12-11 02:53:56,2025-12-11 02:53:56
+27,AVSI,Saúde Mental e Apoio Psicosocial,Sensibilização,Cabo Delgado,Mecufi,Centro 3 de Fevereiro,Eduardo,861779505,eduardo.caponde@avsi.org,t,Referral Pathway Junho 2025,2025-12-11 02:53:56,2025-12-11 02:53:56
+28,SERVIÇOS DISTRITAL DE SAÚDE,Saúde e Nutrição,Serviços de emergência,Cabo Delgado,Mecufi,Hospital Distrital,Alima Maulana,847524666,,t,Referral Pathway Junho 2025,2025-12-11 02:53:56,2025-12-11 02:53:56
+29,SERVIÇO DISTRITAL DE SAÚDE,Violência Baseada no Gênero - VBG,Gestão de casos,Cabo Delgado,Mecufi,Mecufi,Mauricio Lâmpada,860489173,,t,Referral Pathway Junho 2025,2025-12-11 02:53:56,2025-12-11 02:53:56
+30,SAVE THE CHILDREN,Proteção da Criança,Gestão de casos,Cabo Delgado,Mecufi,Sassalane,Belina Murihiua,875125710,belina.murihiua@savethechildren.org,t,Referral Pathway Junho 2025,2025-12-11 02:53:56,2025-12-11 02:53:56
+31,POLÍCIA DA REPÚBLICA DE MOÇAMBIQUE (PRM),Assistência Legal,Atendimento,Cabo Delgado,Mecufi,PRM Mecufi,Arafate,871359388,,t,Referral Pathway Junho 2025,2025-12-11 02:53:56,2025-12-11 02:53:56
+32,AVSI,Saúde Mental e Apoio Psicosocial,PFA,Cabo Delgado,Meluco,Ncoripo,Mirta Braga,869906311,mirta.braga@avsi.org,t,Referral Pathway Junho 2025,2025-12-11 02:53:56,2025-12-11 02:53:56
+33,MULEIDE,Violência Baseada no Gênero - VBG,Gestão de casos,Cabo Delgado,Meluco,Centro de Minapo,Madalena Abel,847479039,,t,Referral Pathway Junho 2025,2025-12-11 02:53:56,2025-12-11 02:53:56
+34,SAVE THE CHILDREN,Proteção da Criança,Gestão de casos,Cabo Delgado,Meluco,Centro de Minapo,Esperanca Zandamenla,869670360,esperanca.zandamela@savethechildren.org,t,Referral Pathway Junho 2025,2025-12-11 02:53:56,2025-12-11 02:53:56
+35,SERVIÇO DISTRITAL DE SAÚDE,Saúde Mental e Apoio Psicosocial,Aconselhamento,Cabo Delgado,Metuge,Metuge,Albertina,849450792,,t,Referral Pathway Junho 2025,2025-12-11 02:53:56,2025-12-11 02:53:56
+36,OIM,Saúde Mental e Apoio Psicosocial,Sensibilização,Cabo Delgado,Metuge,Bandar,Sofia Arizane,849201291,sarizane@iom.int,t,Referral Pathway Junho 2025,2025-12-11 02:53:56,2025-12-11 02:53:56
+37,APROCOSO,Violência Baseada no Gênero - VBG,Gestão de WGSS,Cabo Delgado,Metuge,Bandar,General Tobias,860681352,,t,Referral Pathway Junho 2025,2025-12-11 02:53:56,2025-12-11 02:53:56
+38,MULEIDE,Violência Baseada no Gênero - VBG,Gestão de casos,Cabo Delgado,Metuge,Namuapala,Neca Andinane,856967862,,t,Referral Pathway Junho 2025,2025-12-11 02:53:56,2025-12-11 02:53:56
+39,NRC,Documentação Civil,Registro de nascimento,Cabo Delgado,Metuge,Metuge,Yolanda Inacio,876247806,Yolanda.inacio@nrc.no,t,Referral Pathway Junho 2025,2025-12-11 02:53:56,2025-12-11 02:53:56
+40,SERVIÇO DISTRITAL DE SAÚDE,Saúde Mental e Apoio Psicosocial,Apoio psicossocial,Cabo Delgado,Mocimboa da Praia,Hospital,Tininho Manuel,840466868,,t,Referral Pathway Junho 2025,2025-12-11 02:53:56,2025-12-11 02:53:56
+41,GCR - GIRL CHILD RIGHTS,Violência Baseada no Gênero - VBG,Gestão de casos e WGSS,Cabo Delgado,Mocimboa da Praia,Vila sede,Cleofas Pararua,849150990,pararua@gcr.org.mz,t,Referral Pathway Junho 2025,2025-12-11 02:53:56,2025-12-11 02:53:56
+42,SAVE THE CHILDREN,Proteção da Criança,Gestão de casos,Cabo Delgado,Mocimboa da Praia,Mcuwaya,Ester Mathias,841213350,ester.mathias@savethechildren.org,t,Referral Pathway Junho 2025,2025-12-11 02:53:56,2025-12-11 02:53:56
+43,NRC,Documentação Civil,Registro de nascimento,Cabo Delgado,Mocimboa da Praia,Mcuwaya A,José Saíde,847337788,jose.said@nrc.no,t,Referral Pathway Junho 2025,2025-12-11 02:53:56,2025-12-11 02:53:56
+44,POLÍCIA DA REPÚBLICA DE MOÇAMBIQUE (PRM),Assistência Legal,Atendimento,Cabo Delgado,Mocimboa da Praia,Mcuwaya A,Joaquim Nhabodzo,840133988,,t,Referral Pathway Junho 2025,2025-12-11 02:53:56,2025-12-11 02:53:56
+45,AVSI,Saúde Mental e Apoio Psicosocial,PFA,Cabo Delgado,Montepuez,Montepuez sede,Rajabo Faque,845313890,rajabo.faque@avsi.org,t,Referral Pathway Junho 2025,2025-12-11 02:53:56,2025-12-11 02:53:56
+46,MULEIDE,Violência Baseada no Gênero - VBG,Gestão de casos,Cabo Delgado,Montepuez,Nicuapa A,Rosalina Juma Esmael,861898974,,t,Referral Pathway Junho 2025,2025-12-11 02:53:56,2025-12-11 02:53:56
+47,AVSI,Proteção da Criança,Sensibilização,Cabo Delgado,Montepuez,Montepuez sede,Lucia Mondlane,877231711,lucia.mondlane@avsi.org,t,Referral Pathway Junho 2025,2025-12-11 02:53:56,2025-12-11 02:53:56
+48,SERVIÇO DISTRITAL DE SAÚDE,Saúde Mental e Apoio Psicosocial,Aconselhamento,Cabo Delgado,Mueda,Mueda,Horácio Munguambe,861180008,,t,Referral Pathway Junho 2025,2025-12-11 02:53:56,2025-12-11 02:53:56
+49,GIRL CHILD RIGHTS,Violência Baseada no Gênero - VBG,Gestão de casos,Cabo Delgado,Mueda,Lianda,Mercia Nhavoto,843616315,,t,Referral Pathway Junho 2025,2025-12-11 02:53:56,2025-12-11 02:53:56
+50,PLAN INTERNACIONAL,Proteção da Criança,Gestão de casos,Cabo Delgado,Mueda,Mpeme,Lucia Vilanculos,846190494,,t,Referral Pathway Junho 2025,2025-12-11 02:53:56,2025-12-11 02:53:56
+51,AVSI,Saúde Mental e Apoio Psicosocial,Sensibilização,Cabo Delgado,Muidumbe,Miteda,Zita Salgado,868459249,,t,Referral Pathway Junho 2025,2025-12-11 02:53:56,2025-12-11 02:53:56
+52,HELPCODE,Violência Baseada no Gênero - VBG,Gestão de casos,Cabo Delgado,Muidumbe,Muidumbe,Ruquia Abdala,852377865,abdala.gestora.echo@helpcode.org,t,Referral Pathway Junho 2025,2025-12-11 02:53:56,2025-12-11 02:53:56
+53,HELPCODE,Proteção da Criança,Gestão de casos,Cabo Delgado,Muidumbe,Muidumbe,Foia Soca,862454048,casemanager@helpcode.org,t,Referral Pathway Junho 2025,2025-12-11 02:53:56,2025-12-11 02:53:56
+54,SERVIÇO DISTRITAL DE SAÚDE,Saúde Mental e Apoio Psicosocial,Saúde mental,Cabo Delgado,Namuno,Hospital Distrital,Rumenasi Tomar,870537321,,t,Referral Pathway Junho 2025,2025-12-11 02:53:56,2025-12-11 02:53:56
+55,MULEIDE,Violência Baseada no Gênero - VBG,Gestão de casos,Cabo Delgado,Namuno,Nquiriquele,Mpuanha Salimo,842967070,mpuanhasumail@gmail.com,t,Referral Pathway Junho 2025,2025-12-11 02:53:56,2025-12-11 02:53:56
+56,AVSI,Proteção da Criança,Sensibilização,Cabo Delgado,Namuno,Nquiriquele,Lucia Mondlane,877231717,lucia.mondlane@avsi.org,t,Referral Pathway Junho 2025,2025-12-11 02:53:56,2025-12-11 02:53:56
+57,AVSI,Saúde Mental e Apoio Psicosocial,Sensibilização,Cabo Delgado,Nangade,Litingina,Zita Salgado,868459249,zita.salgado@avsi.org,t,Referral Pathway Junho 2025,2025-12-11 02:53:56,2025-12-11 02:53:56
+58,GIRL CHILD RIGHTS,Violência Baseada no Gênero - VBG,Gestão de casos e WGSS,Cabo Delgado,Nangade,Ntoli,Ana Assara,849157152,ana@gcr.org.mz,t,Referral Pathway Junho 2025,2025-12-11 02:53:56,2025-12-11 02:53:56
+59,SAVE THE CHILDREN,Proteção da Criança,Gestão de casos,Cabo Delgado,Nangade,Ntamba,Saraiva Achia,867731471,saraiva.achia@savethechildren.org,t,Referral Pathway Junho 2025,2025-12-11 02:53:56,2025-12-11 02:53:56
+60,SERVIÇO DISTRITAL DE SAÚDE,Saúde Mental e Apoio Psicosocial,Apoio psicossocial,Cabo Delgado,Palma,Palma,Aelite Matsinhe,842442187,,t,Referral Pathway Junho 2025,2025-12-11 02:53:56,2025-12-11 02:53:56
+61,GIRL CHILD RIGHTS,Violência Baseada no Gênero - VBG,Gestão de casos,Cabo Delgado,Palma,Ncularino,Graca Andre,846050333,gracaandre111@gmail.com,t,Referral Pathway Junho 2025,2025-12-11 02:53:56,2025-12-11 02:53:56
+62,MULEIDE,Violência Baseada no Gênero - VBG,Gestão de casos,Cabo Delgado,Palma,Quitunda,Carminda Alberto,845095357,caralberto.muleide@gmail.com,t,Referral Pathway Junho 2025,2025-12-11 02:53:56,2025-12-11 02:53:56
+63,AVSI,Saúde Mental e Apoio Psicosocial,PFA,Cabo Delgado,Quissanga,Tandanhangue,Armado Ajuta,863351762,Armando.Ajuta@avsi.org,t,Referral Pathway Junho 2025,2025-12-11 02:53:56,2025-12-11 02:53:56
+64,AVSI,Violência Baseada no Gênero - VBG,Gestão de casos,Cabo Delgado,Quissanga,Tandanhangue,Judite Ali,878532766,Judite.Ali@avsi.org,t,Referral Pathway Junho 2025,2025-12-11 02:53:56,2025-12-11 02:53:56
+65,AVSI,Proteção da Criança,Gestão de casos,Cabo Delgado,Quissanga,Tandanhangue,Abdala Salimo,865693410,Abdala.Salimo@avsi.org,t,Referral Pathway Junho 2025,2025-12-11 02:53:56,2025-12-11 02:53:56
+66,SERVIÇO DISTRITAL DE SAÚDE,Saúde Mental e Apoio Psicosocial,PFA,Cabo Delgado,Ancuabe,Ancuabe,Ahamada A.,846063877,,t,Referral Pathway Junho 2025,2025-12-11 02:53:56,2025-12-11 02:53:56
+67,AVSI,Violência Baseada no Gênero - VBG,Gestão de casos,Cabo Delgado,Ancuabe,Nacussa B,Mouza Mussa,878359341,Muza.Mussa@avsi.org,t,Referral Pathway Junho 2025,2025-12-11 02:53:56,2025-12-11 02:53:56
+68,MULEIDE,Violência Baseada no Gênero - VBG,Gestão de WGSS,Cabo Delgado,Ancuabe,Nancapa,Albertino Alberto,878380025,,t,Referral Pathway Junho 2025,2025-12-11 02:53:56,2025-12-11 02:53:56
+69,APROCOSO,Proteção da Criança,Gestão de casos,Cabo Delgado,Ancuabe,Nacussa B,Samissone Luis,867367396,samilioluis@gmail.com,t,Referral Pathway Junho 2025,2025-12-11 02:53:56,2025-12-11 02:53:56
+70,SERVIÇO DISTRITAL DE SAÚDE,Saúde Mental e Apoio Psicosocial,Saúde mental,Cabo Delgado,Balama,Balama,Simone Jacinto,871536670,,t,Referral Pathway Junho 2025,2025-12-11 02:53:56,2025-12-11 02:53:56
+71,MULEIDE,Violência Baseada no Gênero - VBG,Gestão de WGSS,Cabo Delgado,Balama,Impiri,Zacarias Filipe,871516801,,t,Referral Pathway Junho 2025,2025-12-11 02:53:56,2025-12-11 02:53:56
+72,AVSI,Proteção da Criança,Sensibilização,Cabo Delgado,Balama,Balama,Lucia Mondlane,877231717,lucia.mondlane@avsi.org,t,Referral Pathway Junho 2025,2025-12-11 02:53:56,2025-12-11 02:53:56
+73,SERVIÇO DISTRITAL DE SAÚDE,Saúde Mental e Apoio Psicosocial,Apoio psicossocial,Cabo Delgado,Chiúre,Chiure Sede,Zito Mendes,865058645,,t,Referral Pathway Junho 2025,2025-12-11 02:53:56,2025-12-11 02:53:56
+74,FUNDAÇÃO AGA KHAN,Violência Baseada no Gênero - VBG,Gestão de WGSS,Cabo Delgado,Chiúre,Katapua,Elsa Semo,845951578,,t,Referral Pathway Junho 2025,2025-12-11 02:53:56,2025-12-11 02:53:56
+75,SAVE THE CHILDREN,Proteção da Criança,Gestão de casos,Cabo Delgado,Chiúre,Chiote,Iza Dove,877733111,iza.dove@savethechildren.org,t,Referral Pathway Junho 2025,2025-12-11 02:53:56,2025-12-11 02:53:56
+76,CUAMM,Saúde Mental e Apoio Psicosocial,Gestão de casos,Cabo Delgado,Cidade de Pemba,Pemba,Ancila Nyubuntu,860217584,a.niyubuntu@cuamm.org,t,Referral Pathway Junho 2025,2025-12-11 02:53:56,2025-12-11 02:53:56
+77,MULEIDE,Violência Baseada no Gênero - VBG,Gestão de casos,Cabo Delgado,Cidade de Pemba,Pemba,Nicolette de Sara,850700888,nicolettecossa.muleide@gmail.com,t,Referral Pathway Junho 2025,2025-12-11 02:53:56,2025-12-11 02:53:56
+78,GIRL CHILD RIGHTS,Violência Baseada no Gênero - VBG,Gestão de casos,Cabo Delgado,Cidade de Pemba,Pemba,Ana Assara,849157152,ana@gcr.org.mz,t,Referral Pathway Junho 2025,2025-12-11 02:53:56,2025-12-11 02:53:56
+79,AVSI,Proteção da Criança,Gestão de casos,Cabo Delgado,Cidade de Pemba,Pemba,Mirta Braga,869906311,mirta.braga@avsi.org,t,Referral Pathway Junho 2025,2025-12-11 02:53:56,2025-12-11 02:53:56
