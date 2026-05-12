@@ -10,7 +10,8 @@ import { CalendarDays, MapPin, User, AlertTriangle, Scale, HeartPulse, ShieldAle
 const fetcher = (url: string) => fetch(url).then(r => r.json());
 
 export default function SurvivorJourneyPage() {
-  const { id } = useParams<{ id: string }>();
+  const { id: rawId } = useParams<{ id: string }>();
+  const id = decodeURIComponent(rawId || "");
   const { data: cases } = useSWR<GBVCase[]>("/api/cases", fetcher);
   if (!cases) return <p className="text-text-secondary p-8">Carregando...</p>;
 
