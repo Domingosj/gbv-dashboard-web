@@ -998,11 +998,11 @@ components/
 
 | Item | Status | Notes |
 |---|---|---|
-| Executive Summary | 🔲 Not started | |
-| Portfolio Analysis | 🔲 Not started | |
-| Strategic Protection Analysis | 🔲 Not started | |
-| Resource Allocation & Planning | 🔲 Not started | |
-| Donor Reporting | 🔲 Not started | |
+| Executive Summary | ✅ Implemented | TailAdmin-style KPI cards with trends, top districts, alerts, oldest cases table |
+| Portfolio Analysis | ✅ Implemented | Cross-project comparison table with close rates, risk rates, district coverage |
+| Strategic Protection Analysis | ✅ Implemented | Violence patterns, perpetrator relationships, age×violence matrix |
+| Resource Allocation & Planning | ✅ Implemented | District load analysis, low referral areas, overloaded case managers |
+| Donor Reporting | ✅ Implemented | Aggregated safe report with coverage, referrals by service, narrative summary |
 | AI Assistant (full) | 🔲 Not started | |
 
 ### Reusable UI Components (adapted from TailAdmin patterns)
