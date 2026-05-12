@@ -965,44 +965,43 @@ components/
 
 | Item | Status | Notes |
 |---|---|---|
-| Daily Operations Snapshot | ✅ Implemented | Indicators: total active, new 7d, no referral, critical, >30d, stale, pipeline bars |
-| Workload Distribution | ✅ Implemented | Per-manager table + load distribution bars + alerts matrix |
-| Risk, Safety, Referral Gaps | ✅ Implemented | Risk flags, safety gaps, unsafe count, no safety plan, family perpetrator, previous incidents |
-| Referral and Case Progress | ✅ Implemented | Pipeline funnel, referral by service type, closure reasons, avg days to referral/closure |
-| TV auto-rotation + responsive layout | 🔲 Not started | |
-| `/api/stats` optimized endpoint | 🔲 Not started | |
+| Daily Operations Snapshot | ✅ Implemented | |
+| Workload Distribution | ✅ Implemented | |
+| Risk, Safety, Referral Gaps | ✅ Implemented | |
+| Referral and Case Progress | ✅ Implemented | |
+| TV auto-rotation + responsive layout | ✅ Implemented | `/tv` — auto-rotates 4 screens at 15s intervals |
+| `/api/stats` optimized endpoint | ✅ Implemented | Returns pre-computed stats, by_district, by_project, by_violence, by_manager |
 
 ### Phase 2 — Case Management Screens
 
 | Item | Status | Notes |
 |---|---|---|
-| My Priority List / Action Queue | ✅ Implemented | Priority queue table, alert cards, summary metrics |
-| Case Explorer (searchable table) | ✅ Implemented | Links to Survivor Journey |
-| Survivor Journey (case detail) | ✅ Implemented | Full detail: overview, timeline, risk, referrals, perpetrator, alerts |
-| Case Timeline component | ✅ Implemented | Vertical timeline with dates |
-| Referral Assistant | ✅ Implemented | Service catalog, district coverage map, service needs analysis |
-| AI Assistant (basic) | 🔲 Not started |
-| `/api/ai/chat` endpoint | 🔲 Not started | |
+| My Priority List / Action Queue | ✅ Implemented | |
+| Case Explorer (searchable table) | ✅ Implemented | |
+| Survivor Journey (case detail) | ✅ Implemented | |
+| Case Timeline component | ✅ Implemented | |
+| Referral Assistant | ✅ Implemented | |
+| AI Assistant | ✅ Implemented | Rule-based chat, 10+ query types, suggestion chips |
 
 ### Phase 3 — Analysis Screens
 
 | Item | Status | Notes |
 |---|---|---|
-| Data Quality Monitor | ✅ Implemented | 12 quality checks with counts, percentages, severity badges |
-| Referral Pathway Performance | ✅ Implemented | Referral by service type, district referral rates, pipeline overview |
-| Geographic Map | ✅ Implemented | District-level case/service coverage table, gap alerts |
-| Trends and Patterns | ✅ Implemented | Monthly chart, violence type, age, project, province distributions |
-| Partner / Implementation Performance | ✅ Implemented | Per-partner case counts, close rate, referral rate |
+| Data Quality Monitor | ✅ Implemented | |
+| Referral Pathway Performance | ✅ Implemented | |
+| Geographic Map | ✅ Implemented | |
+| Trends and Patterns | ✅ Implemented | |
+| Partner / Implementation Performance | ✅ Implemented | |
 
 ### Phase 4 — Strategy Screens
 
 | Item | Status | Notes |
 |---|---|---|
-| Executive Summary | ✅ Implemented | TailAdmin-style KPI cards with trends, top districts, alerts, oldest cases table |
-| Portfolio Analysis | ✅ Implemented | Cross-project comparison table with close rates, risk rates, district coverage |
-| Strategic Protection Analysis | ✅ Implemented | Violence patterns, perpetrator relationships, age×violence matrix |
-| Resource Allocation & Planning | ✅ Implemented | District load analysis, low referral areas, overloaded case managers |
-| Donor Reporting | ✅ Implemented | Aggregated safe report with coverage, referrals by service, narrative summary |
+| Executive Summary | ✅ Implemented | |
+| Portfolio Analysis | ✅ Implemented | |
+| Strategic Protection Analysis | ✅ Implemented | |
+| Resource Allocation & Planning | ✅ Implemented | |
+| Donor Reporting | ✅ Implemented | |
 | AI Assistant (full) | 🔲 Not started | |
 
 ### Reusable UI Components (adapted from TailAdmin patterns)
