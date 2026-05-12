@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --critical: #dc3545;
+  --high: #fd7e14;
+  --medium: #ffc107;
+  --low: #28a745;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: #f8f9fa;
+  color: #1a1a2e;
+}
+
+.priority-critical { border-left: 4px solid var(--critical); }
+.priority-high { border-left: 4px solid var(--high); }
+.priority-medium { border-left: 4px solid var(--medium); }
+.priority-low { border-left: 4px solid var(--low); }
