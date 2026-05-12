@@ -12,12 +12,15 @@ import { MonthlyChart } from "@/components/Charts";
 const fetcher = (url: string) => fetch(url).then(r => r.json());
 
 export default function SummaryPage() {
+  const [scope, setScope] = useState("total");
   const [provFilter, setProvFilter] = useState("");
   const { data: allCases } = useSWR<GBVCase[]>("/api/cases", fetcher, { refreshInterval: 300000 });
   const { data: openCases } = useSWR<GBVCase[]>("/api/cases?filter=open", fetcher, { refreshInterval: 300000 });
   if (!allCases || !openCases) return <p className="text-text-secondary p-8">Carregando...</p>;
 
-  const filtered = provFilter ? allCases.filter(c => c.province === provFilter) : allCases;
+  const isTotal = scope === "total";
+  const baseCases = isTotal ? allCases : openCases;
+  const filtered = provFilter ? baseCases.filter(c => c.province === provFilter) : baseCases;
   const filteredOpen = provFilter ? openCases.filter(c => c.province === provFilter) : openCases;
 
   const s = calcStats(filtered);
@@ -74,6 +77,22 @@ export default function SummaryPage() {
           <span>Última atualização:</span>
           <span className="font-medium text-text-primary">{new Date().toLocaleDateString("pt-MZ")}</span>
         </div>
+      </div>
+
+      <div className="flex items-center gap-4 mb-4">
+        <div className="flex items-center gap-1 p-1 bg-gray-100 rounded-lg">
+          <button onClick={() => setScope("total")}
+            className={`px-4 py-1.5 text-label font-medium rounded-md transition-all ${scope === "total" ? "bg-white text-text-primary shadow-sm" : "text-text-secondary hover:text-text-primary"}`}>
+            Total
+          </button>
+          <button onClick={() => setScope("active")}
+            className={`px-4 py-1.5 text-label font-medium rounded-md transition-all ${scope === "active" ? "bg-white text-text-primary shadow-sm" : "text-text-secondary hover:text-text-primary"}`}>
+            Activos
+          </button>
+        </div>
+        <span className="text-caption text-text-secondary">
+          {isTotal ? `Todos os casos (${allCases.length})` : `Apenas casos abertos (${openCases.length})`}
+        </span>
       </div>
 
       <FilterBar>
