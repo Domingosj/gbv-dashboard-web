@@ -64,6 +64,14 @@ export default function MapContainer({ markers }: Props) {
           spiderfyOnMaxZoom: true,
           maxClusterRadius: 50,
           zoomToBoundsOnClick: true,
+          iconCreateFunction: (c: any) => {
+            const cnt = c.getChildCount();
+            const clr = cnt > 15 ? "#C65A5A" : cnt > 8 ? "#D9A441" : "#256B5A";
+            return L.divIcon({
+              html: `<div style="background:${clr};color:white;border-radius:50%;width:42px;height:42px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;border:3px solid white;box-shadow:0 3px 8px rgba(0,0,0,0.2)">${cnt}</div>`,
+              className: "", iconSize: [42, 42], iconAnchor: [21, 21],
+            });
+          },
         });
 
         points.forEach(({ position: [lat, lng], label, count }) => {
