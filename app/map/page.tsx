@@ -6,7 +6,7 @@ import { GBVCase } from "@/lib/types";
 import GCRCard from "@/components/ui/GCRCard";
 import GCRBadge from "@/components/ui/GCRBadge";
 
-const MapComponent = dynamic(() => import("@/components/ui/map/MapContainer"), { ssr: false });
+const MapContainer = dynamic(() => import("@/components/ui/map/MapContainer"), { ssr: false });
 
 const fetcher = (url: string) => fetch(url).then(r => r.json());
 
@@ -18,24 +18,16 @@ export default function MapPage() {
   const open = cases.filter(c => c.case_status === "Aberto");
 
   const byDistrict: Record<string, number> = {};
-  for (const c of open) {
-    const d = c.district || "Desconhecido";
-    byDistrict[d] = (byDistrict[d] || 0) + 1;
-  }
+  for (const c of open) { const d = c.district || "Desconhecido"; byDistrict[d] = (byDistrict[d] || 0) + 1; }
 
   const markers = Object.entries(byDistrict).map(([label, count]) => ({ label, count }));
 
   const svcCounts: Record<string, number> = {};
-  if (services) {
-    for (const s of services as any[]) {
-      svcCounts[s.district] = (svcCounts[s.district] || 0) + 1;
-    }
-  }
+  if (services) { for (const s of services as any[]) { svcCounts[s.district] = (svcCounts[s.district] || 0) + 1; } }
 
   return (
     <div>
       <h1 className="text-page-title text-text-primary mb-6">Mapa Geográfico</h1>
-
       <div className="grid grid-cols-4 gap-4 mb-6">
         {[
           { label: "Distritos", value: Object.keys(byDistrict).length, color: "text-primary" },
@@ -49,16 +41,14 @@ export default function MapPage() {
           </div>
         ))}
       </div>
-
       <GCRCard title="Distribuição de Casos por Distrito">
-        <MapComponent markers={markers} />
+        <MapContainer markers={markers} />
         <div className="flex items-center gap-4 mt-3 text-caption text-text-secondary">
           <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-[#256B5A] inline-block" /> ≤10</span>
           <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-[#D9A441] inline-block" /> 11–20</span>
           <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-[#C65A5A] inline-block" /> &gt;20</span>
         </div>
       </GCRCard>
-
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mt-6">
         <GCRCard title="Casos por Distrito">
           <div className="space-y-2 max-h-80 overflow-y-auto">
@@ -70,7 +60,6 @@ export default function MapPage() {
             ))}
           </div>
         </GCRCard>
-
         <GCRCard title="Serviços por Distrito">
           {services ? (
             <div className="space-y-2 max-h-80 overflow-y-auto">
