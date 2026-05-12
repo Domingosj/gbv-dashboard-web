@@ -14,7 +14,7 @@ const TABS = [
   { key: "trends", label: "Tendências" },
   { key: "quality", label: "Qualidade de Dados" },
   { key: "pathways", label: "Vias de Referência" },
-  { key: "partners", label: "Parceiros" },
+  { key: "partners", label: "Projetos" },
 ];
 
 const CHECKS = [
