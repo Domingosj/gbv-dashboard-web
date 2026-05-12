@@ -8,6 +8,7 @@ const inter = Inter({ subsets: ["latin"], display: "swap" });
 export const metadata: Metadata = {
   title: "GCR Dashboard — Gestão de Casos VBG",
   description: "Sistema de Gestão de Casos de Violência Baseada no Género",
+  icons: { icon: "/favicon.svg" },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
