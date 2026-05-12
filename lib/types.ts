@@ -70,6 +70,16 @@ export interface CaseStats {
   high: number;
   no_ref: number;
   delayed: number;
+  new_7d?: number;
+  no_safety_plan?: number;
+  unsafe?: number;
+  minor_serious?: number;
+  prev_incident?: number;
+  family_perp?: number;
+  referred_counts?: Record<string, number>;
+  avg_days_to_referral?: number;
+  avg_days_to_closure?: number;
+  closure_reasons?: Record<string, number>;
 }
 
 export interface ReferralInfo {
@@ -93,8 +103,8 @@ export interface Service {
 }
 
 export const PRIORITY_CONFIG: Record<PriorityLevel, { color: string; bg: string; icon: string }> = {
-  CRÍTICO: { color: "#dc3545", bg: "#fef2f2", icon: "🔴" },
-  ALTO: { color: "#fd7e14", bg: "#fff7ed", icon: "🟠" },
-  MÉDIO: { color: "#eab308", bg: "#fefce8", icon: "🟡" },
-  BAIXO: { color: "#22c55e", bg: "#f0fdf4", icon: "🟢" },
+  CRÍTICO: { color: "#C65A5A", bg: "rgba(198,90,90,0.08)", icon: "🔴" },
+  ALTO: { color: "#D9A441", bg: "rgba(217,164,65,0.08)", icon: "🟠" },
+  MÉDIO: { color: "#D9A441", bg: "rgba(217,164,65,0.08)", icon: "🟡" },
+  BAIXO: { color: "#2E8B57", bg: "rgba(46,139,87,0.08)", icon: "🟢" },
 };
