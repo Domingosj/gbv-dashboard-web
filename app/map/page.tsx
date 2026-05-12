@@ -6,7 +6,7 @@ import { GBVCase } from "@/lib/types";
 import GCRCard from "@/components/ui/GCRCard";
 import GCRBadge from "@/components/ui/GCRBadge";
 
-const MapContainer = dynamic(() => import("@/components/ui/map/MapContainer"), { ssr: false });
+const MapComponent = dynamic(() => import("@/components/ui/map/MapContainer"), { ssr: false });
 
 const fetcher = (url: string) => fetch(url).then(r => r.json());
 
@@ -23,6 +23,8 @@ export default function MapPage() {
     byDistrict[d] = (byDistrict[d] || 0) + 1;
   }
 
+  const markers = Object.entries(byDistrict).map(([label, count]) => ({ label, count }));
+
   const svcCounts: Record<string, number> = {};
   if (services) {
     for (const s of services as any[]) {
@@ -36,7 +38,7 @@ export default function MapPage() {
 
       <div className="grid grid-cols-4 gap-4 mb-6">
         {[
-          { label: "Distritos (Casos)", value: Object.keys(byDistrict).length, color: "text-primary" },
+          { label: "Distritos", value: Object.keys(byDistrict).length, color: "text-primary" },
           { label: "Casos Mapeados", value: Object.entries(byDistrict).reduce((s, [, c]) => s + c, 0), color: "text-info" },
           { label: "Casos Abertos", value: open.length, color: "text-success" },
           { label: "Com Referência", value: open.filter(c => c.has_referral).length, color: "text-success" },
@@ -49,7 +51,7 @@ export default function MapPage() {
       </div>
 
       <GCRCard title="Distribuição de Casos por Distrito">
-        <MapContainer markers={Object.entries(byDistrict).map(([label, count]) => ({ label, count }))} />
+        <MapComponent markers={markers} />
         <div className="flex items-center gap-4 mt-3 text-caption text-text-secondary">
           <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-[#256B5A] inline-block" /> ≤10</span>
           <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-[#D9A441] inline-block" /> 11–20</span>

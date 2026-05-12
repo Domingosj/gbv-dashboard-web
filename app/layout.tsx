@@ -13,9 +13,6 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="pt">
-      <head>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
-      </head>
       <body className={`${inter.className} bg-background text-text-primary antialiased`}>
         <div className="flex min-h-screen">
           <Sidebar />
