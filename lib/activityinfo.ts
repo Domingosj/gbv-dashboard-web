@@ -4,6 +4,8 @@ import { validateActivityInfoResponse } from "./validation";
 
 const TOKEN = process.env.ACTIVITYINFO_TOKEN;
 const FORM_URL = "https://www.activityinfo.org/resources/query/v43/form/ck0nbfrmg0iku4c1hdk";
+const MAX_RETRIES = 3;
+const FETCH_TIMEOUT = 30000; // 30 seconds
 
 const COLUMN_MAP: Record<string, string> = {
   _id: "record_id",
@@ -57,17 +59,48 @@ const COLUMN_MAP: Record<string, string> = {
   "Quem lhe encaminhou este sobrevivente?": "referred_by",
 };
 
+/**
+ * Fetch with retry and timeout
+ */
+async function fetchWithRetry(url: string, options: RequestInit, maxRetries = MAX_RETRIES): Promise<Response> {
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT);
+      const res = await fetch(url, { ...options, signal: controller.signal });
+      clearTimeout(timeoutId);
+      return res;
+    } catch (e: any) {
+      clearTimeout(e.timeoutId);
+      if (i === maxRetries - 1) throw e;
+      const backoffMs = Math.pow(2, i) * 1000;
+      console.warn(`[ActivityInfo] Attempt ${i + 1} failed, retrying in ${backoffMs}ms...`);
+      await new Promise(r => setTimeout(r, backoffMs));
+    }
+  }
+  throw new Error("[ActivityInfo] Max retries exceeded");
+}
+
 async function fetchActivityInfoRaw(): Promise<any[]> {
   if (!TOKEN) throw new Error("ACTIVITYINFO_TOKEN not configured");
-  const res = await fetch(FORM_URL, {
-    headers: { Authorization: "Basic " + Buffer.from("user:" + TOKEN).toString("base64") },
+
+  const authHeader = "Basic " + Buffer.from("user:" + TOKEN).toString("base64");
+  const res = await fetchWithRetry(FORM_URL, {
+    headers: { Authorization: authHeader },
   });
-  if (!res.ok) throw new Error(`ActivityInfo API error: ${res.status}`);
-  const data = await res.json();
+
+  if (!res.ok) throw new Error(`ActivityInfo API error: ${res.status} ${res.statusText}`);
+
+  let data: any;
+  try {
+    data = await res.json();
+  } catch (e) {
+    throw new Error("Failed to parse ActivityInfo response as JSON");
+  }
 
   const validation = validateActivityInfoResponse(data);
   if (!validation.valid) {
-    console.warn("ActivityInfo validation:", validation.message);
+    console.warn("[ActivityInfo] Validation warning:", validation.message);
   }
 
   return data;

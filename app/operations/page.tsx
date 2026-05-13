@@ -8,6 +8,8 @@ import ModuleTabs from "@/components/ModuleTabs";
 import GCRCard from "@/components/ui/GCRCard";
 import GCRBadge from "@/components/ui/GCRBadge";
 import { MonthlyChart } from "@/components/Charts";
+import { Carousel } from "@/components/ui/Carousel";
+import { StatCarousel } from "@/components/ui/StatCarousel";
 
 const fetcher = (url: string) => fetch(url).then(r => r.json());
 
@@ -104,8 +106,22 @@ export default function OperationsPage() {
 
 function DailyTab({ cases }: { cases: GBVCase[] }) {
   const s = computeDaily(cases);
+
+  // Prepare carousel items
+  const carouselStats = [
+    { label: "Casos Ativos", value: s.total, color: "primary" as const, icon: "📊" },
+    { label: "Críticos", value: s.critical, color: "critical" as const, icon: "🔴" },
+    { label: "Sem Referência", value: s.noRef, color: "warning" as const, icon: "⚠️" },
+    { label: "Abertos >30d", value: s.open30, color: "warning" as const, icon: "📅" },
+  ];
+
   return (
     <>
+      {/* Stat Carousel */}
+      <div className="mb-6">
+        <StatCarousel stats={carouselStats} autoplay={true} interval={4000} />
+      </div>
+
       <div className="grid grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
         {[
           { label: "Casos Ativos", value: s.total, color: "text-primary" },

@@ -1,0 +1,86 @@
+name: Deploy to GitHub Main
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [18.x]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run linter
+        run: npm run lint
+        continue-on-error: true
+
+      - name: Build project
+        run: npm run build
+        env:
+          NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
+          ACTIVITYINFO_TOKEN: ${{ secrets.ACTIVITYINFO_TOKEN }}
+
+      - name: Run type checks
+        run: npx tsc --noEmit
+        continue-on-error: true
+
+      - name: Create build artifact
+        run: |
+          mkdir -p build-artifact
+          cp -r .next build-artifact/
+          cp package.json build-artifact/
+          cp next.config.js build-artifact/
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: next-build
+          path: build-artifact/
+          retention-days: 7
+
+      - name: Commit and push changes
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add -A
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Build: auto-generated build files from CI/CD" && git push)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  deploy:
+    needs: build-and-deploy
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy to Vercel
+        uses: vercel/action@main
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}

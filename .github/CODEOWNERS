@@ -1,0 +1,14 @@
+# Default owners
+* @yourusername
+
+# Dashboard components
+/components/DashboardPanels/ @yourusername
+/components/ui/Carousel.tsx @yourusername
+
+# Business logic
+/lib/risk-calculator.ts @yourusername
+/lib/analytics.ts @yourusername
+
+# API integration
+/lib/activityinfo.ts @yourusername
+/app/api/ @yourusername
