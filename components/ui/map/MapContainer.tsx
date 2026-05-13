@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { getCoord, findUnmapped } from "@/lib/map-data";
+import { getCoord, fuzzyCoord, findUnmapped } from "@/lib/map-data";
 
 interface Props { markers: { label: string; count: number }[] }
 
@@ -43,7 +43,7 @@ export default function MapContainer({ markers }: Props) {
         const points: { position: [number, number]; label: string; count: number }[] = [];
         const unmapped: string[] = [];
         for (const m of markers) {
-          const coord = getCoord(m.label);
+          const coord = getCoord(m.label) || fuzzyCoord(m.label);
           if (coord) points.push({ position: coord, label: m.label, count: m.count });
           else unmapped.push(m.label);
         }

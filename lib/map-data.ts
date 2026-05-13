@@ -1,5 +1,18 @@
-// District name variations for normalization
+// District name normalization for ActivityInfo variations
 const NORMALIZE: Record<string, string> = {
+  // "Cidade De X" → "X"
+  "cidade de tete": "Tete",
+  "cidade de chimoio": "Chimoio",
+  "cidade de pemba": "Pemba",
+  "cidade de lichinga": "Lichinga",
+  "cidade de maputo": "Maputo",
+  "cidade de nampula": "Nampula",
+  "cidade de quelimane": "Quelimane",
+  "cidade da beira": "Beira",
+  "cidade de xai-xai": "Xai-Xai",
+  "cidade de inhambane": "Inhambane",
+
+  // Accent and case variations
   "mocimboa da praia": "Mocímboa da Praia",
   "mocimboa": "Mocímboa da Praia",
   "gurue": "Gurúè",
@@ -12,12 +25,13 @@ const NORMALIZE: Record<string, string> = {
   "ilha de mocambique": "Ilha de Moçambique",
   "ilha de moçambique": "Ilha de Moçambique",
   "nacala-porto": "Nacala",
-  "mocuba": "Mocuba",
-  "marrumeu": "Marrumeu",
   "magoé": "Mágoe",
   "mágoe": "Mágoe",
-  "massingir": "Massingir",
-  "massinga": "Massinga",
+  "marrumeu": "Marrumeu",
+  "chiúre": "Chiúre",
+  "mecanhelas": "Mecanhelas",
+  "mecula": "Mecula",
+  "mavago": "Mavago",
 };
 
 export function normalizeDistrict(name: string): string {
@@ -46,6 +60,21 @@ export const DISTRICT_COORDS: Record<string, [number, number]> = {
   "Macanga": [-14.85, 33.5], "Maravia": [-14.9, 32.1333], "Chiuta": [-14.7667, 33.4333],
   "Mecanhelas": [-14.7337, 35.6667], "Mandimba": [-14.3667, 35.7833],
   "Mossuril": [-15.1, 40.0667], "Ilha de Moçambique": [-15.0333, 40.7333],
+  // Additional districts from API data
+  "Marrupa": [-13.2167, 37.55], "Macossa": [-17.6667, 33.3333],
+  "Tambara": [-16.8, 32.6667], "Mossurize": [-17.7833, 33.1667],
+  "Machaze": [-18.0, 33.1667], "Mutarara": [-17.4667, 35.0],
+  "Tsangano": [-14.55, 34.3333], "Angónia": [-14.75, 34.3833],
+  "Calué": [-15.7667, 34.0833], "Doa": [-16.9667, 32.0],
+  "Mutarara": [-17.4667, 35.0], "Bárue": [-18.1667, 33.3333],
+  "Guro": [-16.7, 33.5333], "Sussundenga": [-19.3167, 33.0],
+  "Macate": [-16.4833, 34.0667], "Vila Nova da Fronteira": [-14.9667, 33.7],
+  "Ibo": [-12.3333, 40.5833], "Mecúfi": [-12.7667, 40.1167],
+  "Meluco": [-12.5167, 39.65], "Muidumbe": [-11.8333, 39.95],
+  "Namuno": [-13.7167, 39.0667], "Nangade": [-11.0, 39.3333],
+  "Quissanga": [-11.8667, 40.55], "Ancuabe": [-13.0, 39.6667],
+  "Metuge": [-12.6667, 40.0], "Pebane": [-17.2667, 37.0833],
+  "Monguba": [-14.7, 36.9833], "Nametil": [-15.8, 39.3],
 };
 
 // Get coordinate for a district, with normalization
@@ -54,7 +83,19 @@ export function getCoord(name: string): [number, number] | null {
   return DISTRICT_COORDS[normalized] || null;
 }
 
+// Band-aid: try case-insensitive partial match as last resort
+export function fuzzyCoord(name: string): [number, number] | null {
+  const exact = getCoord(name);
+  if (exact) return exact;
+
+  const lower = name.toLowerCase().trim();
+  for (const [key, coord] of Object.entries(DISTRICT_COORDS)) {
+    if (key.toLowerCase() === lower) return coord;
+  }
+  return null;
+}
+
 // Report which districts don't have coordinates
 export function findUnmapped(allDistricts: string[]): string[] {
-  return allDistricts.filter(d => !getCoord(d));
+  return allDistricts.filter(d => !getCoord(d) && !fuzzyCoord(d));
 }
