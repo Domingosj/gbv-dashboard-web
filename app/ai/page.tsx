@@ -151,12 +151,12 @@ export default function AIPage() {
           <input
             type="text"
             placeholder="Faça uma pergunta sobre os dados..."
-            className="genesis-input flex-1"
+            className="gcr-input flex-1"
             value={input}
             onChange={e => setInput(e.target.value)}
             onKeyDown={e => e.key === "Enter" && handleSend()}
           />
-          <button onClick={handleSend} className="genesis-btn-primary px-5 py-2 rounded-button text-sm font-medium">
+          <button onClick={handleSend} className="gcr-btn-primary px-5 py-2 rounded-button text-sm font-medium">
             Enviar
           </button>
         </div>

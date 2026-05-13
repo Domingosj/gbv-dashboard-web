@@ -35,7 +35,7 @@ export default function CasesPage() {
       <h1 className="text-page-title text-text-primary mb-1">Casos</h1>
       <ModuleTabs tabs={TABS} activeTab={tab} onTabChange={setTab} />
       <FilterBar>
-        <select className="genesis-input w-56" value={provFilter} onChange={e => setProvFilter(e.target.value)}>
+        <select className="gcr-input w-56" value={provFilter} onChange={e => setProvFilter(e.target.value)}>
           <option value="">Todas as províncias</option>
           {provinces.map(p => <option key={p} value={p}>{p}</option>)}
         </select>
@@ -151,7 +151,7 @@ function ReferralsTab({ cases }: { cases: GBVCase[] }) {
       </div>
       {services && (
         <GCRCard title="Catálogo de Serviços">
-          <select className="genesis-input w-64 mb-4" value={distFilter} onChange={e => setDistFilter(e.target.value)}>
+          <select className="gcr-input w-64 mb-4" value={distFilter} onChange={e => setDistFilter(e.target.value)}>
             <option value="">Todos os distritos</option>
             {Array.from(new Set((services as any[]).map((s: any) => s.district))).sort().map((d: any) => <option key={d} value={d}>{d}</option>)}
           </select>

@@ -17,7 +17,7 @@ export default function CaseCard({ case: c, index }: Props) {
   const isSafe = (c.is_safe || "").toLowerCase() === "sim" || !c.is_safe;
 
   return (
-    <div className={`genesis-card p-5 priority-${level.toLowerCase()} hover:shadow-card-hover hover:-translate-y-0.5`}>
+    <div className={`gcr-card p-5 priority-${level.toLowerCase()} hover:shadow-card-hover hover:-translate-y-0.5`}>
       <div className="flex items-start justify-between mb-4">
         <div>
           <span className="font-display text-lg font-semibold text-text-primary">{violence}</span>

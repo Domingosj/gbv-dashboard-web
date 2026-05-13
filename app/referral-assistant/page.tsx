@@ -76,11 +76,11 @@ export default function ReferralAssistantPage() {
 
       <GCRCard title="Catálogo de Serviços">
         <div className="flex gap-4 mb-4">
-          <select className="genesis-input w-64" value={selectedDistrict} onChange={e => setSelectedDistrict(e.target.value)}>
+          <select className="gcr-input w-64" value={selectedDistrict} onChange={e => setSelectedDistrict(e.target.value)}>
             <option value="">Todos os distritos</option>
             {districts.map(d => <option key={d} value={d}>{d}</option>)}
           </select>
-          <select className="genesis-input w-64" value={selectedCategory} onChange={e => setSelectedCategory(e.target.value)}>
+          <select className="gcr-input w-64" value={selectedCategory} onChange={e => setSelectedCategory(e.target.value)}>
             <option value="">Todas as categorias</option>
             {categories.map(c => <option key={c} value={c}>{c}</option>)}
           </select>

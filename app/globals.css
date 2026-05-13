@@ -77,6 +77,33 @@
     color: #64748B;
   }
 
+  .gcr-input {
+    @apply w-full rounded-lg border px-3.5 py-2.5 text-sm transition-all duration-200;
+    border-color: #E2E8F0;
+    background-color: #FFFFFF;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  .gcr-input:focus {
+    border-color: #256B5A;
+    box-shadow: 0 0 0 3px rgba(37, 107, 90, 0.1);
+    outline: none;
+  }
+
+  .gcr-btn {
+    @apply inline-flex items-center justify-center font-medium rounded-lg text-sm transition-all duration-200;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  .gcr-btn-primary {
+    @apply gcr-btn text-white;
+    background-color: #256B5A;
+  }
+
+  .gcr-btn-primary:hover {
+    background-color: #1D594A;
+  }
+
   .priority-critical { border-left: 4px solid #D34053; }
   .priority-alto { border-left: 4px solid #FFA70B; }
   .priority-medio { border-left: 4px solid #3C50E0; }

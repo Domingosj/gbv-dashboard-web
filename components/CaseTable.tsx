@@ -52,10 +52,10 @@ export default function CaseTable({ cases }: Props) {
         <input
           type="text"
           placeholder="Buscar por ID, distrito, gestor, projeto, tipo..."
-          className="genesis-input flex-1"
+          className="gcr-input flex-1"
           value={search} onChange={e => { setSearch(e.target.value); setPage(0); }}
         />
-        <select className="genesis-input w-44" value={statusFilter} onChange={e => { setStatusFilter(e.target.value); setPage(0); }}>
+        <select className="gcr-input w-44" value={statusFilter} onChange={e => { setStatusFilter(e.target.value); setPage(0); }}>
           <option value="all">Todos os estados</option>
           <option value="Aberto">Abertos</option>
           <option value="Encerrado">Encerrados</option>

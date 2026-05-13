@@ -96,7 +96,7 @@ export default function SummaryPage() {
       </div>
 
       <FilterBar>
-        <select className="genesis-input w-56" value={provFilter} onChange={e => setProvFilter(e.target.value)}>
+        <select className="gcr-input w-56" value={provFilter} onChange={e => setProvFilter(e.target.value)}>
           <option value="">Todas as províncias</option>
           {provinces.map(p => <option key={p} value={p}>{p}</option>)}
         </select>
