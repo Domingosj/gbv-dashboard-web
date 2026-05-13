@@ -66,7 +66,7 @@ export const DISTRICT_COORDS: Record<string, [number, number]> = {
   "Machaze": [-18.0, 33.1667], "Mutarara": [-17.4667, 35.0],
   "Tsangano": [-14.55, 34.3333], "Angónia": [-14.75, 34.3833],
   "Calué": [-15.7667, 34.0833], "Doa": [-16.9667, 32.0],
-  "Mutarara": [-17.4667, 35.0], "Bárue": [-18.1667, 33.3333],
+  "Bárue": [-18.1667, 33.3333],
   "Guro": [-16.7, 33.5333], "Sussundenga": [-19.3167, 33.0],
   "Macate": [-16.4833, 34.0667], "Vila Nova da Fronteira": [-14.9667, 33.7],
   "Ibo": [-12.3333, 40.5833], "Mecúfi": [-12.7667, 40.1167],
