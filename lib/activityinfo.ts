@@ -1,5 +1,6 @@
 import { GBVCase } from "./types";
 import { prioritizeCases, fmtViolence } from "./risk-calculator";
+import { validateActivityInfoResponse } from "./validation";
 
 const TOKEN = process.env.ACTIVITYINFO_TOKEN;
 const FORM_URL = "https://www.activityinfo.org/resources/query/v43/form/ck0nbfrmg0iku4c1hdk";
@@ -62,7 +63,14 @@ async function fetchActivityInfoRaw(): Promise<any[]> {
     headers: { Authorization: "Basic " + Buffer.from("user:" + TOKEN).toString("base64") },
   });
   if (!res.ok) throw new Error(`ActivityInfo API error: ${res.status}`);
-  return res.json();
+  const data = await res.json();
+
+  const validation = validateActivityInfoResponse(data);
+  if (!validation.valid) {
+    console.warn("ActivityInfo validation:", validation.message);
+  }
+
+  return data;
 }
 
 export async function fetchAllCases(): Promise<GBVCase[]> {
@@ -88,6 +96,5 @@ export async function loadOpenCases(): Promise<GBVCase[]> {
 }
 
 export async function loadAllCases(): Promise<GBVCase[]> {
-  const all = await fetchAllCases();
-  return all;
+  return fetchAllCases();
 }

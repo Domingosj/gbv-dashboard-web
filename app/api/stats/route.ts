@@ -1,18 +1,20 @@
 import { NextResponse } from "next/server";
 import { fetchAllCases } from "@/lib/activityinfo";
 import { calcStats } from "@/lib/risk-calculator";
+import { enrichCases, hasReferral } from "@/lib/enrich";
 
 export async function GET() {
   try {
-    const allCases = await fetchAllCases();
-    const openCases = allCases.filter(c => c.case_status === "Aberto");
+    const raw = await fetchAllCases();
+    const cases = enrichCases(raw);
+    const open = cases.filter(c => c.case_status === "Aberto");
 
     const now = Date.now();
     const d7 = 7 * 86400000;
     const d30 = 30 * 86400000;
 
-    const all = calcStats(allCases);
-    const ostats = calcStats(openCases);
+    const all = calcStats(cases);
+    const ostats = calcStats(open);
 
     const stats = {
       total: all.total,
@@ -20,20 +22,21 @@ export async function GET() {
       closed: all.closed,
       critical: all.critical,
       high: all.high,
-      no_ref: all.no_ref,
-      delayed: all.delayed,
+      no_ref: ostats.no_ref,
+      delayed: ostats.delayed,
       open_critical: ostats.critical,
       open_no_ref: ostats.no_ref,
       open_delayed: ostats.delayed,
-      new7d: openCases.filter(c => c.identification_date && now - new Date(c.identification_date).getTime() < d7).length,
-      open30: openCases.filter(c => c.identification_date && now - new Date(c.identification_date).getTime() > d30).length,
+      new7d: open.filter(c => c.identification_date && now - new Date(c.identification_date).getTime() < d7).length,
+      open30: open.filter(c => c.identification_date && now - new Date(c.identification_date).getTime() > d30).length,
+      withReferral: open.filter(c => hasReferral(c)).length,
       by_district: {} as Record<string, number>,
       by_project: {} as Record<string, number>,
       by_violence: {} as Record<string, number>,
       by_manager: {} as Record<string, number>,
     };
 
-    for (const c of openCases) {
+    for (const c of open) {
       const d = c.district || "Desconhecido";
       stats.by_district[d] = (stats.by_district[d] || 0) + 1;
       const p = c.project || "N/A";
