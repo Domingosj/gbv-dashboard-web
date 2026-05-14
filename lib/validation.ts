@@ -40,7 +40,7 @@ export function validateCases(cases: GBVCase[]): ValidationResult {
     if (!c.identification_date) noIdentDate++;
 
     for (const field of EXPECTED_FIELDS) {
-      if (!(field in c || (c as any)[field] !== undefined)) {
+      if ((c as any)[field] === undefined) {
         missingFields.add(field);
       }
     }

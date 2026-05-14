@@ -24,7 +24,7 @@ export function DistributionPanel({ cases }: { cases: GBVCase[] }) {
             {sortedEntries(byViolence, 5).map(([label, count]) => (
               <div key={label} className="flex items-center justify-between py-2 border-b border-border last:border-0">
                 <span className="text-sm text-text-secondary truncate">{label}</span>
-                <GCRBadge color={count > 10 ? "red" : count > 5 ? "orange" : "blue"}>{count}</GCRBadge>
+                <GCRBadge color={count > 10 ? "red" : count > 5 ? "amber" : "blue"}>{count}</GCRBadge>
               </div>
             ))}
           </div>
@@ -48,7 +48,7 @@ export function DistributionPanel({ cases }: { cases: GBVCase[] }) {
             {sortedEntries(byManager, 5).map(([label, count]) => (
               <div key={label} className="flex items-center justify-between py-2 border-b border-border last:border-0">
                 <span className="text-sm text-text-secondary truncate">{label}</span>
-                <GCRBadge color={count > 15 ? "red" : count > 10 ? "orange" : "green"}>{count}</GCRBadge>
+                <GCRBadge color={count > 15 ? "red" : count > 10 ? "amber" : "green"}>{count}</GCRBadge>
               </div>
             ))}
           </div>

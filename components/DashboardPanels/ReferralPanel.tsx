@@ -1,7 +1,6 @@
 "use client";
 
 import { GBVCase } from "@/lib/types";
-import GCRCard from "@/components/ui/GCRCard";
 
 export function ReferralPanel({ cases }: { cases: GBVCase[] }) {
   const open = cases.filter(c => c.case_status === "Aberto");
@@ -58,7 +57,6 @@ export function ReferralPanel({ cases }: { cases: GBVCase[] }) {
         })}
       </div>
 
-      {/* <GCRCard /> */}
     </div>
   );
 }

@@ -48,36 +48,20 @@ export function StatCarousel({
   if (!stats || stats.length === 0) return null;
 
   const current = stats[currentIndex];
-  const colorMap = {
-    primary: "from-primary/20 to-primary/5 border-primary/30 text-primary",
-    success: "from-success/20 to-success/5 border-success/30 text-success",
-    warning: "from-warning/20 to-warning/5 border-warning/30 text-warning",
-    critical: "from-critical/20 to-critical/5 border-critical/30 text-critical",
-  };
 
   return (
     <div className="w-full space-y-4">
       {/* Main stat display */}
-      <div
-        className={`relative overflow-hidden rounded-2xl border bg-gradient-to-br ${
-          colorMap[current.color || "primary"]
-        } p-8 transition-all duration-300`}
-      >
-        {/* Background animation */}
-        <div className="absolute top-0 right-0 w-40 h-40 rounded-full blur-3xl opacity-20 animate-pulse" />
-
-        <div className="relative space-y-3">
-          {/* Icon and label */}
+      <div className="gcr-card p-6">
+        <div className="space-y-3">
           <div className="flex items-center gap-3">
             {current.icon && <div className="text-3xl">{current.icon}</div>}
             <p className="text-sm font-medium text-text-secondary">{current.label}</p>
           </div>
 
-          {/* Main value */}
           <div className="flex items-baseline gap-2">
             <p className="text-4xl font-bold text-text-primary">{current.value}</p>
 
-            {/* Change indicator */}
             {current.change && (
               <div
                 className={`flex items-center gap-1 text-sm font-semibold ${
@@ -94,9 +78,6 @@ export function StatCarousel({
             )}
           </div>
         </div>
-
-        {/* Animated border */}
-        <div className="absolute inset-0 rounded-2xl border border-transparent bg-gradient-to-r from-transparent via-white/10 to-transparent animate-shimmer" />
       </div>
 
       {/* Navigation controls */}

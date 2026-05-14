@@ -71,7 +71,6 @@ async function fetchWithRetry(url: string, options: RequestInit, maxRetries = MA
       clearTimeout(timeoutId);
       return res;
     } catch (e: any) {
-      clearTimeout(e.timeoutId);
       if (i === maxRetries - 1) throw e;
       const backoffMs = Math.pow(2, i) * 1000;
       console.warn(`[ActivityInfo] Attempt ${i + 1} failed, retrying in ${backoffMs}ms...`);

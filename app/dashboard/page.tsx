@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import useSWR from "swr";
 import { GBVCase } from "@/lib/types";
 import { DashboardCarousel } from "@/components/ui/DashboardCarousel";
@@ -10,6 +9,7 @@ import { DistributionPanel } from "@/components/DashboardPanels/DistributionPane
 import { GeographicPanel } from "@/components/DashboardPanels/GeographicPanel";
 import { ReferralPanel } from "@/components/DashboardPanels/ReferralPanel";
 import { CaseProgressPanel } from "@/components/DashboardPanels/CaseProgressPanel";
+import { AnalysisPanel } from "@/components/DashboardPanels/AnalysisPanel";
 
 const fetcher = (url: string) => fetch(url).then(r => r.json());
 
@@ -29,6 +29,7 @@ export default function DashboardPage() {
     <GeographicPanel key="geographic" cases={cases} />,
     <ReferralPanel key="referral" cases={cases} />,
     <CaseProgressPanel key="progress" cases={cases} />,
+    <AnalysisPanel key="analysis" cases={cases} />,
   ];
 
   const panelTitles = [
@@ -38,6 +39,7 @@ export default function DashboardPage() {
     "🗺️ Cobertura Geográfica",
     "📤 Vias de Referência",
     "✅ Progresso dos Casos",
+    "📊 Todas as Análises",
   ];
 
   return (
@@ -51,12 +53,12 @@ export default function DashboardPage() {
         </div>
 
         <DashboardCarousel
-          cases={cases}
-          children={dashboardPanels}
           titles={panelTitles}
           autoplay={false}
           interval={8000}
-        />
+        >
+          {dashboardPanels}
+        </DashboardCarousel>
       </div>
     </div>
   );

@@ -56,15 +56,20 @@ function computeRisk(cases: GBVCase[]) {
   const open = cases.filter(c => c.case_status === "Aberto");
   return {
     critical: open.filter(c => c.priority_level === "CRÍTICO").length,
-    unsafe: open.filter(c => (c.is_safe || "").toLowerCase() === "não" || (c.is_safe || "").toLowerCase() === "nao").length,
+    unsafe: open.filter(c => (c.is_safe || "").trim().toLowerCase() === "não" || (c.is_safe || "").trim().toLowerCase() === "nao").length,
     noSafety: open.filter(c => !c.safety_measures || c.safety_measures.trim() === "").length,
     minor: open.filter(c => (c.age_group || "").includes("0-11") || (c.age_group || "").includes("12-17")).length,
-    prev: open.filter(c => (c.previous_incident || "").toLowerCase() === "sim").length,
+    prev: open.filter(c => (c.previous_incident || "").trim().toLowerCase() === "sim").length,
     familyPerp: open.filter(c => {
       const rel = (c.perpetrator_relationship || "").toLowerCase();
       return rel.includes("família") || rel.includes("familiar") || rel.includes("parceiro") || rel.includes("íntimo") || rel.includes("intimo") || rel.includes("cuidador");
     }).length,
   };
+}
+
+function hasReferralRaw(c: GBVCase) {
+  return ["referred_medical","referred_psychosocial","referred_police","referred_legal","referred_safe_house","referred_child_protection","referred_livelihood"]
+    .some(k => /sim/i.test((c as any)[k] || ""));
 }
 
 function computeProgress(cases: GBVCase[]) {
@@ -75,7 +80,7 @@ function computeProgress(cases: GBVCase[]) {
     open: open.length,
     closed: closed.length,
     interviewed: cases.filter(c => c.interview_date).length,
-    referred: cases.filter(c => c.has_referral).length,
+    referred: cases.filter(c => hasReferralRaw(c)).length,
   };
 }
 

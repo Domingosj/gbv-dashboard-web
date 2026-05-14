@@ -1,12 +1,10 @@
 "use client";
 
 import { useState, useCallback, useEffect } from "react";
-import { ChevronLeft, ChevronRight, Maximize2 } from "lucide-react";
+import { ChevronLeft, ChevronRight, Maximize2, Minimize2 } from "lucide-react";
 import { getNextIndex } from "@/lib/carousel-utils";
-import { GBVCase } from "@/lib/types";
 
 interface DashboardCarouselProps {
-  cases: GBVCase[];
   children: React.ReactNode[]; // Array of dashboard panels
   titles: string[];
   autoplay?: boolean;
@@ -14,7 +12,6 @@ interface DashboardCarouselProps {
 }
 
 export function DashboardCarousel({
-  cases,
   children,
   titles,
   autoplay = false,
@@ -75,7 +72,7 @@ export function DashboardCarousel({
           className="p-2 hover:bg-white/20 rounded-lg transition-colors"
           title={isFullscreen ? "Sair da tela cheia" : "Tela cheia"}
         >
-          <Maximize2 className="w-5 h-5" />
+          {isFullscreen ? <Minimize2 className="w-5 h-5" /> : <Maximize2 className="w-5 h-5" />}
         </button>
       </div>
 

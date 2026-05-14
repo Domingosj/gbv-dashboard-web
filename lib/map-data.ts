@@ -32,6 +32,8 @@ const NORMALIZE: Record<string, string> = {
   "mecanhelas": "Mecanhelas",
   "mecula": "Mecula",
   "mavago": "Mavago",
+  "angonia": "Angónia",
+  "maringue": "Maringué",
 };
 
 export function normalizeDistrict(name: string): string {
@@ -75,6 +77,8 @@ export const DISTRICT_COORDS: Record<string, [number, number]> = {
   "Quissanga": [-11.8667, 40.55], "Ancuabe": [-13.0, 39.6667],
   "Metuge": [-12.6667, 40.0], "Pebane": [-17.2667, 37.0833],
   "Monguba": [-14.7, 36.9833], "Nametil": [-15.8, 39.3],
+  "Buzi": [-20.0760, 34.3583], "Chibabava": [-20.2988, 33.7764],
+  "Maringué": [-17.8145, 34.4970],
 };
 
 // Get coordinate for a district, with normalization

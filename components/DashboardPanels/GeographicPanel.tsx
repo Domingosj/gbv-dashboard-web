@@ -22,7 +22,7 @@ export function GeographicPanel({ cases }: { cases: GBVCase[] }) {
             {sortedEntries(byProvince).map(([label, count]) => (
               <div key={label} className="flex items-center justify-between py-2 border-b border-border last:border-0">
                 <span className="text-sm font-medium text-text-primary">{label}</span>
-                <GCRBadge color={count > 20 ? "red" : count > 10 ? "orange" : "blue"}>{count}</GCRBadge>
+                <GCRBadge color={count > 20 ? "red" : count > 10 ? "amber" : "blue"}>{count}</GCRBadge>
               </div>
             ))}
           </div>
@@ -34,7 +34,7 @@ export function GeographicPanel({ cases }: { cases: GBVCase[] }) {
             {sortedEntries(byDistrict, 10).map(([label, count]) => (
               <div key={label} className="flex items-center justify-between py-2 border-b border-border last:border-0">
                 <span className="text-sm text-text-secondary truncate">{label}</span>
-                <GCRBadge color={count > 10 ? "red" : count > 5 ? "orange" : "green"}>{count}</GCRBadge>
+                <GCRBadge color={count > 10 ? "red" : count > 5 ? "amber" : "green"}>{count}</GCRBadge>
               </div>
             ))}
           </div>

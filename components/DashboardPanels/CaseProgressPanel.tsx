@@ -8,30 +8,10 @@ export function CaseProgressPanel({ cases }: { cases: GBVCase[] }) {
   const stats = calcStats(cases);
 
   const stages = [
-    {
-      label: "Identificados",
-      value: stats.total,
-      color: "primary",
-      icon: "📋",
-    },
-    {
-      label: "Entrevistados",
-      value: cases.filter(c => c.interview_date).length,
-      color: "info",
-      icon: "💬",
-    },
-    {
-      label: "Referenciados",
-      value: cases.filter(c => c.has_referral).length,
-      color: "info",
-      icon: "📤",
-    },
-    {
-      label: "Encerrados",
-      value: stats.closed,
-      color: "success",
-      icon: "✅",
-    },
+    { label: "Identificados", value: stats.total, className: "text-primary", icon: "📋" },
+    { label: "Entrevistados", value: cases.filter(c => c.interview_date).length, className: "text-info", icon: "💬" },
+    { label: "Referenciados", value: cases.filter(c => c.has_referral).length, className: "text-info", icon: "📤" },
+    { label: "Encerrados", value: stats.closed, className: "text-success", icon: "✅" },
   ];
 
   return (
@@ -51,7 +31,7 @@ export function CaseProgressPanel({ cases }: { cases: GBVCase[] }) {
             <div className="flex-1 p-4 rounded-lg bg-gradient-to-br from-gray-50 to-gray-100 border-2 border-border">
               <p className="text-3xl mb-2">{stage.icon}</p>
               <p className="text-sm text-text-secondary">{stage.label}</p>
-              <p className={`text-2xl font-bold text-${stage.color}`}>{stage.value}</p>
+              <p className={`text-2xl font-bold ${stage.className}`}>{stage.value}</p>
             </div>
           </div>
         ))}
@@ -85,8 +65,17 @@ export function CaseProgressPanel({ cases }: { cases: GBVCase[] }) {
 
       {/* Case details cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {cases.map((gbvCase, idx) => (
-          <GCRCard key={gbvCase.id} caseData={gbvCase} isFirst={idx === 0} />
+        {cases.slice(0, 6).map((gbvCase) => (
+          <GCRCard key={gbvCase.case_id || gbvCase.record_id}>
+            <div className="text-sm space-y-1">
+              <p className="font-semibold text-text-primary">{gbvCase.case_id}</p>
+              <p className="text-text-secondary">{gbvCase.district || "N/A"}</p>
+              <p className="text-text-secondary">{gbvCase.violence_type_short || gbvCase.violence_type || "N/A"}</p>
+              {gbvCase.priority_level === "CRÍTICO" && (
+                <span className="inline-block mt-1 px-2 py-0.5 rounded-full text-caption font-medium bg-critical/10 text-critical">CRÍTICO</span>
+              )}
+            </div>
+          </GCRCard>
         ))}
       </div>
     </div>

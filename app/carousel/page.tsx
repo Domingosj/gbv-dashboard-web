@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import useSWR from "swr";
 import { GBVCase } from "@/lib/types";
 import { MonthlyChart } from "@/components/Charts";
@@ -25,53 +25,53 @@ export default function CarouselPage() {
     return () => clearInterval(t);
   }, []);
 
-  const next = useCallback(() => setCurrent(i => (i + 1) % slides.length), []);
+  const open = openCases || [];
 
-  useEffect(() => {
-    if (paused || !allCases || !openCases) return;
-    const interval = setInterval(next, 12000);
-    return () => clearInterval(interval);
-  }, [paused, allCases, openCases, next]);
+  const sexData = useMemo(() => {
+    if (!allCases) return [];
+    const sex: Record<string, number> = {};
+    for (const c of allCases) { const x = c.sex || "N/E"; sex[x] = (sex[x] || 0) + 1; }
+    return Object.entries(sex).sort((a, b) => b[1] - a[1]);
+  }, [allCases]);
 
-  useEffect(() => {
-    const handleKey = (e: KeyboardEvent) => {
-      if (e.key === " " || e.key === "p") setPaused(p => !p);
-      if (e.key === "ArrowRight") next();
-      if (e.key === "ArrowLeft") setCurrent(i => (i - 1 + slides.length) % slides.length);
-    };
-    window.addEventListener("keydown", handleKey);
-    return () => window.removeEventListener("keydown", handleKey);
-  }, [next]);
+  const ageData = useMemo(() => {
+    if (!allCases) return [];
+    const age: Record<string, number> = {};
+    for (const c of allCases) { const a = c.age_group || "N/E"; age[a] = (age[a] || 0) + 1; }
+    return Object.entries(age).sort((a, b) => b[1] - a[1]);
+  }, [allCases]);
 
-  if (!allCases || !openCases) return <p className="text-text-secondary p-8">Carregando...</p>;
+  const provData = useMemo(() => {
+    if (!allCases) return [];
+    const prov: Record<string, number> = {};
+    for (const c of allCases) { const p = c.province || "N/E"; prov[p] = (prov[p] || 0) + 1; }
+    return Object.entries(prov).sort((a, b) => b[1] - a[1]);
+  }, [allCases]);
 
-  const open = openCases;
+  const violData = useMemo(() => {
+    if (!open.length) return [];
+    const viol: Record<string, number> = {};
+    for (const c of open) { const v = c.violence_type_short || c.violence_type || "N/E"; viol[v] = (viol[v] || 0) + 1; }
+    return Object.entries(viol).sort((a, b) => b[1] - a[1]).slice(0, 6);
+  }, [open]);
 
-  const sex: Record<string, number> = {};
-  for (const c of allCases) { const x = c.sex || "N/E"; sex[x] = (sex[x] || 0) + 1; }
-  const sexData = Object.entries(sex).sort((a, b) => b[1] - a[1]);
+  const mgrData = useMemo(() => {
+    if (!open.length) return [];
+    const mgr: Record<string, number> = {};
+    for (const c of open) { const m = c.case_manager || "Sem gestor"; mgr[m] = (mgr[m] || 0) + 1; }
+    return Object.entries(mgr).sort((a, b) => b[1] - a[1]).slice(0, 8);
+  }, [open]);
 
-  const age: Record<string, number> = {};
-  for (const c of allCases) { const a = c.age_group || "N/E"; age[a] = (age[a] || 0) + 1; }
-  const ageData = Object.entries(age).sort((a, b) => b[1] - a[1]);
+  const perpData = useMemo(() => {
+    if (!open.length) return [];
+    const perp: Record<string, number> = {};
+    for (const c of open) { const r = c.perpetrator_relationship || "N/E"; perp[r] = (perp[r] || 0) + 1; }
+    return Object.entries(perp).sort((a, b) => b[1] - a[1]).slice(0, 6);
+  }, [open]);
 
-  const prov: Record<string, number> = {};
-  for (const c of allCases) { const p = c.province || "N/E"; prov[p] = (prov[p] || 0) + 1; }
-  const provData = Object.entries(prov).sort((a, b) => b[1] - a[1]);
-
-  const viol: Record<string, number> = {};
-  for (const c of open) { const v = c.violence_type_short || c.violence_type || "N/E"; viol[v] = (viol[v] || 0) + 1; }
-  const violData = Object.entries(viol).sort((a, b) => b[1] - a[1]).slice(0, 6);
-
-  const mgr: Record<string, number> = {};
-  for (const c of open) { const m = c.case_manager || "Sem gestor"; mgr[m] = (mgr[m] || 0) + 1; }
-  const mgrData = Object.entries(mgr).sort((a, b) => b[1] - a[1]).slice(0, 8);
-
-  const perp: Record<string, number> = {};
-  for (const c of open) { const r = c.perpetrator_relationship || "N/E"; perp[r] = (perp[r] || 0) + 1; }
-  const perpData = Object.entries(perp).sort((a, b) => b[1] - a[1]).slice(0, 6);
-
-  const slides: Slide[] = [
+  const slides: Slide[] = useMemo(() => {
+    if (!allCases || !openCases) return [];
+    return [
     {
       id: "overview",
       label: "Visão Geral",
@@ -198,8 +198,33 @@ export default function CarouselPage() {
       ),
     },
   ];
+  }, [allCases, openCases, sexData, ageData, provData, violData, mgrData, perpData]);
 
-  const slide = slides[current];
+  const slidesList = slides;
+  const totalSlides = slidesList.length;
+
+  const next = useCallback(() => setCurrent(i => (i + 1) % (totalSlides || 1)), [totalSlides]);
+
+  useEffect(() => {
+    if (paused || !allCases || !openCases || totalSlides === 0) return;
+    const interval = setInterval(next, 12000);
+    return () => clearInterval(interval);
+  }, [paused, allCases, openCases, next, totalSlides]);
+
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === " " || e.key === "p") setPaused(p => !p);
+      if (e.key === "ArrowRight") next();
+      if (e.key === "ArrowLeft") setCurrent(i => (i - 1 + totalSlides) % totalSlides);
+    };
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [next, totalSlides]);
+
+  if (!allCases || !openCases) return <p className="text-text-secondary p-8">Carregando...</p>;
+
+  const slide = slidesList[current];
+  const slidesLen = totalSlides;
 
   return (
     <div className="fixed inset-0 z-50 bg-background flex flex-col">
@@ -207,12 +232,12 @@ export default function CarouselPage() {
       <div className="flex items-center justify-between px-6 sm:px-12 py-4 shrink-0">
         <div className="flex items-center gap-4">
           <span className="text-xl sm:text-2xl font-bold text-text-primary">{slide.label}</span>
-          <span className="text-base sm:text-lg text-text-secondary">{current + 1}/{slides.length}</span>
+          <span className="text-base sm:text-lg text-text-secondary">{current + 1}/{slidesLen}</span>
         </div>
         <div className="flex items-center gap-3">
           <span className="text-base sm:text-lg text-text-secondary font-mono">{clock}</span>
           <button onClick={() => setPaused(p => !p)} className="px-3 py-1.5 rounded-lg bg-gray-100 text-text-secondary hover:bg-gray-200 text-sm">{paused ? "Continuar" : "Pausar"}</button>
-          <button onClick={() => setCurrent((current - 1 + slides.length) % slides.length)} className="px-3 py-1.5 rounded-lg bg-gray-100 text-text-secondary hover:bg-gray-200 text-lg">‹</button>
+          <button onClick={() => setCurrent((current - 1 + slidesLen) % slidesLen)} className="px-3 py-1.5 rounded-lg bg-gray-100 text-text-secondary hover:bg-gray-200 text-lg">‹</button>
           <button onClick={next} className="px-3 py-1.5 rounded-lg bg-gray-100 text-text-secondary hover:bg-gray-200 text-lg">›</button>
         </div>
       </div>
