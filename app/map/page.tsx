@@ -99,11 +99,11 @@ export default function MapPage() {
   const [tab, setTab] = useState("open");
   const { data: cases } = useSWR<GBVCase[]>("/api/cases", fetcher, { refreshInterval: 300000 });
   const { data: services } = useSWR("/api/services", fetcher);
-  if (!cases) return <p className="text-text-secondary p-8">Carregando...</p>;
 
-  const open = cases.filter(c => c.case_status === "Aberto");
+  const open = cases?.filter(c => c.case_status === "Aberto") ?? [];
   const openStats = useMemo(() => aggregateCasesByDistrict(open), [open]);
-  const allStats = useMemo(() => aggregateCasesByDistrict(cases), [cases]);
+  const allStats = useMemo(() => aggregateCasesByDistrict(cases ?? []), [cases]);
+  if (!cases) return <p className="text-text-secondary p-8">Carregando...</p>;
 
   return (
     <div>
