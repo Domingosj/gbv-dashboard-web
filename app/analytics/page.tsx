@@ -17,6 +17,7 @@ const TABS = [
   { key: "quality", label: "Qualidade de Dados" },
   { key: "pathways", label: "Vias de Referência" },
   { key: "partners", label: "Projetos" },
+  { key: "geo", label: "Análise Geográfica" },
 ];
 
 export default function AnalyticsPage() {
@@ -42,6 +43,7 @@ export default function AnalyticsPage() {
       {tab === "quality" && <QualityTab cases={filtered} />}
       {tab === "pathways" && <PathwaysTab cases={filtered} />}
       {tab === "partners" && <PartnersTab cases={filtered} />}
+      {tab === "geo" && <GeoTab cases={filtered} />}
     </div>
   );
 }
@@ -492,7 +494,6 @@ function HeatMatrix({
 function PartnersTab({ cases }: { cases: GBVCase[] }) {
   const currentYear = new Date().getFullYear();
   const [year, setYear] = useState(currentYear);
-  const [subTab, setSubTab] = useState<"projects" | "geo">("projects");
   const [selection, setSelection] = useState<{ label: string; cases: GBVCase[] } | null>(null);
 
   const availableYears = useMemo(() => {
@@ -522,27 +523,12 @@ function PartnersTab({ cases }: { cases: GBVCase[] }) {
     return { projectRows: rows, projectMatrix: matrix, projectMax: max };
   }, [yearCases]);
 
-  const { geoRows, geoMatrix, geoMax } = useMemo(() => {
-    const rows = Array.from(new Set(yearCases.map(c => c.province).filter(Boolean) as string[])).sort();
-    const matrix: Record<string, Record<number, GBVCase[]>> = {};
-    for (const r of rows) matrix[r] = {};
-    for (const c of yearCases) {
-      if (!c.province || !c.identification_date) continue;
-      const m = new Date(c.identification_date).getMonth();
-      if (!matrix[c.province][m]) matrix[c.province][m] = [];
-      matrix[c.province][m].push(c);
-    }
-    const max = Math.max(1, ...rows.flatMap(r => Object.values(matrix[r]).map(a => a.length)));
-    return { geoRows: rows, geoMatrix: matrix, geoMax: max };
-  }, [yearCases]);
-
   function handleSelect(label: string, selected: GBVCase[]) {
     setSelection(prev => prev?.label === label ? null : { label, cases: selected });
   }
 
   return (
     <div className="space-y-5">
-      {/* Year filter */}
       <div className="flex items-center gap-3">
         <span className="text-label text-on-surface-variant">Ano:</span>
         <div className="flex items-center gap-1 p-1 bg-surface-container rounded-lg">
@@ -556,33 +542,12 @@ function PartnersTab({ cases }: { cases: GBVCase[] }) {
         <span className="text-caption text-on-surface-variant">{yearCases.length} casos</span>
       </div>
 
-      {/* Sub-tabs */}
-      <div className="flex gap-0 border-b border-outline-variant">
-        {[{ key: "projects", label: "Desempenho dos Projetos" }, { key: "geo", label: "Análise Geográfica" }].map(t => (
-          <button key={t.key}
-            onClick={() => { setSubTab(t.key as "projects" | "geo"); setSelection(null); }}
-            className={`px-5 py-2.5 text-label font-medium border-b-2 -mb-px transition-all ${subTab === t.key ? "border-primary text-primary" : "border-transparent text-on-surface-variant hover:text-on-surface"}`}>
-            {t.label}
-          </button>
-        ))}
-      </div>
-
-      {/* Matrix */}
-      {subTab === "projects" ? (
-        <GCRCard title={`Projetos × Mês — ${year}`}>
-          <p className="text-caption text-on-surface-variant mb-3">Clique numa célula para ver os casos desse projeto/mês</p>
-          {projectRows.length > 0
-            ? <HeatMatrix rowLabel="Projeto" rows={projectRows} matrix={projectMatrix} maxVal={projectMax} year={year} onSelect={handleSelect} />
-            : <p className="text-on-surface-variant text-sm py-4 text-center">Sem dados para {year}</p>}
-        </GCRCard>
-      ) : (
-        <GCRCard title={`Províncias × Mês — ${year}`}>
-          <p className="text-caption text-on-surface-variant mb-3">Clique numa célula para ver os casos dessa província/mês</p>
-          {geoRows.length > 0
-            ? <HeatMatrix rowLabel="Província" rows={geoRows} matrix={geoMatrix} maxVal={geoMax} year={year} onSelect={handleSelect} />
-            : <p className="text-on-surface-variant text-sm py-4 text-center">Sem dados para {year}</p>}
-        </GCRCard>
-      )}
+      <GCRCard title={`Projetos × Mês — ${year}`}>
+        <p className="text-caption text-on-surface-variant mb-3">Clique numa célula para ver os casos desse projeto/mês</p>
+        {projectRows.length > 0
+          ? <HeatMatrix rowLabel="Projeto" rows={projectRows} matrix={projectMatrix} maxVal={projectMax} year={year} onSelect={handleSelect} />
+          : <p className="text-on-surface-variant text-sm py-4 text-center">Sem dados para {year}</p>}
+      </GCRCard>
 
       {/* Selected cases panel */}
       {selection && (
@@ -602,6 +567,119 @@ function PartnersTab({ cases }: { cases: GBVCase[] }) {
                   <span className="text-primary font-mono text-caption font-semibold">{c.case_id || c.record_id || "N/A"}</span>
                   <div className="flex items-center gap-2 text-caption text-on-surface-variant mt-0.5">
                     <span>{c.district || "N/A"}</span>
+                    <span>·</span>
+                    <span>{c.case_manager || "Sem gestor"}</span>
+                    <span>·</span>
+                    <span>{c.project || "—"}</span>
+                  </div>
+                </div>
+                <span className={`shrink-0 ml-3 text-caption px-2 py-0.5 rounded-full font-medium ${
+                  c.priority_level === "CRÍTICO" ? "bg-critical/10 text-critical" :
+                  c.priority_level === "ALTO" ? "bg-warning/10 text-warning" :
+                  "bg-primary/10 text-primary"
+                }`}>
+                  {c.priority_level || c.case_status || "—"}
+                </span>
+              </a>
+            ))}
+          </div>
+        </GCRCard>
+      )}
+    </div>
+  );
+}
+
+function GeoTab({ cases }: { cases: GBVCase[] }) {
+  const currentYear = new Date().getFullYear();
+  const [year, setYear] = useState(currentYear);
+  const [geoLevel, setGeoLevel] = useState<"province" | "district">("province");
+  const [selection, setSelection] = useState<{ label: string; cases: GBVCase[] } | null>(null);
+
+  const availableYears = useMemo(() => {
+    const ys = new Set<number>();
+    for (const c of cases) {
+      if (c.identification_date) ys.add(new Date(c.identification_date).getFullYear());
+    }
+    return Array.from(ys).sort((a, b) => b - a);
+  }, [cases]);
+
+  const yearCases = useMemo(() =>
+    cases.filter(c => c.identification_date && new Date(c.identification_date).getFullYear() === year),
+    [cases, year]
+  );
+
+  const { geoRows, geoMatrix, geoMax } = useMemo(() => {
+    const keyFn = (c: GBVCase) => geoLevel === "province" ? c.province : (c.district || c.province);
+    const rows = Array.from(new Set(yearCases.map(keyFn).filter(Boolean) as string[])).sort();
+    const matrix: Record<string, Record<number, GBVCase[]>> = {};
+    for (const r of rows) matrix[r] = {};
+    for (const c of yearCases) {
+      const key = keyFn(c);
+      if (!key || !c.identification_date) continue;
+      const m = new Date(c.identification_date).getMonth();
+      if (!matrix[key][m]) matrix[key][m] = [];
+      matrix[key][m].push(c);
+    }
+    const max = Math.max(1, ...rows.flatMap(r => Object.values(matrix[r]).map(a => a.length)));
+    return { geoRows: rows, geoMatrix: matrix, geoMax: max };
+  }, [yearCases, geoLevel]);
+
+  function handleSelect(label: string, selected: GBVCase[]) {
+    setSelection(prev => prev?.label === label ? null : { label, cases: selected });
+  }
+
+  return (
+    <div className="space-y-5">
+      <div className="flex flex-wrap items-center gap-4">
+        <div className="flex items-center gap-3">
+          <span className="text-label text-on-surface-variant">Ano:</span>
+          <div className="flex items-center gap-1 p-1 bg-surface-container rounded-lg">
+            {availableYears.map(y => (
+              <button key={y} onClick={() => { setYear(y); setSelection(null); }}
+                className={`px-3 py-1.5 text-label font-medium rounded-md transition-all ${year === y ? "bg-white text-on-surface shadow-sm" : "text-on-surface-variant hover:text-on-surface"}`}>
+                {y}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="flex items-center gap-3">
+          <span className="text-label text-on-surface-variant">Nível:</span>
+          <div className="flex items-center gap-1 p-1 bg-surface-container rounded-lg">
+            {([["province", "Província"], ["district", "Distrito"]] as const).map(([k, l]) => (
+              <button key={k} onClick={() => { setGeoLevel(k); setSelection(null); }}
+                className={`px-3 py-1.5 text-label font-medium rounded-md transition-all ${geoLevel === k ? "bg-white text-on-surface shadow-sm" : "text-on-surface-variant hover:text-on-surface"}`}>
+                {l}
+              </button>
+            ))}
+          </div>
+        </div>
+        <span className="text-caption text-on-surface-variant">{yearCases.length} casos em {year}</span>
+      </div>
+
+      <GCRCard title={`${geoLevel === "province" ? "Províncias" : "Distritos"} × Mês — ${year}`}>
+        <p className="text-caption text-on-surface-variant mb-3">Clique numa célula para ver os casos</p>
+        {geoRows.length > 0
+          ? <HeatMatrix rowLabel={geoLevel === "province" ? "Província" : "Distrito"} rows={geoRows} matrix={geoMatrix} maxVal={geoMax} year={year} onSelect={handleSelect} />
+          : <p className="text-on-surface-variant text-sm py-4 text-center">Sem dados para {year}</p>}
+      </GCRCard>
+
+      {selection && (
+        <GCRCard title={`${selection.label} — ${selection.cases.length} casos`}>
+          <div className="flex justify-between items-center mb-3">
+            <p className="text-caption text-on-surface-variant">Clique num caso para ver detalhes</p>
+            <button onClick={() => setSelection(null)} className="text-caption text-on-surface-variant hover:text-on-surface flex items-center gap-1">
+              <X className="w-3.5 h-3.5" /> Fechar
+            </button>
+          </div>
+          <div className="space-y-1.5 max-h-96 overflow-y-auto pr-1">
+            {selection.cases.map(c => (
+              <a key={c.record_id || c.case_id}
+                href={`/cases/${c.record_id || encodeURIComponent(c.case_id || "")}`}
+                className="flex items-center justify-between py-2 px-3 rounded-lg bg-surface-container-low hover:bg-surface-container transition-colors">
+                <div className="min-w-0 flex-1">
+                  <span className="text-primary font-mono text-caption font-semibold">{c.case_id || c.record_id || "N/A"}</span>
+                  <div className="flex items-center gap-2 text-caption text-on-surface-variant mt-0.5">
+                    <span>{c.district || c.province || "N/A"}</span>
                     <span>·</span>
                     <span>{c.case_manager || "Sem gestor"}</span>
                     <span>·</span>
