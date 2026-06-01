@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import useSWR from "swr";
 import { GBVCase } from "@/lib/types";
-import { MonthlyChart } from "@/components/Charts";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import {
   ChevronLeft, ChevronRight, Pause, Play,
   Maximize2, Minimize2, X,
@@ -131,6 +131,17 @@ export default function CarouselPage() {
     return Object.entries(m).sort((a, b) => b[1] - a[1]).slice(0, 6);
   }, [open]);
 
+  const trendData = useMemo(() => {
+    const ident: Record<string, number> = {};
+    const intv: Record<string, number> = {};
+    for (const c of cases) {
+      if (c.identification_date) { const m = c.identification_date.slice(0, 7); ident[m] = (ident[m] || 0) + 1; }
+      if (c.interview_date) { const m = c.interview_date.slice(0, 7); intv[m] = (intv[m] || 0) + 1; }
+    }
+    const keys = Array.from(new Set([...Object.keys(ident), ...Object.keys(intv)])).sort();
+    return keys.map(m => ({ month: m.slice(0, 7), identificacao: ident[m] || 0, entrevista: intv[m] || 0 }));
+  }, [cases]);
+
   const noRefCount = useMemo(() => open.filter(c => !c.has_referral).length, [open]);
   const criticalCount = useMemo(() => open.filter(c => c.priority_level === "CRÍTICO").length, [open]);
   const closedCount = useMemo(() => cases.filter(c => c.case_status === "Encerrado").length, [cases]);
@@ -195,12 +206,22 @@ export default function CarouselPage() {
       },
       {
         id: "trend",
-        label: "Casos por Mês",
+        label: "Tendências Temporais",
         content: (
           <div className="h-full w-full max-w-5xl mx-auto flex flex-col">
-            <SlideHeading title="Casos por Mês" />
+            <SlideHeading title="Tendências: Identificação vs Entrevista" />
             <div className="flex-1">
-              <MonthlyChart cases={cases} />
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={trendData} margin={{ top: 10, right: 30, left: 0, bottom: 40 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e0e3e5" />
+                  <XAxis dataKey="month" tick={{ fontSize: 14, fill: "#6f7975" }} angle={-35} textAnchor="end" interval={0} />
+                  <YAxis tick={{ fontSize: 14, fill: "#6f7975" }} />
+                  <Tooltip contentStyle={{ fontSize: 14 }} />
+                  <Legend wrapperStyle={{ fontSize: 16, paddingTop: 12 }} />
+                  <Line type="monotone" dataKey="identificacao" stroke="#005243" strokeWidth={3} dot={{ r: 4 }} name="Identificação" />
+                  <Line type="monotone" dataKey="entrevista" stroke="#E91E8C" strokeWidth={3} dot={{ r: 4 }} name="Entrevista" strokeDasharray="6 3" />
+                </LineChart>
+              </ResponsiveContainer>
             </div>
           </div>
         ),
@@ -276,7 +297,7 @@ export default function CarouselPage() {
         ),
       },
     ];
-  }, [cases, open, sexData, ageData, provData, violData, perpData,
+  }, [cases, open, trendData, sexData, ageData, provData, violData, perpData,
       noRefCount, criticalCount, closedCount, unsafeCount]);
 
   const total = slides.length;
