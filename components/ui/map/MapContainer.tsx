@@ -153,7 +153,7 @@ export default function MapContainer({ markers, heatPoints }: Props) {
   return (
     <div className={isFullscreen ? "fixed inset-0 z-50 bg-white" : "relative"}>
       {/* Controls bar */}
-      <div className={`flex items-center justify-between mb-2 ${isFullscreen ? "absolute top-4 left-4 right-4 z-[1000] bg-white/90 backdrop-blur-sm px-4 py-2 rounded-lg shadow-md" : ""}`}>
+      <div className={`flex items-center justify-between ${isFullscreen ? "absolute top-4 left-4 right-4 z-[9999] bg-white/95 backdrop-blur-sm px-4 py-2 rounded-lg shadow-lg" : "mb-2"}`}>
         {/* Mode toggle */}
         <div className="flex items-center gap-1 p-1 bg-surface-container rounded-lg">
           {([["bubbles", "Bolhas"], ["heat", "Calor"]] as const).map(([k, l]) => (
