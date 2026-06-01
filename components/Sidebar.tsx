@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Search, ClipboardCheck, Bot, Play, TrendingUp, Map, PieChart, PanelLeftClose, PanelLeftOpen, Network, MessageSquareText, Monitor } from "lucide-react";
+import { Search, ClipboardCheck, Bot, Play, TrendingUp, Map, PieChart, PanelLeftClose, PanelLeftOpen, Network, Monitor } from "lucide-react";
 
 const NAV = [
   { href: "/summary", label: "Resumo Executivo", icon: PieChart },
@@ -15,7 +15,6 @@ const NAV = [
   { href: "/map", label: "Mapa", icon: Map },
   { href: "/carousel", label: "Carrossel", icon: Play },
   { href: "/ai", label: "Assistente IA", icon: Bot },
-  { href: "/ai-assistant", label: "Ana (assistant-ui)", icon: MessageSquareText },
 ];
 
 export default function Sidebar() {
