@@ -98,9 +98,13 @@ export default function CarouselPage() {
 
   // Pre-compute slide data
   const sexData = useMemo(() => {
-    const m: Record<string, number> = {};
-    for (const c of cases) { const x = c.sex || "N/E"; m[x] = (m[x] || 0) + 1; }
-    return Object.entries(m).sort((a, b) => b[1] - a[1]);
+    const m: Record<string, number> = { Feminino: 0, Masculino: 0 };
+    for (const c of cases) {
+      if (!c.sex) continue;
+      if (/femenino|feminino/i.test(c.sex)) m.Feminino++;
+      else if (/masculino/i.test(c.sex)) m.Masculino++;
+    }
+    return Object.entries(m).filter(([, v]) => v > 0).sort((a, b) => b[1] - a[1]);
   }, [cases]);
 
   const ageData = useMemo(() => {
