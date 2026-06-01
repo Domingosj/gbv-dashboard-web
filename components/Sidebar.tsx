@@ -4,11 +4,10 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Search, BarChart3, Bot, Monitor, Play, TrendingUp, Activity, Map, PieChart, PanelLeftClose, PanelLeftOpen, Network, MessageSquareText } from "lucide-react";
+import { Search, BarChart3, Bot, Play, TrendingUp, Map, PieChart, PanelLeftClose, PanelLeftOpen, Network, MessageSquareText, Monitor } from "lucide-react";
 
 const NAV = [
   { href: "/summary", label: "Resumo Executivo", icon: PieChart },
-  { href: "/operations", label: "Operações", icon: Activity },
   { href: "/strategy", label: "Desempenho", icon: TrendingUp },
   { href: "/cases", label: "Casos", icon: Search },
   { href: "/analytics", label: "Análises", icon: BarChart3 },

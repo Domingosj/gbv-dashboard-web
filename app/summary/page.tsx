@@ -147,9 +147,9 @@ export default function SummaryPage() {
 
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-5 mb-6">
         {[
-          { label: "Total de Casos", value: s.total, href: "/operations", color: "text-on-surface" },
+          { label: "Total de Casos", value: s.total, href: "", color: "text-on-surface" },
           { label: "Casos Abertos", value: s.open, href: "/cases", color: "text-info" },
-          { label: "Encerrados", value: s.closed, href: "/operations?tab=progress", color: "text-success" },
+          { label: "Encerrados", value: s.closed, href: "", color: "text-success" },
           { label: "Casos por Género", value: "", href: "", color: "", isGender: true },
           { label: "Pessoas com Deficiência", value: "", href: "", color: "", isDisability: true },
         ].map(({ label, value, href, color, isGender, isDisability }) =>
@@ -507,12 +507,11 @@ export default function SummaryPage() {
               <span className="text-caption ml-2">Clique para ver</span>
             </p>
           </a>
-          <a href="/operations" className={`block p-3 rounded-lg ${open.delayed > 0 ? "bg-critical/10" : "bg-success/10"} hover:opacity-80 transition-opacity`}>
+          <div className={`block p-3 rounded-lg ${open.delayed > 0 ? "bg-critical/10" : "bg-success/10"}`}>
             <p className={`text-body font-medium ${open.delayed > 0 ? "text-critical" : "text-success"}`}>
               {open.delayed > 0 ? `${open.delayed} atrasados >30d` : "Sem atrasos"}
-              <span className="text-caption ml-2">Clique para ver</span>
             </p>
-          </a>
+          </div>
         </div>
       </GCRCard>
 
