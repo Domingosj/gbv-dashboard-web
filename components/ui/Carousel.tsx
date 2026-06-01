@@ -74,8 +74,8 @@ export function Carousel({
 
   if (!items || items.length === 0) {
     return (
-      <div className="flex items-center justify-center w-full h-64 rounded-lg bg-gray-100 border-2 border-dashed border-gray-300">
-        <p className="text-text-secondary text-sm">Sem itens para exibir</p>
+      <div className="flex items-center justify-center w-full h-64 rounded-lg bg-surface-container border-2 border-dashed border-gray-300">
+        <p className="text-on-surface-variant text-sm">Sem itens para exibir</p>
       </div>
     );
   }
@@ -85,7 +85,7 @@ export function Carousel({
   // Determine styling based on variant
   const variantStyles = {
     default: "rounded-lg shadow-card overflow-hidden",
-    card: "rounded-2xl shadow-lg overflow-hidden border border-border",
+    card: "rounded-lg shadow-lg overflow-hidden border border-outline-variant",
     fullscreen: "rounded-none overflow-hidden",
   };
 
@@ -95,7 +95,7 @@ export function Carousel({
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/20 z-10 pointer-events-none" />
 
       {/* Main carousel item container */}
-      <div className="relative w-full h-full overflow-hidden bg-gray-200">
+      <div className="relative w-full h-full overflow-hidden bg-surface-container-high">
         {/* Item wrapper with transitions */}
         <div
           className={`w-full h-full transition-all duration-300 ease-in-out transform ${
@@ -109,15 +109,15 @@ export function Carousel({
           {items[validIndex] ? (
             items[validIndex]
           ) : (
-            <div className="w-full h-full flex items-center justify-center bg-gray-100">
-              <p className="text-text-secondary">Erro ao carregar item</p>
+            <div className="w-full h-full flex items-center justify-center bg-surface-container">
+              <p className="text-on-surface-variant">Erro ao carregar item</p>
             </div>
           )}
         </div>
 
         {/* Loading skeleton during transition */}
         {isTransitioning && (
-          <div className="absolute inset-0 bg-gray-300 animate-pulse z-20" />
+          <div className="absolute inset-0 bg-surface-container-highest animate-pulse z-20" />
         )}
       </div>
 
@@ -194,7 +194,7 @@ export function Carousel({
 
       {/* Keyboard navigation hint */}
       <div className="absolute top-2 right-2 z-20 opacity-0 group-hover:opacity-100 transition-opacity text-xs text-white/60 pointer-events-none">
-        ← →
+        Esq Dir
       </div>
     </div>
   );

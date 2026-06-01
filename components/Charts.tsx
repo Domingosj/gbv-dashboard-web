@@ -18,11 +18,8 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-const COLORS = ["#3C50E0", "#80CAEE", "#219653", "#FFA70B", "#D34053", "#AEB7C0"];
+const COLORS = ["#005243", "#90d4bf", "#166965", "#644119", "#D34053", "#6f7975"];
 
-/**
- * Monthly case chart with safe data aggregation
- */
 export function MonthlyChart({ cases }: { cases: GBVCase[] }) {
   const data = useMemo(() => {
     const months: Record<string, number> = {};
@@ -37,28 +34,25 @@ export function MonthlyChart({ cases }: { cases: GBVCase[] }) {
   }, [cases]);
 
   if (!data || data.length === 0) {
-    return <p className="text-text-secondary text-sm">Sem dados para exibir</p>;
+    return <p className="text-on-surface-variant text-sm">Sem dados para exibir</p>;
   }
 
   return (
     <ResponsiveContainer width="100%" height={300}>
       <LineChart data={data}>
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="month" />
-        <YAxis />
+        <CartesianGrid strokeDasharray="3 3" stroke="#e0e3e5" />
+        <XAxis dataKey="month" tick={{ fontSize: 12, fill: "#6f7975" }} />
+        <YAxis tick={{ fontSize: 12, fill: "#6f7975" }} />
         <Tooltip />
         <Legend />
-        <Line type="monotone" dataKey="count" stroke="#256B5A" name="Casos" />
+        <Line type="monotone" dataKey="count" stroke="#005243" strokeWidth={2} name="Casos" />
       </LineChart>
     </ResponsiveContainer>
   );
 }
 
-/**
- * Distribution pie chart with safe rendering
- */
 export function DistributionChart({ data, title }: { data: Record<string, number>; title: string }) {
-  const colors = ["#256B5A", "#D9A441", "#C65A5A", "#256B8A", "#6BA587"];
+  const colors = ["#005243", "#90d4bf", "#166965", "#644119", "#6f7975", "#D34053"];
 
   const chartData = useMemo(() =>
     Object.entries(data).map(([name, value]) => ({ name, value })),
@@ -66,7 +60,7 @@ export function DistributionChart({ data, title }: { data: Record<string, number
   );
 
   if (!chartData || chartData.length === 0) {
-    return <p className="text-text-secondary text-sm">Sem dados para exibir</p>;
+    return <p className="text-on-surface-variant text-sm">Sem dados para exibir</p>;
   }
 
   return (
@@ -93,9 +87,6 @@ export function DistributionChart({ data, title }: { data: Record<string, number
   );
 }
 
-/**
- * Bar chart for comparisons
- */
 export function ComparisonChart({
   data,
   label,
@@ -106,18 +97,18 @@ export function ComparisonChart({
   const chartData = data;
 
   if (!chartData || chartData.length === 0) {
-    return <p className="text-text-secondary text-sm">Sem dados para exibir</p>;
+    return <p className="text-on-surface-variant text-sm">Sem dados para exibir</p>;
   }
 
   return (
     <ResponsiveContainer width="100%" height={300}>
       <BarChart data={chartData}>
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="name" />
-        <YAxis />
+        <CartesianGrid strokeDasharray="3 3" stroke="#e0e3e5" />
+        <XAxis dataKey="name" tick={{ fontSize: 12, fill: "#6f7975" }} />
+        <YAxis tick={{ fontSize: 12, fill: "#6f7975" }} />
         <Tooltip />
         <Legend />
-        <Bar dataKey="value" fill="#256B5A" name={label} />
+        <Bar dataKey="value" fill="#005243" radius={[4, 4, 0, 0]} name={label} />
       </BarChart>
     </ResponsiveContainer>
   );

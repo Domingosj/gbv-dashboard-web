@@ -24,7 +24,7 @@ export default function CasesPage() {
   const [provFilter, setProvFilter] = useState("");
   const { data: allCases } = useSWR<GBVCase[]>("/api/cases", fetcher, { refreshInterval: 300000 });
   const { data: openCases } = useSWR<GBVCase[]>("/api/cases?filter=open", fetcher, { refreshInterval: 300000 });
-  if (!allCases || !openCases) return <p className="text-text-secondary p-8">Carregando...</p>;
+  if (!allCases || !openCases) return <p className="text-on-surface-variant p-8">Carregando...</p>;
 
   const provinces = Array.from(new Set(allCases.map(c => c.province).filter((d): d is string => !!d))).sort();
   const filteredAll = provFilter ? allCases.filter(c => c.province === provFilter) : allCases;
@@ -32,7 +32,7 @@ export default function CasesPage() {
 
   return (
     <div>
-      <h1 className="text-page-title text-text-primary mb-1">Casos</h1>
+      <h1 className="text-page-title text-on-surface mb-1">Casos</h1>
       <ModuleTabs tabs={TABS} activeTab={tab} onTabChange={setTab} />
       <FilterBar>
         <select className="gcr-input w-56" value={provFilter} onChange={e => setProvFilter(e.target.value)}>
@@ -61,7 +61,7 @@ function PriorityTab({ cases }: { cases: GBVCase[] }) {
           { label: "Alta Prioridade", value: cases.filter(c => c.priority_level === "ALTO").length, color: "text-warning" },
         ].map(({ label, value, color }) => (
           <div key={label} className="gcr-card p-4 text-center">
-            <p className="text-label text-text-secondary mb-1">{label}</p>
+            <p className="text-label text-on-surface-variant mb-1">{label}</p>
             <p className={`text-metric ${color}`}>{value}</p>
           </div>
         ))}
@@ -130,8 +130,8 @@ function ReferralsTab({ cases }: { cases: GBVCase[] }) {
             { label: "Abrigo", count: open.filter(c => !/sim/i.test(c.referred_safe_house || "")).length },
             { label: "Proteção Infantil", count: open.filter(c => !/sim/i.test(c.referred_child_protection || "")).length },
           ].map(({ label, count }) => (
-            <div key={label} className="flex justify-between py-1.5 border-b border-border last:border-0">
-              <span className="text-body text-text-secondary">{label}</span>
+            <div key={label} className="flex justify-between py-1.5 border-b border-outline-variant last:border-0">
+              <span className="text-body-sm text-on-surface-variant">{label}</span>
               <span className="font-semibold">{count} necessitam</span>
             </div>
           ))}
@@ -140,13 +140,13 @@ function ReferralsTab({ cases }: { cases: GBVCase[] }) {
           {districts.length > 0 ? (
             <div className="space-y-2 max-h-80 overflow-y-auto">
               {districts.map(d => (
-                <div key={d} className="flex items-center justify-between py-1.5 border-b border-border last:border-0">
-                  <span className="text-body">{d}</span>
+                <div key={d} className="flex items-center justify-between py-1.5 border-b border-outline-variant last:border-0">
+                  <span className="text-body-sm">{d}</span>
                   <GCRBadge color={open.filter(c => c.district === d).length > 0 ? "blue" : "grey"}>{open.filter(c => c.district === d).length} casos</GCRBadge>
                 </div>
               ))}
             </div>
-          ) : <p className="text-text-secondary">Sem dados</p>}
+          ) : <p className="text-on-surface-variant">Sem dados</p>}
         </GCRCard>
       </div>
       {services && (
@@ -156,18 +156,18 @@ function ReferralsTab({ cases }: { cases: GBVCase[] }) {
             {Array.from(new Set((services as any[]).map((s: any) => s.district))).sort().map((d: any) => <option key={d} value={d}>{d}</option>)}
           </select>
           <div className="overflow-x-auto">
-            <table className="w-full text-body">
-              <thead className="bg-gray-50 border-b border-border">
+            <table className="w-full text-body-sm">
+              <thead className="bg-surface-container border-b border-outline-variant">
                 <tr>
-                  <th className="text-left px-4 py-3 text-label text-text-secondary">Organização</th>
-                  <th className="text-left px-4 py-3 text-label text-text-secondary">Categoria</th>
-                  <th className="text-left px-4 py-3 text-label text-text-secondary">Distrito</th>
-                  <th className="text-left px-4 py-3 text-label text-text-secondary">Contacto</th>
+                  <th className="text-left px-4 py-3 text-label-caps text-on-surface-variant">Organização</th>
+                  <th className="text-left px-4 py-3 text-label-caps text-on-surface-variant">Categoria</th>
+                  <th className="text-left px-4 py-3 text-label-caps text-on-surface-variant">Distrito</th>
+                  <th className="text-left px-4 py-3 text-label-caps text-on-surface-variant">Contacto</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-border">
+              <tbody className="divide-y divide-outline-variant/50">
                 {(services as any[]).filter((s: any) => !distFilter || s.district === distFilter).map((s, i) => (
-                  <tr key={i} className="hover:bg-gray-50">
+                  <tr key={i} className="hover:bg-surface-container-low transition-colors">
                     <td className="px-4 py-3 font-medium">{s.organization}</td>
                     <td className="px-4 py-3"><GCRBadge color="blue">{s.service_category}</GCRBadge></td>
                     <td className="px-4 py-3">{s.district}</td>

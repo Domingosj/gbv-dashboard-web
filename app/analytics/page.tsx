@@ -22,14 +22,14 @@ export default function AnalyticsPage() {
   const [tab, setTab] = useState("trends");
   const [provFilter, setProvFilter] = useState("");
   const { data: allCases } = useSWR<GBVCase[]>("/api/cases", fetcher, { refreshInterval: 300000 });
-  if (!allCases) return <p className="text-text-secondary p-8">Carregando...</p>;
+  if (!allCases) return <p className="text-on-surface-variant p-8">Carregando...</p>;
 
   const provinces = Array.from(new Set(allCases.map(c => c.province).filter((d): d is string => !!d))).sort();
   const filtered = provFilter ? allCases.filter(c => c.province === provFilter) : allCases;
 
   return (
     <div>
-      <h1 className="text-page-title text-text-primary mb-1">Análises</h1>
+      <h1 className="text-page-title text-on-surface mb-1">Análises</h1>
       <ModuleTabs tabs={TABS} activeTab={tab} onTabChange={setTab} />
       <FilterBar>
         <select className="gcr-input w-56" value={provFilter} onChange={e => setProvFilter(e.target.value)}>
@@ -90,11 +90,11 @@ function TrendsTab({ cases }: { cases: GBVCase[] }) {
   return (
     <>
       <div className="flex items-center gap-2 mb-5">
-        <span className="text-label text-text-secondary">Agrupar por:</span>
-        <div className="flex items-center gap-1 p-1 bg-gray-100 rounded-lg">
+        <span className="text-label text-on-surface-variant">Agrupar por:</span>
+        <div className="flex items-center gap-1 p-1 bg-surface-container rounded-lg">
           {periods.map(p => (
             <button key={p.key} onClick={() => setPeriod(p.key)}
-              className={`px-3 py-1.5 text-caption font-medium rounded-md transition-all ${period === p.key ? "bg-white text-text-primary shadow-sm" : "text-text-secondary hover:text-text-primary"}`}
+              className={`px-3 py-1.5 text-caption font-medium rounded-md transition-all ${period === p.key ? "bg-white text-on-surface shadow-sm" : "text-on-surface-variant hover:text-on-surface"}`}
             >{p.label}</button>
           ))}
         </div>
@@ -105,8 +105,8 @@ function TrendsTab({ cases }: { cases: GBVCase[] }) {
           <div className="max-h-80 overflow-y-auto space-y-1 pr-2">
             {entries.map(([k, v]) => (
               <div key={k} className="flex items-center gap-3 py-1">
-                <span className="text-caption text-text-secondary w-24 shrink-0">{k}</span>
-                <div className="flex-1 h-5 bg-gray-100 rounded-full overflow-hidden">
+                <span className="text-caption text-on-surface-variant w-24 shrink-0">{k}</span>
+                <div className="flex-1 h-5 bg-surface-container rounded-full overflow-hidden">
                   <div className="h-full rounded-full bg-primary" style={{ width: `${(v / Math.max(...data)) * 100}%` }} />
                 </div>
                 <span className="text-label font-semibold w-10 text-right">{v}</span>
@@ -122,8 +122,8 @@ function TrendsTab({ cases }: { cases: GBVCase[] }) {
       <div className="grid grid-cols-2 gap-5">
         <GCRCard title="Tipo de Violência">
           <div className="space-y-2">{topViol.map(([l, c]) => (
-            <div key={l} className="flex items-center justify-between py-1.5 border-b border-border last:border-0">
-              <span className="text-body text-text-secondary truncate mr-2">{l}</span>
+            <div key={l} className="flex items-center justify-between py-1.5 border-b border-outline-variant last:border-0">
+              <span className="text-body text-on-surface-variant truncate mr-2">{l}</span>
               <GCRBadge color="blue">{c}</GCRBadge>
             </div>
           ))}</div>
@@ -131,8 +131,8 @@ function TrendsTab({ cases }: { cases: GBVCase[] }) {
         <GCRCard title="Distribuição por Projeto">
           <div className="space-y-2">
             {Object.entries(open.reduce((acc: Record<string, number>, c) => { const p = c.project || "N/A"; acc[p] = (acc[p] || 0) + 1; return acc; }, {})).sort((a, b) => b[1] - a[1]).map(([l, c]) => (
-              <div key={l} className="flex items-center justify-between py-1.5 border-b border-border last:border-0">
-                <span className="text-body text-text-secondary truncate mr-2">{l}</span>
+              <div key={l} className="flex items-center justify-between py-1.5 border-b border-outline-variant last:border-0">
+                <span className="text-body text-on-surface-variant truncate mr-2">{l}</span>
                 <GCRBadge color="blue">{c}</GCRBadge>
               </div>
             ))}
@@ -229,16 +229,16 @@ function QualityTab({ cases }: { cases: GBVCase[] }) {
       {/* Summary header */}
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
         {[
-          { label: "Total de Registos", value: total, color: "text-text-primary", desc: `${open.length} abertos · ${closed.length} encerrados` },
+          { label: "Total de Registos", value: total, color: "text-on-surface", desc: `${open.length} abertos · ${closed.length} encerrados` },
           { label: "Problemas Encontrados", value: checkResults.reduce((s, r) => s + r.count, 0), color: "text-critical", desc: `${checkResults.filter(r => r.count > 0).length} tipos de falhas` },
           { label: "Casos com Erros", value: caseProblemScore.length, color: "text-warning", desc: `${total > 0 ? ((caseProblemScore.length / total) * 100).toFixed(0) : 0}% dos registos` },
           { label: "Campos Críticos", value: checkResults.filter(r => r.count > total * 0.1).length, color: "text-critical", desc: "com >10% de falhas" },
           { label: "Gestores com Falhas", value: managerIssues.filter(m => m.errors > 0).length, color: "text-info", desc: "precisam corrigir dados" },
         ].map(({ label, value, color, desc }) => (
           <div key={label} className="gcr-card p-4 text-center">
-            <p className="text-label text-text-secondary mb-1">{label}</p>
+            <p className="text-label text-on-surface-variant mb-1">{label}</p>
             <p className={`text-metric ${color}`}>{value}</p>
-            <p className="text-caption text-text-secondary mt-1">{desc}</p>
+            <p className="text-caption text-on-surface-variant mt-1">{desc}</p>
           </div>
         ))}
       </div>
@@ -253,21 +253,21 @@ function QualityTab({ cases }: { cases: GBVCase[] }) {
               <div key={r.id}>
                 <button
                   onClick={() => setFocusField(focusField === r.id ? null : r.id)}
-                  className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 transition-colors text-left"
+                  className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-surface-container-low transition-colors text-left"
                 >
                   <div className="flex items-center gap-3 min-w-0">
                     <div className={`w-2 h-2 rounded-full shrink-0 ${sevDot}`} />
                     <div className="min-w-0">
-                      <p className="text-body font-medium text-text-primary">{r.desc}</p>
-                      <p className="text-caption text-text-secondary truncate">{r.count} casos ({r.pct.toFixed(1)}%)</p>
+                      <p className="text-body font-medium text-on-surface">{r.desc}</p>
+                      <p className="text-caption text-on-surface-variant truncate">{r.count} casos ({r.pct.toFixed(1)}%)</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-3 shrink-0 ml-3">
-                    <div className="w-24 h-2 bg-gray-100 rounded-full overflow-hidden">
+                    <div className="w-24 h-2 bg-surface-container rounded-full overflow-hidden">
                       <div className={`h-full rounded-full ${sevDot}`} style={{ width: `${Math.min(r.pct, 100)}%` }} />
                     </div>
-                    <span className={`px-2 py-0.5 rounded text-caption font-medium ${focusField === r.id ? "bg-primary/10 text-primary" : "bg-gray-100 text-text-secondary"}`}>
-                      {focusField === r.id ? "▲" : "▼"}
+                    <span className={`px-2 py-0.5 rounded text-caption font-medium ${focusField === r.id ? "bg-primary/10 text-primary" : "bg-surface-container text-on-surface-variant"}`}>
+                      {focusField === r.id ? "\u25B2" : "\u25BC"}
                     </span>
                   </div>
                 </button>
@@ -281,12 +281,12 @@ function QualityTab({ cases }: { cases: GBVCase[] }) {
                             {c.case_id || c.record_id || "N/A"}
                           </a>
                           <div className="flex items-center gap-2 shrink-0">
-                            <span className="text-text-secondary">{c.district || "N/A"}</span>
-                            <span className="text-text-secondary">{c.project}</span>
+                            <span className="text-on-surface-variant">{c.district || "N/A"}</span>
+                            <span className="text-on-surface-variant">{c.project}</span>
                           </div>
                         </div>
-                      )) : <p className="text-text-secondary text-sm py-2">Nenhum caso encontrado</p>}
-                      {r.cases.length > 50 && <p className="text-caption text-text-secondary">+ {r.cases.length - 50} casos não listados</p>}
+                      )) : <p className="text-on-surface-variant text-sm py-2">Nenhum caso encontrado</p>}
+                      {r.cases.length > 50 && <p className="text-caption text-on-surface-variant">+ {r.cases.length - 50} casos não listados</p>}
                     </div>
                   </div>
                 )}
@@ -299,15 +299,15 @@ function QualityTab({ cases }: { cases: GBVCase[] }) {
       {/* Two columns: Problematic cases + Manager issues */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         <GCRCard title="Casos com Mais Falhas de Preenchimento">
-          <p className="text-caption text-text-secondary mb-3">Estes casos precisam de correção prioritária no ActivityInfo</p>
+          <p className="text-caption text-on-surface-variant mb-3">Estes casos precisam de correção prioritária no ActivityInfo</p>
           <div className="space-y-2 max-h-80 overflow-y-auto">
             {caseProblemScore.slice(0, 20).map(({ case: c, errors, score }, i) => (
-              <div key={c.case_id || i} className="flex items-center justify-between py-2 px-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors">
+              <div key={c.case_id || i} className="flex items-center justify-between py-2 px-3 rounded-lg bg-surface-container-low hover:bg-surface-container transition-colors">
                 <div className="min-w-0 flex-1">
                   <a href={`/cases/${c.record_id || encodeURIComponent(c.case_id || "")}`} className="text-primary hover:underline font-mono text-caption font-semibold">
                     {c.case_id || c.record_id || "N/A"}
                   </a>
-                  <div className="flex items-center gap-2 text-caption text-text-secondary mt-0.5">
+                  <div className="flex items-center gap-2 text-caption text-on-surface-variant mt-0.5">
                     <span>{c.district || "N/A"}</span>
                     <span>·</span>
                     <span>{c.project}</span>
@@ -318,12 +318,12 @@ function QualityTab({ cases }: { cases: GBVCase[] }) {
                     {errors.slice(0, 4).map(e => (
                       <span key={e.id} className="px-1.5 py-0.5 rounded bg-critical/10 text-caption text-critical">{e.label}</span>
                     ))}
-                    {errors.length > 4 && <span className="text-caption text-text-secondary">+{errors.length - 4}</span>}
+                    {errors.length > 4 && <span className="text-caption text-on-surface-variant">+{errors.length - 4}</span>}
                   </div>
                 </div>
                 <div className="text-right shrink-0 ml-3">
-                  <span className={`text-lg font-bold ${score >= 5 ? "text-critical" : score >= 3 ? "text-warning" : "text-text-secondary"}`}>{score}</span>
-                  <p className="text-caption text-text-secondary">falhas</p>
+                  <span className={`text-lg font-bold ${score >= 5 ? "text-critical" : score >= 3 ? "text-warning" : "text-on-surface-variant"}`}>{score}</span>
+                  <p className="text-caption text-on-surface-variant">falhas</p>
                 </div>
               </div>
             ))}
@@ -331,19 +331,19 @@ function QualityTab({ cases }: { cases: GBVCase[] }) {
         </GCRCard>
 
         <GCRCard title="Gestores com Dados Incompletos">
-          <p className="text-caption text-text-secondary mb-3">Gestores que precisam atualizar registos no ActivityInfo</p>
+          <p className="text-caption text-on-surface-variant mb-3">Gestores que precisam atualizar registos no ActivityInfo</p>
           <div className="space-y-3">
             {managerIssues.filter(m => m.errors > 0).slice(0, 15).map(m => (
               <div key={m.manager}>
                 <div className="flex justify-between text-label mb-1">
-                  <span className="text-text-secondary truncate mr-2">{m.manager}</span>
+                  <span className="text-on-surface-variant truncate mr-2">{m.manager}</span>
                   <span className={`font-semibold ${m.errorCases > m.total * 0.5 ? "text-critical" : "text-warning"}`}>{m.errorCases}/{m.total} casos</span>
                 </div>
-                <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
+                <div className="h-3 bg-surface-container rounded-full overflow-hidden">
                   <div className={`h-full rounded-full ${m.errorCases > m.total * 0.5 ? "bg-critical" : "bg-warning"}`}
                     style={{ width: `${m.total > 0 ? (m.errorCases / m.total) * 100 : 0}%` }} />
                 </div>
-                <p className="text-caption text-text-secondary mt-0.5">{m.errors} campos em falta no total</p>
+                <p className="text-caption text-on-surface-variant mt-0.5">{m.errors} campos em falta no total</p>
               </div>
             ))}
           </div>
@@ -363,7 +363,7 @@ function QualityTab({ cases }: { cases: GBVCase[] }) {
                     <a href={`/cases/${c.record_id || encodeURIComponent(c.case_id || "")}`} className="text-primary hover:underline font-mono text-caption font-semibold">
                       {c.case_id || c.record_id || "N/A"}
                     </a>
-                    <div className="flex items-center gap-2 text-caption text-text-secondary mt-0.5">
+                    <div className="flex items-center gap-2 text-caption text-on-surface-variant mt-0.5">
                       <span>{c.district || "N/A"}</span>
                       <span>·</span>
                       <span>{c.case_manager || "Sem gestor"}</span>
@@ -375,12 +375,12 @@ function QualityTab({ cases }: { cases: GBVCase[] }) {
                     <p className="text-caption text-critical font-semibold">
                       {Math.floor((Date.now() - new Date(c.identification_date!).getTime()) / 86400000)}d
                     </p>
-                    <p className="text-caption text-text-secondary">sem ref.</p>
+                    <p className="text-caption text-on-surface-variant">sem ref.</p>
                   </div>
                 </div>
               ))}
             </div>
-          ) : <p className="text-text-secondary text-sm">Nenhum caso aberto sem referência há mais de 30 dias</p>;
+          ) : <p className="text-on-surface-variant text-sm">Nenhum caso aberto sem referência há mais de 30 dias</p>;
         })()}
       </GCRCard>
     </div>
@@ -404,10 +404,10 @@ function PathwaysTab({ cases }: { cases: GBVCase[] }) {
         return (
           <div key={key}>
             <div className="flex justify-between text-label mb-1">
-              <span className="text-text-secondary">{label}</span>
+              <span className="text-on-surface-variant">{label}</span>
               <span className="font-semibold">{sim}/{open.length}</span>
             </div>
-            <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+            <div className="h-2 bg-surface-container rounded-full overflow-hidden">
               <div className="h-full rounded-full bg-primary" style={{ width: `${(sim / open.length) * 100}%` }} />
             </div>
           </div>
@@ -430,18 +430,18 @@ function PartnersTab({ cases }: { cases: GBVCase[] }) {
   return (
     <div className="overflow-x-auto">
       <table className="w-full text-body">
-        <thead className="bg-gray-50 border-b border-border">
+        <thead className="bg-surface-container-low border-b border-outline-variant">
           <tr>
-            <th className="text-left px-4 py-3 text-label text-text-secondary">Projeto</th>
-            <th className="text-right px-4 py-3 text-label text-text-secondary">Total</th>
-            <th className="text-right px-4 py-3 text-label text-text-secondary">Abertos</th>
-            <th className="text-right px-4 py-3 text-label text-text-secondary">Encerrados</th>
-            <th className="text-right px-4 py-3 text-label text-text-secondary">Taxa</th>
+            <th className="text-left px-4 py-3 text-label text-on-surface-variant">Projeto</th>
+            <th className="text-right px-4 py-3 text-label text-on-surface-variant">Total</th>
+            <th className="text-right px-4 py-3 text-label text-on-surface-variant">Abertos</th>
+            <th className="text-right px-4 py-3 text-label text-on-surface-variant">Encerrados</th>
+            <th className="text-right px-4 py-3 text-label text-on-surface-variant">Taxa</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-border">
           {rows.map(r => (
-            <tr key={r.name} className="hover:bg-gray-50">
+            <tr key={r.name} className="hover:bg-surface-container-low">
               <td className="px-4 py-3 font-medium">{r.name}</td>
               <td className="px-4 py-3 text-right">{r.total}</td>
               <td className="px-4 py-3 text-right">{r.open}</td>

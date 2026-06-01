@@ -14,7 +14,7 @@ export default function ReferralAssistantPage() {
   const [selectedDistrict, setSelectedDistrict] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
 
-  if (!services || !cases) return <p className="text-text-secondary p-8">Carregando...</p>;
+  if (!services || !cases) return <p className="text-on-surface-variant p-8">Carregando...</p>;
 
   const districts = Array.from(new Set(services.map(s => s.district))).sort();
   const categories = Array.from(new Set(services.map(s => s.service_category))).sort();
@@ -43,15 +43,15 @@ export default function ReferralAssistantPage() {
 
   return (
     <div>
-      <h1 className="text-page-title text-text-primary mb-6">Assistente de Referência</h1>
+      <h1 className="text-page-title text-on-surface mb-6">Assistente de Referência</h1>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-6">
         <GCRCard title="Necessidades de Serviço (Casos Abertos)">
           <div className="space-y-3">
             {serviceNeeds.map(s => (
               <div key={s.label} className="flex items-center justify-between">
-                <span className="text-body text-text-secondary">{s.label}</span>
-                <span className="font-semibold">{s.count} <span className="text-caption text-text-secondary">necessitam</span></span>
+                <span className="text-body text-on-surface-variant">{s.label}</span>
+                <span className="font-semibold">{s.count} <span className="text-caption text-on-surface-variant">necessitam</span></span>
               </div>
             ))}
           </div>
@@ -60,10 +60,10 @@ export default function ReferralAssistantPage() {
         <GCRCard title="Cobertura por Distrito">
           <div className="space-y-2 max-h-80 overflow-y-auto">
             {districtCoverage.map(d => (
-              <div key={d.district} className="flex items-center justify-between py-1.5 border-b border-border last:border-0">
+              <div key={d.district} className="flex items-center justify-between py-1.5 border-b border-outline-variant last:border-0">
                 <div>
                   <span className="text-body font-medium">{d.district}</span>
-                  <span className="text-caption text-text-secondary ml-2">{d.caseCount} casos</span>
+                  <span className="text-caption text-on-surface-variant ml-2">{d.caseCount} casos</span>
                 </div>
                 <GCRBadge color={d.serviceCount > 0 ? "green" : "red"}>
                   {d.serviceCount > 0 ? `${d.serviceCount} serviços` : "Sem serviços"}
@@ -84,26 +84,26 @@ export default function ReferralAssistantPage() {
             <option value="">Todas as categorias</option>
             {categories.map(c => <option key={c} value={c}>{c}</option>)}
           </select>
-          <span className="text-label text-text-secondary self-center">{filtered.length} serviços</span>
+          <span className="text-label text-on-surface-variant self-center">{filtered.length} serviços</span>
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-body">
-            <thead className="bg-gray-50 border-b border-border">
+            <thead className="bg-surface-container-low border-b border-outline-variant">
               <tr>
-                <th className="text-left px-4 py-3 text-label text-text-secondary">Organização</th>
-                <th className="text-left px-4 py-3 text-label text-text-secondary">Categoria</th>
-                <th className="text-left px-4 py-3 text-label text-text-secondary">Tipo</th>
-                <th className="text-left px-4 py-3 text-label text-text-secondary">Distrito</th>
-                <th className="text-left px-4 py-3 text-label text-text-secondary">Contacto</th>
+                <th className="text-left px-4 py-3 text-label text-on-surface-variant">Organização</th>
+                <th className="text-left px-4 py-3 text-label text-on-surface-variant">Categoria</th>
+                <th className="text-left px-4 py-3 text-label text-on-surface-variant">Tipo</th>
+                <th className="text-left px-4 py-3 text-label text-on-surface-variant">Distrito</th>
+                <th className="text-left px-4 py-3 text-label text-on-surface-variant">Contacto</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
               {filtered.map((s, i) => (
-                <tr key={i} className="hover:bg-gray-50">
+                <tr key={i} className="hover:bg-surface-container-low">
                   <td className="px-4 py-3 font-medium">{s.organization}</td>
                   <td className="px-4 py-3"><GCRBadge color="blue">{s.service_category}</GCRBadge></td>
-                  <td className="px-4 py-3 text-text-secondary">{s.service_type}</td>
+                  <td className="px-4 py-3 text-on-surface-variant">{s.service_type}</td>
                   <td className="px-4 py-3">{s.district}</td>
                   <td className="px-4 py-3">
                     <span className="text-caption">{s.focal_point_name}: {s.focal_point_phone}</span>

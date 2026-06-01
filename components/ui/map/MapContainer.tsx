@@ -114,27 +114,27 @@ export default function MapContainer({ markers }: Props) {
     : "relative";
 
   if (!markers || markers.length === 0) {
-    return <div className="h-[500px] rounded-2xl border border-border bg-gray-50 flex items-center justify-center text-text-secondary">Sem dados para exibir</div>;
+    return <div className="h-[500px] rounded-lg border border-outline-variant bg-surface-container-low flex items-center justify-center text-on-surface-variant">Sem dados para exibir</div>;
   }
 
   return (
     <div className={containerClass}>
       {isFullscreen && (
         <div className="absolute top-4 right-4 z-[1000] flex items-center gap-3 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-lg shadow-md">
-          <span className="text-sm font-medium text-text-secondary">Mapa de Distribuição</span>
-          <button onClick={() => setIsFullscreen(false)} className="p-1.5 rounded-md hover:bg-gray-100 transition-colors text-text-secondary" title="Sair da tela cheia">
+          <span className="text-sm font-medium text-on-surface-variant">Mapa de Distribuição</span>
+          <button onClick={() => setIsFullscreen(false)} className="p-1.5 rounded-md hover:bg-surface-container transition-colors text-on-surface-variant" title="Sair da tela cheia">
             <Minimize2 className="w-5 h-5" />
           </button>
         </div>
       )}
       {!isFullscreen && (
         <div className="flex items-center justify-end mb-2">
-          <button onClick={() => setIsFullscreen(true)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-gray-100 hover:bg-gray-200 transition-colors text-caption text-text-secondary" title="Tela cheia">
+          <button onClick={() => setIsFullscreen(true)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-surface-container hover:bg-surface-container-high transition-colors text-caption text-on-surface-variant" title="Tela cheia">
             <Maximize2 className="w-3.5 h-3.5" /> Tela cheia
           </button>
         </div>
       )}
-      <div ref={ref} className={`${isFullscreen ? "h-screen w-screen" : "h-[500px] w-full"} rounded-2xl border border-border`} />
+      <div ref={ref} className={`${isFullscreen ? "h-screen w-screen" : "h-[500px] w-full"} rounded-lg border border-outline-variant`} />
     </div>
   );
 }

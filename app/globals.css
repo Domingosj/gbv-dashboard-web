@@ -10,48 +10,44 @@
 
   body {
     font-family: 'Inter', system-ui, sans-serif;
-    font-size: 15px;
-    line-height: 1.5;
-    color: #1C2434;
-    background-color: #F1F5F9;
+    color: #191c1e;
+    background-color: #f7f9fb;
   }
 
   h1, h2, h3, h4 {
     font-family: 'Inter', system-ui, sans-serif;
-    color: #1C2434;
+    color: #191c1e;
   }
 
   ::selection {
-    background-color: rgba(60, 80, 224, 0.2);
-    color: #1C2434;
+    background-color: rgba(0, 82, 67, 0.15);
+    color: #191c1e;
   }
 
   *:focus-visible {
     outline: none;
-    box-shadow: 0 0 0 3px rgba(60, 80, 224, 0.15);
+    box-shadow: 0 0 0 2px #005243, 0 0 0 4px rgba(0, 82, 67, 0.15);
   }
 
-  /* Remove any explicit @font-face preloads that might conflict */
-  /* Use system fonts instead or lazy-load fonts */
   @font-face {
     font-family: 'Inter', system-ui;
-    font-display: swap; /* Ensures text is visible while font loads */
+    font-display: swap;
   }
 }
 
 @layer components {
   .gcr-card {
-    @apply bg-surface border border-stroke rounded-card;
-    box-shadow: 0px 8px 13px 0px rgba(0, 0, 0, 0.05);
+    @apply bg-surface-container-lowest border border-outline-variant rounded-lg;
+    box-shadow: 0px 4px 15px 0px rgba(15, 23, 42, 0.08);
     transition: all 300ms ease;
   }
 
   .gcr-card:hover {
-    box-shadow: 0px 10px 15px 0px rgba(0, 0, 0, 0.1);
+    box-shadow: 0px 6px 20px 0px rgba(15, 23, 42, 0.12);
   }
 
   .gcr-chip {
-    @apply inline-flex items-center rounded-full px-3 py-1 text-[13px] font-medium;
+    @apply inline-flex items-center rounded-full px-3 py-1 text-[12px] font-semibold;
   }
 
   .gcr-chip-green {
@@ -74,26 +70,26 @@
 
   .gcr-chip-blue {
     @apply gcr-chip;
-    background-color: rgba(60, 80, 224, 0.1);
-    color: #3C50E0;
+    background-color: rgba(0, 82, 67, 0.1);
+    color: #005243;
   }
 
   .gcr-chip-grey {
     @apply gcr-chip;
-    background-color: rgba(174, 183, 192, 0.15);
-    color: #64748B;
+    background-color: rgba(111, 121, 117, 0.1);
+    color: #3f4945;
   }
 
   .gcr-input {
     @apply w-full rounded-lg border px-3.5 py-2.5 text-sm transition-all duration-200;
-    border-color: #E2E8F0;
-    background-color: #FFFFFF;
+    border-color: #bfc9c4;
+    background-color: #ffffff;
     font-family: 'Inter', system-ui, sans-serif;
   }
 
   .gcr-input:focus {
-    border-color: #256B5A;
-    box-shadow: 0 0 0 3px rgba(37, 107, 90, 0.1);
+    border-color: #005243;
+    box-shadow: 0 0 0 2px rgba(0, 82, 67, 0.15);
     outline: none;
   }
 
@@ -104,75 +100,40 @@
 
   .gcr-btn-primary {
     @apply gcr-btn text-white;
-    background-color: #256B5A;
+    background-color: #005243;
   }
 
   .gcr-btn-primary:hover {
-    background-color: #1D594A;
+    background-color: #003d32;
   }
 
   .priority-critical { border-left: 4px solid #D34053; }
   .priority-alto { border-left: 4px solid #FFA70B; }
-  .priority-medio { border-left: 4px solid #3C50E0; }
+  .priority-medio { border-left: 4px solid #005243; }
   .priority-baixo { border-left: 4px solid #219653; }
 }
 
-/* Carousel animations */
 @keyframes shimmer {
-  0% {
-    background-position: -1000px 0;
-  }
-  100% {
-    background-position: 1000px 0;
-  }
+  0% { background-position: -1000px 0; }
+  100% { background-position: 1000px 0; }
 }
 
 @keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateX(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
 }
 
 @keyframes slideOut {
-  from {
-    opacity: 1;
-    transform: translateX(0);
-  }
-  to {
-    opacity: 0;
-    transform: translateX(-20px);
-  }
+  from { opacity: 1; transform: translateX(0); }
+  to { opacity: 0; transform: translateX(-20px); }
 }
 
 @keyframes fadeScaleIn {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
 }
 
-.animate-shimmer {
-  animation: shimmer 3s infinite;
-  background-size: 200% 100%;
-}
-
-.animate-slideIn {
-  animation: slideIn 0.3s ease-out;
-}
-
-.animate-slideOut {
-  animation: slideOut 0.3s ease-in;
-}
-
-.animate-fadeScaleIn {
-  animation: fadeScaleIn 0.3s ease-out;
-}
+.animate-shimmer { animation: shimmer 3s infinite; background-size: 200% 100%; }
+.animate-slideIn { animation: slideIn 0.3s ease-out; }
+.animate-slideOut { animation: slideOut 0.3s ease-in; }
+.animate-fadeScaleIn { animation: fadeScaleIn 0.3s ease-out; }

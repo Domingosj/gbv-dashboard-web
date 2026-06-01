@@ -46,8 +46,8 @@ export function ImageCarousel({
 
   if (!images || images.length === 0) {
     return (
-      <div className="w-full h-96 bg-gray-100 rounded-lg flex items-center justify-center">
-        <p className="text-text-secondary">Sem imagens para exibir</p>
+      <div className="w-full h-96 bg-surface-container rounded-lg flex items-center justify-center">
+        <p className="text-on-surface-variant">Sem imagens para exibir</p>
       </div>
     );
   }
@@ -140,17 +140,17 @@ export function ImageCarousel({
       )}
 
       {/* Info bar */}
-      <div className="flex items-center justify-between px-4 py-2 rounded-lg bg-gray-50">
-        <p className="text-sm text-text-secondary">{current.alt}</p>
+      <div className="flex items-center justify-between px-4 py-2 rounded-lg bg-surface-container-low">
+        <p className="text-sm text-on-surface-variant">{current.alt}</p>
         <button
           onClick={() => setIsPlaying(!isPlaying)}
           className={`text-xs px-3 py-1 rounded-full font-medium transition-all ${
             isPlaying
               ? "bg-primary text-white"
-              : "bg-gray-200 text-text-primary hover:bg-gray-300"
+              : "bg-surface-container-high text-on-surface hover:bg-surface-container-highest"
           }`}
         >
-          {isPlaying ? "●" : "▶"} {isPlaying ? "Reproduzindo" : "Pausado"}
+          {isPlaying ? "Pausar" : "Reproduzir"}
         </button>
       </div>
     </div>

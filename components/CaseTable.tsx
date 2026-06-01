@@ -41,31 +41,24 @@ export default function CaseTable({ cases }: Props) {
   };
 
   const SH = ({ field, children }: { field: keyof GBVCase; children: React.ReactNode }) => (
-    <GCRTCell isHeader className="cursor-pointer hover:text-text-primary" onClick={() => toggleSort(field)}>
-      {children} {sortField === field ? (sortDir === "asc" ? "↑" : "↓") : ""}
+    <GCRTCell isHeader className="cursor-pointer hover:text-on-surface" onClick={() => toggleSort(field)}>
+      {children} {sortField === field ? (sortDir === "asc" ? "\u2191" : "\u2193") : ""}
     </GCRTCell>
   );
 
   return (
     <div>
       <div className="flex gap-4 mb-5">
-        <input
-          type="text"
-          placeholder="Buscar por ID, distrito, gestor, projeto, tipo..."
-          className="gcr-input flex-1"
-          value={search} onChange={e => { setSearch(e.target.value); setPage(0); }}
-        />
+        <input type="text" placeholder="Buscar por ID, distrito, gestor, projeto, tipo..." className="gcr-input flex-1" value={search} onChange={e => { setSearch(e.target.value); setPage(0); }} />
         <select className="gcr-input w-44" value={statusFilter} onChange={e => { setStatusFilter(e.target.value); setPage(0); }}>
           <option value="all">Todos os estados</option>
           <option value="Aberto">Abertos</option>
           <option value="Encerrado">Encerrados</option>
         </select>
-        <span className="text-label text-text-secondary self-center whitespace-nowrap">
-          {filtered.length} casos
-        </span>
+        <span className="text-label text-on-surface-variant self-center whitespace-nowrap">{filtered.length} casos</span>
       </div>
 
-      <div className="overflow-x-auto rounded-card border border-border">
+      <div className="overflow-x-auto rounded-lg border border-outline-variant">
         <GCRTable>
           <GCRTHead>
             <GCRTRow>
@@ -83,20 +76,16 @@ export default function CaseTable({ cases }: Props) {
           <GCRTBody>
             {paged.map((c, i) => (
               <GCRTRow key={c.case_id || i}>
-                <GCRTCell>{c.priority_icon || "–"}</GCRTCell>
+                <GCRTCell>{c.priority_icon || "\u2013"}</GCRTCell>
                 <GCRTCell className="font-mono text-caption">
-                  <a href={`/cases/${c.record_id || encodeURIComponent(c.case_id || "")}`} className="text-primary hover:underline font-semibold">
-                    {c.case_id?.slice(0, 22)}
-                  </a>
+                  <a href={`/cases/${c.record_id || encodeURIComponent(c.case_id || "")}`} className="text-primary hover:underline font-semibold">{c.case_id?.slice(0, 22)}</a>
                 </GCRTCell>
                 <GCRTCell>{c.district || "N/A"}</GCRTCell>
                 <GCRTCell className="max-w-[160px] truncate">{fmtViolence(c.violence_type)}</GCRTCell>
                 <GCRTCell>{c.age_group || "N/A"}</GCRTCell>
                 <GCRTCell className="max-w-[120px] truncate">{c.project || "N/A"}</GCRTCell>
                 <GCRTCell className="max-w-[120px] truncate">{c.case_manager || "N/A"}</GCRTCell>
-                <GCRTCell>
-                  <GCRBadge color={c.case_status === "Aberto" ? "green" : "grey"}>{c.case_status || "N/A"}</GCRBadge>
-                </GCRTCell>
+                <GCRTCell><GCRBadge color={c.case_status === "Aberto" ? "green" : "grey"}>{c.case_status || "N/A"}</GCRBadge></GCRTCell>
                 <GCRTCell className="font-semibold">{c.risk_score || 0}</GCRTCell>
               </GCRTRow>
             ))}
@@ -106,25 +95,18 @@ export default function CaseTable({ cases }: Props) {
 
       {totalPages > 1 && (
         <div className="flex items-center justify-between mt-4">
-          <p className="text-caption text-text-secondary">
-            Mostrando {page * perPage + 1}–{Math.min((page + 1) * perPage, filtered.length)} de {filtered.length}
-          </p>
+          <p className="text-caption text-on-surface-variant">Mostrando {page * perPage + 1}–{Math.min((page + 1) * perPage, filtered.length)} de {filtered.length}</p>
           <div className="flex gap-1">
-            <button onClick={() => setPage(p => Math.max(0, p - 1))} disabled={page === 0}
-              className="px-3 py-1.5 rounded-md text-sm bg-gray-100 text-text-secondary hover:bg-gray-200 disabled:opacity-40">Anterior</button>
+            <button onClick={() => setPage(p => Math.max(0, p - 1))} disabled={page === 0} className="px-3 py-1.5 rounded-md text-sm bg-surface-container text-on-surface-variant hover:bg-surface-container-high disabled:opacity-40">Anterior</button>
             {Array.from({ length: Math.min(totalPages, 7) }, (_, i) => {
               const start = Math.max(0, Math.min(page - 3, totalPages - 7));
               const p = start + i;
               if (p >= totalPages) return null;
               return (
-                <button key={p} onClick={() => setPage(p)}
-                  className={`px-3 py-1.5 rounded-md text-sm ${p === page ? "bg-primary text-white" : "bg-gray-100 text-text-secondary hover:bg-gray-200"}`}>
-                  {p + 1}
-                </button>
+                <button key={p} onClick={() => setPage(p)} className={`px-3 py-1.5 rounded-md text-sm ${p === page ? "bg-primary text-white" : "bg-surface-container text-on-surface-variant hover:bg-surface-container-high"}`}>{p + 1}</button>
               );
             })}
-            <button onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))} disabled={page >= totalPages - 1}
-              className="px-3 py-1.5 rounded-md text-sm bg-gray-100 text-text-secondary hover:bg-gray-200 disabled:opacity-40">Seguinte</button>
+            <button onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))} disabled={page >= totalPages - 1} className="px-3 py-1.5 rounded-md text-sm bg-surface-container text-on-surface-variant hover:bg-surface-container-high disabled:opacity-40">Seguinte</button>
           </div>
         </div>
       )}

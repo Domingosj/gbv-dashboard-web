@@ -11,7 +11,7 @@ const fetcher = (url: string) => fetch(url).then(r => r.json());
 
 export default function PriorityListPage() {
   const { data: cases } = useSWR<GBVCase[]>("/api/cases?filter=open", fetcher, { refreshInterval: 300000 });
-  if (!cases) return <p className="text-text-secondary p-8">Carregando...</p>;
+  if (!cases) return <p className="text-on-surface-variant p-8">Carregando...</p>;
 
   const critical = cases.filter(c => c.priority_level === "CRÍTICO");
   const alto = cases.filter(c => c.priority_level === "ALTO");
@@ -33,7 +33,7 @@ export default function PriorityListPage() {
 
   return (
     <div>
-      <h1 className="text-page-title text-text-primary mb-6">Lista Prioritária</h1>
+      <h1 className="text-page-title text-on-surface mb-6">Lista Prioritária</h1>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         {[
@@ -43,7 +43,7 @@ export default function PriorityListPage() {
           { label: "Atrasados >30d", value: overdue.length, color: "text-critical" },
         ].map(({ label, value, color }) => (
           <div key={label} className="gcr-card p-4 text-center">
-            <p className="text-label text-text-secondary mb-1">{label}</p>
+            <p className="text-label text-on-surface-variant mb-1">{label}</p>
             <p className={`text-metric ${color}`}>{value}</p>
           </div>
         ))}
@@ -84,7 +84,7 @@ export default function PriorityListPage() {
                 return (
                   <GCRTRow key={c.case_id || i}>
                     <GCRTCell>{c.priority_icon || "–"}</GCRTCell>
-                    <GCRTCell className="font-mono text-caption text-text-secondary">{c.case_id?.slice(0, 18)}</GCRTCell>
+                    <GCRTCell className="font-mono text-caption text-on-surface-variant">{c.case_id?.slice(0, 18)}</GCRTCell>
                     <GCRTCell>{c.district || "N/A"}</GCRTCell>
                     <GCRTCell>{fmtViolence(c.violence_type)}</GCRTCell>
                     <GCRTCell>{c.age_group || "N/A"}</GCRTCell>

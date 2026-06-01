@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Search, BarChart3, Shield, Bot, Monitor, Play, TrendingUp, Activity, Map, PieChart, PanelLeftClose, PanelLeftOpen } from "lucide-react";
+import { Search, BarChart3, Bot, Monitor, Play, TrendingUp, Activity, Map, PieChart, PanelLeftClose, PanelLeftOpen, Network, MessageSquareText } from "lucide-react";
 
 const NAV = [
   { href: "/summary", label: "Resumo Executivo", icon: PieChart },
@@ -11,9 +12,11 @@ const NAV = [
   { href: "/strategy", label: "Desempenho", icon: TrendingUp },
   { href: "/cases", label: "Casos", icon: Search },
   { href: "/analytics", label: "Análises", icon: BarChart3 },
+  { href: "/referral-pathways", label: "Vias de Referência", icon: Network },
   { href: "/map", label: "Mapa", icon: Map },
   { href: "/carousel", label: "Carrossel", icon: Play },
   { href: "/ai", label: "Assistente IA", icon: Bot },
+  { href: "/ai-assistant", label: "Ana (assistant-ui)", icon: MessageSquareText },
 ];
 
 export default function Sidebar() {
@@ -26,18 +29,28 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className={`${collapsed ? "w-16" : "w-56 lg:w-60"} bg-surface border-r border-border min-h-screen flex flex-col shrink-0 transition-all duration-200`}>
-      <div className={`px-3 pt-6 pb-8 ${collapsed ? "text-center" : "px-5"}`}>
+    <aside className={`${collapsed ? "w-16" : "w-56 lg:w-60"} bg-surface-container-lowest border-r border-outline-variant min-h-screen flex flex-col shrink-0 transition-all duration-200`}>
+      <div className={`pt-5 pb-6 flex items-center ${collapsed ? "justify-center px-3" : "px-4"}`}>
         {collapsed ? (
-          <Shield className="w-6 h-6 text-primary mx-auto" />
+          <Image
+            src="/gcr-logo.png"
+            alt="GCR"
+            width={32}
+            height={32}
+            className="object-contain"
+            style={{ objectPosition: "left center" }}
+          />
         ) : (
-          <>
-            <h1 className="text-lg font-bold text-primary flex items-center gap-2.5">
-              <Shield className="w-5 h-5" />
-              GCR Dashboard
-            </h1>
-            <p className="text-caption text-text-secondary mt-1.5">Gestão de Casos VBG</p>
-          </>
+          <Link href="/summary">
+            <Image
+              src="/gcr-logo.png"
+              alt="GCR — Para Todas Raparigas"
+              width={180}
+              height={48}
+              className="object-contain object-left"
+              priority
+            />
+          </Link>
         )}
       </div>
 
@@ -48,12 +61,9 @@ export default function Sidebar() {
             <Link
               key={href}
               href={href}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-button text-label transition-all duration-150 ${collapsed ? "justify-center" : "justify-start"} ${
-                isActive
-                  ? "text-primary font-semibold"
-                  : "text-text-secondary hover:text-text-primary hover:bg-gray-50"
+              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-label transition-all duration-150 ${collapsed ? "justify-center" : "justify-start"} ${
+                isActive ? "text-primary font-semibold bg-primary/10" : "text-on-surface-variant hover:text-on-surface hover:bg-surface-container"
               }`}
-              style={isActive ? { backgroundColor: "rgba(37,107,90,0.08)" } : undefined}
               title={collapsed ? label : undefined}
             >
               <Icon className="w-5 h-5 shrink-0" />
@@ -63,21 +73,14 @@ export default function Sidebar() {
         })}
       </nav>
 
-      <div className={`px-3 py-4 border-t border-border text-caption text-text-secondary space-y-2 ${collapsed ? "text-center" : "px-5"}`}>
-        <button
-          onClick={() => setCollapsed(!collapsed)}
-          className="flex items-center gap-2 hover:text-primary transition-colors w-full"
-          title={collapsed ? "Expandir menu" : "Recolher menu"}
-        >
+      <div className={`px-3 py-4 border-t border-outline-variant text-body-sm text-on-surface-variant space-y-2 ${collapsed ? "text-center" : "px-5"}`}>
+        <button onClick={() => setCollapsed(!collapsed)} className="flex items-center gap-2 hover:text-on-surface transition-colors w-full" title={collapsed ? "Expandir menu" : "Recolher menu"}>
           {collapsed ? <PanelLeftOpen className="w-4 h-4 mx-auto" /> : <><PanelLeftClose className="w-3.5 h-3.5 shrink-0" /> Recolher</>}
         </button>
         {!collapsed && (
-          <>
-            <a href="/tv" className="flex items-center gap-2 hover:text-primary transition-colors">
-              <Monitor className="w-3.5 h-3.5" />
-              Modo TV
-            </a>
-          </>
+          <a href="/tv" className="flex items-center gap-2 hover:text-on-surface transition-colors">
+            <Monitor className="w-3.5 h-3.5" /> Modo TV
+          </a>
         )}
       </div>
     </aside>

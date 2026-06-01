@@ -104,8 +104,8 @@ export interface Service {
 }
 
 export const PRIORITY_CONFIG: Record<PriorityLevel, { color: string; bg: string; icon: string }> = {
-  CRÍTICO: { color: "#C65A5A", bg: "rgba(198,90,90,0.08)", icon: "🔴" },
-  ALTO: { color: "#D9A441", bg: "rgba(217,164,65,0.08)", icon: "🟠" },
-  MÉDIO: { color: "#D9A441", bg: "rgba(217,164,65,0.08)", icon: "🟡" },
-  BAIXO: { color: "#2E8B57", bg: "rgba(46,139,87,0.08)", icon: "🟢" },
+  CRÍTICO: { color: "#C65A5A", bg: "rgba(198,90,90,0.08)", icon: "!" },
+  ALTO: { color: "#D9A441", bg: "rgba(217,164,65,0.08)", icon: "!" },
+  MÉDIO: { color: "#D9A441", bg: "rgba(217,164,65,0.08)", icon: "!" },
+  BAIXO: { color: "#2E8B57", bg: "rgba(46,139,87,0.08)", icon: "" },
 };

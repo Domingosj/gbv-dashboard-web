@@ -33,12 +33,12 @@ export const VIOLENCE_SCORES: Record<string, number> = {
   "default": 10,
 } as const;
 
-// Age group scoring mapping
+// Age group scoring mapping — keys match the actual ActivityInfo values ("10 - 14" etc.)
 export const AGE_GROUP_SCORES: Record<string, number> = {
-  "0-11": 25,
-  "12-17": 22,
-  "18-25": 10,
-  "25-49": 5,
+  "10 - 14": 22,
+  "15 - 19": 15,
+  "20 - 24": 10,
+  "25 - 49": 5,
 } as const;
 
 // Perpetrator relationship scoring

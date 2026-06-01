@@ -61,7 +61,7 @@ function MapView({ cases, services }: { cases: GBVCase[]; services: any }) {
     <>
       <GCRCard title="Distribuição de Casos por Distrito">
         <MapContainer markers={markers} />
-        <div className="flex items-center gap-4 mt-3 text-caption text-text-secondary">
+        <div className="flex items-center gap-4 mt-3 text-caption text-on-surface-variant">
           <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-[#256B5A] inline-block" /> ≤10</span>
           <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-[#D9A441] inline-block" /> 11–20</span>
           <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-[#C65A5A] inline-block" /> &gt;20</span>
@@ -71,7 +71,7 @@ function MapView({ cases, services }: { cases: GBVCase[]; services: any }) {
         <GCRCard title="Casos por Distrito">
           <div className="space-y-2 max-h-80 overflow-y-auto">
             {Object.entries(byDistrict).sort((a, b) => b[1] - a[1]).map(([d, c]) => (
-              <div key={d} className="flex items-center justify-between py-1.5 border-b border-border last:border-0">
+              <div key={d} className="flex items-center justify-between py-1.5 border-b border-outline-variant last:border-0">
                 <span className="text-body">{d}</span>
                 <GCRBadge color={c > 10 ? "red" : c > 5 ? "amber" : "blue"}>{c}</GCRBadge>
               </div>
@@ -82,13 +82,13 @@ function MapView({ cases, services }: { cases: GBVCase[]; services: any }) {
           {services ? (
             <div className="space-y-2 max-h-80 overflow-y-auto">
               {Object.entries(svcCounts).sort((a, b) => b[1] - a[1]).map(([d, c]) => (
-                <div key={d} className="flex items-center justify-between py-1.5 border-b border-border last:border-0">
+                <div key={d} className="flex items-center justify-between py-1.5 border-b border-outline-variant last:border-0">
                   <span className="text-body">{d}</span>
                   <GCRBadge color="blue">{c} serviços</GCRBadge>
                 </div>
               ))}
             </div>
-          ) : <p className="text-text-secondary">Carregando...</p>}
+          ) : <p className="text-on-surface-variant">Carregando...</p>}
         </GCRCard>
       </div>
     </>
@@ -103,11 +103,11 @@ export default function MapPage() {
   const open = cases?.filter(c => c.case_status === "Aberto") ?? [];
   const openStats = useMemo(() => aggregateCasesByDistrict(open), [open]);
   const allStats = useMemo(() => aggregateCasesByDistrict(cases ?? []), [cases]);
-  if (!cases) return <p className="text-text-secondary p-8">Carregando...</p>;
+  if (!cases) return <p className="text-on-surface-variant p-8">Carregando...</p>;
 
   return (
     <div>
-      <h1 className="text-page-title text-text-primary mb-1">Mapa Geográfico</h1>
+      <h1 className="text-page-title text-on-surface mb-1">Mapa Geográfico</h1>
       <ModuleTabs tabs={TABS} activeTab={tab} onTabChange={setTab} />
 
       {tab === "open" && (
@@ -120,7 +120,7 @@ export default function MapPage() {
               { label: "Com Referência", value: open.filter(c => hasRef(c)).length, color: "text-success" },
             ].map(({ label, value, color }) => (
               <div key={label} className="gcr-card p-4 text-center">
-                <p className="text-label text-text-secondary mb-1">{label}</p>
+                <p className="text-label text-on-surface-variant mb-1">{label}</p>
                 <p className={`text-metric ${color}`}>{value}</p>
               </div>
             ))}
@@ -139,7 +139,7 @@ export default function MapPage() {
               { label: "Casos Encerrados", value: cases.filter(c => c.case_status === "Encerrado").length, color: "text-success" },
             ].map(({ label, value, color }) => (
               <div key={label} className="gcr-card p-4 text-center">
-                <p className="text-label text-text-secondary mb-1">{label}</p>
+                <p className="text-label text-on-surface-variant mb-1">{label}</p>
                 <p className={`text-metric ${color}`}>{value}</p>
               </div>
             ))}

@@ -56,11 +56,11 @@ export function StatCarousel({
         <div className="space-y-3">
           <div className="flex items-center gap-3">
             {current.icon && <div className="text-3xl">{current.icon}</div>}
-            <p className="text-sm font-medium text-text-secondary">{current.label}</p>
+            <p className="text-sm font-medium text-on-surface-variant">{current.label}</p>
           </div>
 
           <div className="flex items-baseline gap-2">
-            <p className="text-4xl font-bold text-text-primary">{current.value}</p>
+            <p className="text-4xl font-bold text-on-surface">{current.value}</p>
 
             {current.change && (
               <div
@@ -85,7 +85,7 @@ export function StatCarousel({
         <div className="flex items-center justify-between gap-2">
           <button
             onClick={handlePrev}
-            className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors text-text-primary"
+            className="p-2 rounded-lg bg-surface-container hover:bg-surface-container-high transition-colors text-on-surface"
             aria-label="Estatística anterior"
           >
             <ChevronLeft className="w-5 h-5" />
@@ -101,7 +101,7 @@ export function StatCarousel({
                   setIsPlaying(false);
                 }}
                 className={`h-2 rounded-full transition-all ${
-                  idx === currentIndex ? "bg-primary w-6" : "bg-gray-300 w-2 hover:bg-gray-400"
+                  idx === currentIndex ? "bg-primary w-6" : "bg-surface-container-highest w-2 hover:bg-gray-400"
                 }`}
                 aria-label={`Ir para métrica ${idx + 1}`}
               />
@@ -110,7 +110,7 @@ export function StatCarousel({
 
           <button
             onClick={handleNext}
-            className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors text-text-primary"
+            className="p-2 rounded-lg bg-surface-container hover:bg-surface-container-high transition-colors text-on-surface"
             aria-label="Próxima estatística"
           >
             <ChevronRight className="w-5 h-5" />
@@ -119,7 +119,7 @@ export function StatCarousel({
       )}
 
       {/* Counter */}
-      <div className="text-center text-xs text-text-secondary">
+      <div className="text-center text-xs text-on-surface-variant">
         {currentIndex + 1} de {stats.length}
       </div>
     </div>

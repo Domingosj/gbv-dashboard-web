@@ -14,12 +14,10 @@ import { AnalysisPanel } from "@/components/DashboardPanels/AnalysisPanel";
 const fetcher = (url: string) => fetch(url).then(r => r.json());
 
 export default function DashboardPage() {
-  const { data: cases } = useSWR<GBVCase[]>("/api/cases", fetcher, {
-    refreshInterval: 300000,
-  });
+  const { data: cases } = useSWR<GBVCase[]>("/api/cases", fetcher, { refreshInterval: 300000 });
 
   if (!cases) {
-    return <p className="text-text-secondary p-8">Carregando...</p>;
+    return <p className="text-on-surface-variant p-8">Carregando...</p>;
   }
 
   const dashboardPanels = [
@@ -33,30 +31,23 @@ export default function DashboardPage() {
   ];
 
   const panelTitles = [
-    "📊 Operações Diárias",
-    "🚨 Avaliação de Risco",
-    "📈 Distribuição de Casos",
-    "🗺️ Cobertura Geográfica",
-    "📤 Vias de Referência",
-    "✅ Progresso dos Casos",
-    "📊 Todas as Análises",
+    "Operações Diárias",
+    "Avaliação de Risco",
+    "Distribuição de Casos",
+    "Cobertura Geográfica",
+    "Vias de Referência",
+    "Progresso dos Casos",
+    "Todas as Análises",
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 md:p-8">
+    <div className="min-h-screen p-4 md:p-8">
       <div className="max-w-full">
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-text-primary">Painel de Controle GBV</h1>
-          <p className="text-text-secondary mt-2">
-            Navegue pelos indicadores de risco e progresso dos casos
-          </p>
+          <h1 className="text-headline-lg text-on-surface">Painel de Controle GBV</h1>
+          <p className="text-body-md text-on-surface-variant mt-2">Navegue pelos indicadores de risco e progresso dos casos</p>
         </div>
-
-        <DashboardCarousel
-          titles={panelTitles}
-          autoplay={false}
-          interval={8000}
-        >
+        <DashboardCarousel titles={panelTitles} autoplay={false} interval={8000}>
           {dashboardPanels}
         </DashboardCarousel>
       </div>

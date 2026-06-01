@@ -1,5 +1,5 @@
 import { GBVCase } from "./types";
-import { isYes, isUnavailable, matchesAny } from "./text-utils";
+import { isYes, matchesAny } from "./text-utils";
 import { daysBetween, safeParseDate } from "./date-utils";
 
 /**
@@ -46,7 +46,8 @@ export function daysSinceReferral(c: GBVCase): number | null {
 }
 
 /**
- * Count service gaps (unavailable services) - safely
+ * Count service gaps: referral fields that have not been confirmed (not "Sim").
+ * Data only contains "Sim" / "Não" / blank — "indisponível" never appears.
  */
 export function countServiceGaps(c: GBVCase): number {
   const refFields = [
@@ -56,7 +57,17 @@ export function countServiceGaps(c: GBVCase): number {
     "referred_child_protection",
     "referred_safe_house",
   ];
-  return refFields.filter(k => isUnavailable((c as any)[k])).length;
+  return refFields.filter(k => !isYes((c as any)[k])).length;
+}
+
+/**
+ * Check if the survivor has any disability.
+ * The disability field stores specific types ("Deficiência Física", "Deficiência Mental")
+ * or "Nao" — it never stores "Sim", so isYes() always returns false.
+ */
+export function hasDisability(c: GBVCase): boolean {
+  const d = (c.disability || "").trim().toLowerCase();
+  return d !== "" && d !== "nao" && d !== "não";
 }
 
 /**

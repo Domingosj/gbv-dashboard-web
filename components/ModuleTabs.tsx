@@ -1,6 +1,5 @@
 "use client";
 
-
 interface Props {
   tabs: { key: string; label: string }[];
   activeTab: string;
@@ -9,15 +8,15 @@ interface Props {
 
 export default function ModuleTabs({ tabs, activeTab, onTabChange }: Props) {
   return (
-    <div className="flex items-center gap-1 mb-6 p-1 bg-gray-100 rounded-xl w-fit">
+    <div className="flex items-center gap-1 mb-6 p-1 bg-surface-container rounded-lg w-fit">
       {tabs.map(tab => (
         <button
           key={tab.key}
           onClick={() => onTabChange(tab.key)}
-          className={`px-4 py-2 text-label font-medium rounded-lg transition-all ${
+          className={`px-4 py-2 text-label font-medium rounded-md transition-all ${
             activeTab === tab.key
-              ? "bg-white text-text-primary shadow-sm"
-              : "text-text-secondary hover:text-text-primary"
+              ? "bg-surface-container-lowest text-on-surface shadow-sm"
+              : "text-on-surface-variant hover:text-on-surface"
           }`}
         >
           {tab.label}

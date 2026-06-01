@@ -7,8 +7,8 @@ interface Props {
 
 export default function FilterBar({ label = "Filtrar por:", children }: Props) {
   return (
-    <div className="flex items-center flex-wrap gap-3 mb-5 p-3 bg-white rounded-xl border border-border">
-      <span className="text-caption font-medium text-text-secondary uppercase tracking-wider">{label}</span>
+    <div className="flex items-center flex-wrap gap-3 mb-5 p-3 bg-surface-container-lowest rounded-lg border border-outline-variant">
+      <span className="text-label-caps font-semibold text-on-surface-variant">{label}</span>
       {children}
     </div>
   );

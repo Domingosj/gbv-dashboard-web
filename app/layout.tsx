@@ -6,9 +6,7 @@ import Sidebar from "@/components/Sidebar";
 export const metadata: Metadata = {
   title: "GBV Dashboard",
   description: "Gender-Based Violence Case Management Dashboard",
-  icons: {
-    icon: "/favicon.ico",
-  },
+  icons: { icon: "/favicon.ico" },
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
@@ -18,7 +16,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </head>
-      <body className="bg-background text-text-primary antialiased">
+      <body className="bg-surface text-on-surface antialiased">
         <div className="flex min-h-screen">
           <Sidebar />
           <main className="flex-1 p-6 md:p-8 overflow-auto min-w-0">

@@ -33,7 +33,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
             <AlertTriangle className="w-5 h-5 shrink-0" />
             <div>
               <p className="font-semibold">Erro ao carregar componente</p>
-              <p className="text-sm text-text-secondary">{this.state.error?.message}</p>
+              <p className="text-sm text-on-surface-variant">{this.state.error?.message}</p>
             </div>
           </div>
         )

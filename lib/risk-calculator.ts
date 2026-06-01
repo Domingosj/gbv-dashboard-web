@@ -12,7 +12,7 @@ import {
 } from "./constants";
 import { matchesAny, isYes, normalizePt } from "./text-utils";
 import { daysBetween, safeParseDate, getUrgencyBand } from "./date-utils";
-import { hasReferral, countServiceGaps, isUnsafe } from "./enrich";
+import { hasReferral, countServiceGaps, isUnsafe, hasDisability } from "./enrich";
 
 /**
  * Score violence type using normalized text matching
@@ -100,7 +100,7 @@ export function calculateComprehensiveRiskScore(c: GBVCase): number {
   if (!hasReferral(c)) score += 15;
 
   // Disability bonus
-  if (isYes(c.disability)) score += 10;
+  if (hasDisability(c)) score += 10;
 
   return Math.min(score, 100);
 }
@@ -125,8 +125,8 @@ export function calculateDaysSinceReferral(c: GBVCase): ReferralInfo {
       has_referral: false,
       days_waiting: dw,
       status: "SEM_REFERENCIA",
-      alert: `⚠️ ${dw}d sem referência`,
-      alert_icon: "⚠️",
+      alert: `${dw}d sem referência`,
+      alert_icon: "!",
     };
   }
 
@@ -139,31 +139,31 @@ export function calculateDaysSinceReferral(c: GBVCase): ReferralInfo {
         has_referral: true,
         days_waiting: dw,
         status: "CRITICO",
-        alert: `🔴 ${dw}d sem desfecho`,
-        alert_icon: "🔴",
+        alert: `${dw}d sem desfecho`,
+        alert_icon: "!",
       };
     if (dw > DAYS_THRESHOLDS.HIGH)
       return {
         has_referral: true,
         days_waiting: dw,
         status: "ALTO",
-        alert: `🟠 ${dw}d sem desfecho`,
-        alert_icon: "🟠",
+        alert: `${dw}d sem desfecho`,
+        alert_icon: "!",
       };
     if (dw > DAYS_THRESHOLDS.MEDIUM)
       return {
         has_referral: true,
         days_waiting: dw,
         status: "MEDIO",
-        alert: `🟡 ${dw}d sem desfecho`,
-        alert_icon: "🟡",
+        alert: `${dw}d sem desfecho`,
+        alert_icon: "!",
       };
     return {
       has_referral: true,
       days_waiting: dw,
       status: "RECENTE",
-      alert: `🟢 ${dw}d desde referência`,
-      alert_icon: "🟢",
+      alert: `${dw}d desde referência`,
+      alert_icon: "",
     };
   }
   return {
@@ -171,7 +171,7 @@ export function calculateDaysSinceReferral(c: GBVCase): ReferralInfo {
     days_waiting: 0,
     status: "ENCERRADO",
     alert: "Caso encerrado",
-    alert_icon: "✅",
+    alert_icon: "",
   };
 }
 
@@ -266,10 +266,10 @@ export function prioritizeCases(cases: GBVCase[]): GBVCase[] {
       else level = "BAIXO";
 
       const icons: Record<string, string> = {
-        CRÍTICO: "🔴",
-        ALTO: "🟠",
-        MÉDIO: "🟡",
-        BAIXO: "🟢",
+        CRÍTICO: "!",
+        ALTO: "!",
+        MÉDIO: "!",
+        BAIXO: "",
       };
 
       return {

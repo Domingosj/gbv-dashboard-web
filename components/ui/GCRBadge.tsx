@@ -5,7 +5,7 @@ const COLORS: Record<Color, string> = {
   red: "bg-danger/10 text-danger",
   amber: "bg-warning/10 text-warning",
   blue: "bg-primary/10 text-primary",
-  grey: "bg-inactive/20 text-body",
+  grey: "bg-outline/10 text-on-surface-variant",
 };
 
 interface Props {
@@ -17,7 +17,7 @@ interface Props {
 
 export default function GCRBadge({ color = "grey", children, className = "", dot = false }: Props) {
   return (
-    <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[12px] font-semibold ${COLORS[color]} ${className}`}>
+    <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[12px] font-semibold leading-none ${COLORS[color]} ${className}`}>
       {dot && <span className={`w-1.5 h-1.5 rounded-full bg-current`} />}
       {children}
     </span>

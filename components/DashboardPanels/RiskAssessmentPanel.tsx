@@ -30,48 +30,54 @@ export function RiskAssessmentPanel({ cases }: { cases: GBVCase[] }) {
     }).length,
   };
 
+  const cardStyle = (color: "red" | "amber" | "blue") => {
+    const colors = {
+      red: { border: "2px solid rgba(211, 64, 83, 0.25)", background: "rgba(211, 64, 83, 0.06)", icon: "#D34053", text: "#93000a" },
+      amber: { border: "2px solid rgba(255, 167, 11, 0.25)", background: "rgba(255, 167, 11, 0.06)", icon: "#FFA70B", text: "#644119" },
+      blue: { border: "2px solid rgba(0, 82, 67, 0.25)", background: "rgba(0, 82, 67, 0.06)", icon: "#005243", text: "#005141" },
+    };
+    return colors[color];
+  };
+
   return (
     <div className="space-y-6">
-      <h3 className="text-lg font-semibold text-text-primary">Avaliação de Risco e Segurança</h3>
+      <h3 className="text-headline-lg text-on-surface">Avaliação de Risco e Segurança</h3>
 
-      {/* Risk indicators */}
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
         {[
-          { label: "Críticos", value: risks.critical, icon: AlertTriangle, color: "red", style: { border: "2px solid #fecaca", background: "#fef2f2", iconColor: "#dc2626", textColor: "#b91c1c" } },
-          { label: "Não Seguras", value: risks.unsafe, icon: AlertTriangle, color: "red", style: { border: "2px solid #fecaca", background: "#fef2f2", iconColor: "#dc2626", textColor: "#b91c1c" } },
-          { label: "Sem Plano Segurança", value: risks.noSafety, icon: Shield, color: "amber", style: { border: "2px solid #fde68a", background: "#fffbeb", iconColor: "#d97706", textColor: "#b45309" } },
-          { label: "Menores Envolvidos", value: risks.minor, icon: Users, color: "blue", style: { border: "2px solid #bfdbfe", background: "#eff6ff", iconColor: "#2563eb", textColor: "#1d4ed8" } },
-          { label: "Incidentes Anteriores", value: risks.prev, icon: Heart, color: "amber", style: { border: "2px solid #fde68a", background: "#fffbeb", iconColor: "#d97706", textColor: "#b45309" } },
-          { label: "Perpetrador Familiar", value: risks.familyPerp, icon: AlertTriangle, color: "red", style: { border: "2px solid #fecaca", background: "#fef2f2", iconColor: "#dc2626", textColor: "#b91c1c" } },
-        ].map(({ label, value, icon: Icon, color }) => (
-          <div
-            key={label}
-            className="p-4 rounded-lg text-center"
-            style={{ border: color === "red" ? "2px solid #fecaca" : color === "amber" ? "2px solid #fde68a" : "2px solid #bfdbfe", backgroundColor: color === "red" ? "#fef2f2" : color === "amber" ? "#fffbeb" : "#eff6ff" }}
-          >
-            <Icon className="w-5 h-5 mx-auto mb-2" style={{ color: color === "red" ? "#dc2626" : color === "amber" ? "#d97706" : "#2563eb" }} />
-            <p className="text-xs text-gray-600">{label}</p>
-            <p className="text-2xl font-bold" style={{ color: color === "red" ? "#b91c1c" : color === "amber" ? "#b45309" : "#1d4ed8" }}>{value}</p>
-          </div>
-        ))}
+          { label: "Críticos", value: risks.critical, icon: AlertTriangle, color: "red" as const },
+          { label: "Não Seguras", value: risks.unsafe, icon: AlertTriangle, color: "red" as const },
+          { label: "Sem Plano Segurança", value: risks.noSafety, icon: Shield, color: "amber" as const },
+          { label: "Menores Envolvidos", value: risks.minor, icon: Users, color: "blue" as const },
+          { label: "Incidentes Anteriores", value: risks.prev, icon: Heart, color: "amber" as const },
+          { label: "Perpetrador Familiar", value: risks.familyPerp, icon: AlertTriangle, color: "red" as const },
+        ].map(({ label, value, icon: Icon, color }) => {
+          const s = cardStyle(color);
+          return (
+            <div key={label} className="p-4 rounded-xl text-center" style={{ border: s.border, backgroundColor: s.background }}>
+              <Icon className="w-5 h-5 mx-auto mb-2" style={{ color: s.icon }} />
+              <p className="text-caption text-on-surface-variant">{label}</p>
+              <p className="text-metric font-bold" style={{ color: s.text }}>{value}</p>
+            </div>
+          );
+        })}
       </div>
 
-      {/* Cases table */}
-      <div className="rounded-lg border border-border overflow-hidden">
-        <div className="bg-gray-100 p-4">
-          <h4 className="text-sm font-semibold text-text-primary">Detalhes dos Casos Abertos</h4>
+      <div className="rounded-lg border border-outline-variant overflow-hidden">
+        <div className="bg-surface-container p-4 border-b border-outline-variant">
+          <h4 className="text-label font-semibold text-on-surface">Detalhes dos Casos Abertos</h4>
         </div>
-        <div className="max-h-60 overflow-y-auto">
+        <div className="max-h-60 overflow-y-auto divide-y divide-outline-variant/50">
           {open.length === 0 ? (
-            <div className="p-4 text-center text-text-secondary text-sm">
+            <div className="p-4 text-center text-on-surface-variant text-body-sm">
               Nenhum caso aberto para exibir.
             </div>
           ) : (
             open.map((gbvCase) => (
               <GCRCard key={gbvCase.case_id || gbvCase.record_id}>
-                <div className="text-sm space-y-1">
-                  <p className="font-semibold text-text-primary">{gbvCase.case_id}</p>
-                  <p className="text-text-secondary">{gbvCase.district || "N/A"} - {gbvCase.violence_type_short || gbvCase.violence_type || "N/A"}</p>
+                <div className="text-body-sm space-y-1">
+                  <p className="font-semibold text-on-surface font-mono text-data-sm">{gbvCase.case_id}</p>
+                  <p className="text-on-surface-variant">{gbvCase.district || "N/A"} - {gbvCase.violence_type_short || gbvCase.violence_type || "N/A"}</p>
                 </div>
               </GCRCard>
             ))

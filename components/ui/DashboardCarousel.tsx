@@ -5,7 +5,7 @@ import { ChevronLeft, ChevronRight, Maximize2, Minimize2 } from "lucide-react";
 import { getNextIndex } from "@/lib/carousel-utils";
 
 interface DashboardCarouselProps {
-  children: React.ReactNode[]; // Array of dashboard panels
+  children: React.ReactNode[];
   titles: string[];
   autoplay?: boolean;
   interval?: number;
@@ -54,16 +54,15 @@ export function DashboardCarousel({
   }, [handleKeyDown]);
 
   const containerClass = isFullscreen
-    ? "fixed inset-0 z-50 bg-white rounded-none"
-    : "relative w-full rounded-xl shadow-lg overflow-hidden";
+    ? "fixed inset-0 z-50 bg-surface-container-lowest rounded-none"
+    : "relative w-full rounded-lg border border-outline-variant overflow-hidden";
 
   return (
     <div className={containerClass}>
-      {/* Header */}
       <div className="bg-gradient-to-r from-primary to-primary/80 text-white p-4 flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-bold">{titles[currentIndex]}</h2>
-          <p className="text-sm text-white/80">
+          <h2 className="text-title-md font-bold">{titles[currentIndex]}</h2>
+          <p className="text-body-sm text-white/80">
             {currentIndex + 1} de {totalPanels}
           </p>
         </div>
@@ -76,9 +75,7 @@ export function DashboardCarousel({
         </button>
       </div>
 
-      {/* Content area */}
-      <div className={`relative ${isFullscreen ? "h-[calc(100vh-120px)]" : "h-full min-h-96"} overflow-hidden bg-white`}>
-        {/* Panels */}
+      <div className={`relative ${isFullscreen ? "h-[calc(100vh-120px)]" : "h-full min-h-96"} overflow-hidden bg-surface-container-lowest`}>
         <div className="relative w-full h-full">
           {Array.isArray(children) &&
             children.map((child, idx) => (
@@ -98,18 +95,15 @@ export function DashboardCarousel({
         </div>
       </div>
 
-      {/* Navigation bar */}
-      <div className="bg-gray-50 border-t border-border px-4 py-4 flex items-center justify-between">
-        {/* Previous button */}
+      <div className="bg-surface-container border-t border-outline-variant px-4 py-4 flex items-center justify-between">
         <button
           onClick={handlePrev}
-          className="p-2 rounded-lg bg-gray-200 hover:bg-gray-300 transition-colors text-gray-700"
+          className="p-2 rounded-lg bg-surface-container-high hover:bg-surface-container-highest transition-colors text-on-surface"
           aria-label="Anterior"
         >
           <ChevronLeft className="w-5 h-5" />
         </button>
 
-        {/* Indicators */}
         <div className="flex gap-1.5 flex-1 justify-center mx-4">
           {Array(totalPanels)
             .fill(0)
@@ -120,7 +114,7 @@ export function DashboardCarousel({
                 className={`h-2 rounded-full transition-all ${
                   idx === currentIndex
                     ? "bg-primary w-8"
-                    : "bg-gray-300 w-2 hover:bg-gray-400"
+                    : "bg-outline-variant w-2 hover:bg-outline"
                 }`}
                 aria-label={`Ir para slide ${idx + 1}`}
                 title={titles[idx]}
@@ -128,19 +122,17 @@ export function DashboardCarousel({
             ))}
         </div>
 
-        {/* Next button */}
         <button
           onClick={handleNext}
-          className="p-2 rounded-lg bg-gray-200 hover:bg-gray-300 transition-colors text-gray-700"
+          className="p-2 rounded-lg bg-surface-container-high hover:bg-surface-container-highest transition-colors text-on-surface"
           aria-label="Próximo"
         >
           <ChevronRight className="w-5 h-5" />
         </button>
       </div>
 
-      {/* Keyboard shortcut hint */}
-      <div className="absolute bottom-16 right-4 text-xs text-text-secondary opacity-60 pointer-events-none">
-        ⌨️ ← →
+      <div className="absolute bottom-16 right-4 text-xs text-on-surface-variant opacity-60 pointer-events-none">
+        Setas ← →
       </div>
     </div>
   );

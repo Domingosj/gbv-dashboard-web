@@ -18,6 +18,7 @@ const fetcher = (url: string) => fetch(url).then(r => r.json());
 const TABS = [
   { key: "portfolio", label: "Portfólio" },
   { key: "matrix", label: "Matrix Mensal" },
+  { key: "location", label: "Análise Geográfica" },
 ];
 
 export default function StrategyPage() {
@@ -25,14 +26,14 @@ export default function StrategyPage() {
   const [provFilter, setProvFilter] = useState("");
   const [timeRange, setTimeRange] = useState("all");
   const { data: cases } = useSWR<GBVCase[]>("/api/cases", fetcher, { refreshInterval: 300000 });
-  if (!cases) return <p className="text-text-secondary p-8">Carregando...</p>;
+  if (!cases) return <p className="text-on-surface-variant p-8">Carregando...</p>;
 
   const provinces = Array.from(new Set(cases.map(c => c.province).filter((d): d is string => !!d))).sort();
   const filtered = provFilter ? cases.filter(c => c.province === provFilter) : cases;
 
   return (
     <div>
-      <h1 className="text-page-title text-text-primary mb-1">Desempenho dos Projectos</h1>
+      <h1 className="text-page-title text-on-surface mb-1">Desempenho dos Projectos</h1>
       <ModuleTabs tabs={TABS} activeTab={tab} onTabChange={setTab} />
       <FilterBar>
         <select className="gcr-input w-56" value={provFilter} onChange={e => setProvFilter(e.target.value)}>
@@ -42,6 +43,7 @@ export default function StrategyPage() {
       </FilterBar>
       {tab === "portfolio" && <PortfolioTab cases={filtered} />}
       {tab === "matrix" && <MatrixTab cases={filtered} timeRange={timeRange} setTimeRange={setTimeRange} />}
+      {tab === "location" && <LocationTab cases={filtered} />}
     </div>
   );
 }
@@ -120,7 +122,7 @@ function MatrixTab({ cases, timeRange, setTimeRange }: { cases: GBVCase[]; timeR
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-4">
-        <h3 className="text-section-title text-text-primary">Casos por Projeto por Mês</h3>
+        <h3 className="text-section-title text-on-surface">Casos por Projeto por Mês</h3>
         <Select value={timeRange} onValueChange={setTimeRange}>
           <SelectTrigger className="w-40 rounded-lg bg-surface border border-stroke" aria-label="Período">
             <SelectValue placeholder="Todos os períodos" />
@@ -141,27 +143,27 @@ function MatrixTab({ cases, timeRange, setTimeRange }: { cases: GBVCase[]; timeR
             {/* Year header row */}
             <thead>
               <tr className="border-b border-stroke">
-                <th className="sticky left-0 bg-surface z-10 px-3 py-2 text-left text-label text-text-secondary min-w-[160px]">Projeto</th>
+                <th className="sticky left-0 bg-surface z-10 px-3 py-2 text-left text-label text-on-surface-variant min-w-[160px]">Projeto</th>
                 {yearGroups.map(g => (
                   <th key={g.year} colSpan={g.cols.length} className={`px-2 py-2 text-center text-label border-l border-stroke transition-colors ${hoveredCell && g.cols.some((_, ci) => {
                     const globalIdx = yearGroups.slice(0, yearGroups.indexOf(g)).reduce((s, g2) => s + g2.cols.length, 0) + ci;
                     return hoveredCell.col === globalIdx;
-                  }) ? "bg-primary/10 text-primary" : "text-text-secondary"}`}>{g.year}</th>
+                  }) ? "bg-primary/10 text-primary" : "text-on-surface-variant"}`}>{g.year}</th>
                 ))}
-                <th className="px-3 py-2 text-right text-label text-text-secondary border-l border-stroke min-w-[60px]">Total</th>
+                <th className="px-3 py-2 text-right text-label text-on-surface-variant border-l border-stroke min-w-[60px]">Total</th>
               </tr>
               {/* Month header row */}
-              <tr className="border-b border-stroke bg-gray-50">
-                <th className="sticky left-0 bg-gray-50 z-10 px-3 py-2 text-left text-caption text-text-secondary font-medium"></th>
+              <tr className="border-b border-stroke bg-surface-container-low">
+                <th className="sticky left-0 bg-surface-container-low z-10 px-3 py-2 text-left text-caption text-on-surface-variant font-medium"></th>
                 {months.map((m, ci) => (
-                  <th key={m} className={`px-2 py-2 text-center text-caption font-medium border-l border-stroke w-14 transition-colors ${hoveredCell?.col === ci ? "bg-primary/10 text-primary" : "text-text-secondary"}`}
+                  <th key={m} className={`px-2 py-2 text-center text-caption font-medium border-l border-stroke w-14 transition-colors ${hoveredCell?.col === ci ? "bg-primary/10 text-primary" : "text-on-surface-variant"}`}
                     onMouseEnter={() => setHoveredCell(prev => prev ? { ...prev, col: ci } : { row: 0, col: ci })}
                     onMouseLeave={() => setHoveredCell(null)}
                   >
                     {{ "01":"Jan","02":"Fev","03":"Mar","04":"Abr","05":"Mai","06":"Jun","07":"Jul","08":"Ago","09":"Set","10":"Out","11":"Nov","12":"Dez" }[m.slice(5, 7)] || m.slice(5, 7)}
                   </th>
                 ))}
-                <th className="px-3 py-2 text-right text-caption text-text-secondary font-medium border-l border-stroke"></th>
+                <th className="px-3 py-2 text-right text-caption text-on-surface-variant font-medium border-l border-stroke"></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-stroke">
@@ -170,8 +172,8 @@ function MatrixTab({ cases, timeRange, setTimeRange }: { cases: GBVCase[]; timeR
                 const cellLink = (project: string, month: string, count: number) =>
                   count > 0 ? `/cases?project=${encodeURIComponent(project)}&month=${month}` : undefined;
                 return (
-                  <tr key={r.project} className={`transition-colors ${isRowHovered ? "bg-primary/5" : "hover:bg-gray-50"}`}>
-                    <td className={`sticky left-0 px-3 py-2 font-medium text-text-primary text-body truncate max-w-[160px] transition-colors ${isRowHovered ? "bg-primary/10" : "bg-surface"}`} title={r.project}>{r.project}</td>
+                  <tr key={r.project} className={`transition-colors ${isRowHovered ? "bg-primary/5" : "hover:bg-surface-container-low"}`}>
+                    <td className={`sticky left-0 px-3 py-2 font-medium text-on-surface text-body truncate max-w-[160px] transition-colors ${isRowHovered ? "bg-primary/10" : "bg-surface"}`} title={r.project}>{r.project}</td>
                     {r.cells.map((v, ci) => {
                       const isHovered = hoveredCell?.row === ri && hoveredCell?.col === ci;
                       const isColHovered = hoveredCell?.col === ci;
@@ -193,7 +195,7 @@ function MatrixTab({ cases, timeRange, setTimeRange }: { cases: GBVCase[]; timeR
                         </td>
                       );
                     })}
-                    <td className={`px-3 py-2 text-right font-bold border-l border-stroke transition-colors ${isRowHovered ? "bg-primary/5 text-primary" : "text-text-primary"}`}>
+                    <td className={`px-3 py-2 text-right font-bold border-l border-stroke transition-colors ${isRowHovered ? "bg-primary/5 text-primary" : "text-on-surface"}`}>
                       <div className="flex items-center justify-end gap-1.5">
                         <span>{r.total}</span>
                         <span className="w-2 h-2 rounded-full" style={{ backgroundColor: `hsl(${145 - (r.total / maxTotal) * 40}, ${30 + (r.total / maxTotal) * 40}%, ${60 - (r.total / maxTotal) * 20}%)` }} />
@@ -205,9 +207,9 @@ function MatrixTab({ cases, timeRange, setTimeRange }: { cases: GBVCase[]; timeR
             </tbody>
             {/* Total row */}
             {totalRow && (
-              <tfoot className="border-t-2 border-stroke bg-gray-50">
+              <tfoot className="border-t-2 border-stroke bg-surface-container-low">
                 <tr>
-                  <td className="sticky left-0 bg-gray-50 z-10 px-3 py-2 font-bold text-text-primary text-body">Total</td>
+                  <td className="sticky left-0 bg-surface-container-low z-10 px-3 py-2 font-bold text-on-surface text-body">Total</td>
                   {totalRow.cells.map((v, ci) => {
                     const intensity = maxInCol[ci] > 0 ? v / maxInCol[ci] : 0;
                     return (
@@ -217,19 +219,72 @@ function MatrixTab({ cases, timeRange, setTimeRange }: { cases: GBVCase[]; timeR
                       </td>
                     );
                   })}
-                  <td className="px-3 py-2 text-right font-bold text-text-primary border-l border-stroke">{totalRow.total}</td>
+                  <td className="px-3 py-2 text-right font-bold text-on-surface border-l border-stroke">{totalRow.total}</td>
                 </tr>
               </tfoot>
             )}
           </table>
         </div>
       ) : (
-        <p className="text-text-secondary text-sm py-8 text-center">Sem dados para o período selecionado</p>
+        <p className="text-on-surface-variant text-sm py-8 text-center">Sem dados para o período selecionado</p>
       )}
 
-      <p className="text-caption text-text-secondary">
+      <p className="text-caption text-on-surface-variant">
         {matrix.length} projetos · {months.length} meses · {matrix.reduce((s, r) => s + r.total, 0)} casos no total
       </p>
+    </div>
+  );
+}
+
+function LocationTab({ cases }: { cases: GBVCase[] }) {
+  const rows = useMemo(() => {
+    const groups: Record<string, { project: string; province: string; district: string; total: number; open: number; closed: number; critical: number }> = {};
+    for (const c of cases) {
+      if (!c.province && !c.district) continue;
+      const key = `${c.project || "Sem projeto"}||${c.province || "Sem província"}||${c.district || "Sem distrito"}`;
+      if (!groups[key]) groups[key] = { project: c.project || "Sem projeto", province: c.province || "Sem província", district: c.district || "Sem distrito", total: 0, open: 0, closed: 0, critical: 0 };
+      groups[key].total++;
+      if (c.case_status === "Aberto") groups[key].open++;
+      if (c.case_status === "Encerrado") groups[key].closed++;
+      if (c.priority_level === "CRÍTICO") groups[key].critical++;
+    }
+    return Object.values(groups)
+      .map(g => ({ ...g, closeRate: g.total ? ((g.closed / g.total) * 100).toFixed(1) : "0" }))
+      .sort((a, b) => b.total - a.total);
+  }, [cases]);
+
+  if (rows.length === 0) return <p className="text-on-surface-variant text-sm py-8 text-center">Sem dados de localização</p>;
+
+  return (
+    <div className="overflow-x-auto">
+      <table className="w-full text-body">
+        <thead className="bg-surface-container-low border-b border-outline-variant">
+          <tr>
+            <th className="text-left px-4 py-3 text-label text-on-surface-variant">Projeto</th>
+            <th className="text-left px-4 py-3 text-label text-on-surface-variant">Província</th>
+            <th className="text-left px-4 py-3 text-label text-on-surface-variant">Distrito</th>
+            <th className="text-right px-4 py-3 text-label text-on-surface-variant">Total</th>
+            <th className="text-right px-4 py-3 text-label text-on-surface-variant">Abertos</th>
+            <th className="text-right px-4 py-3 text-label text-on-surface-variant">Encerrados</th>
+            <th className="text-right px-4 py-3 text-label text-on-surface-variant">Tx Encerramento</th>
+            <th className="text-right px-4 py-3 text-label text-on-surface-variant">Críticos</th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-border">
+          {rows.map((r, i) => (
+            <tr key={i} className="hover:bg-surface-container-low">
+              <td className="px-4 py-3 font-medium">{r.project}</td>
+              <td className="px-4 py-3 text-on-surface-variant">{r.province}</td>
+              <td className="px-4 py-3 text-on-surface-variant">{r.district}</td>
+              <td className="px-4 py-3 text-right">{r.total}</td>
+              <td className="px-4 py-3 text-right">{r.open}</td>
+              <td className="px-4 py-3 text-right">{r.closed}</td>
+              <td className="px-4 py-3 text-right font-semibold">{r.closeRate}%</td>
+              <td className={`px-4 py-3 text-right ${r.critical > 0 ? "text-critical font-semibold" : ""}`}>{r.critical}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
@@ -249,27 +304,27 @@ function PortfolioTab({ cases }: { cases: GBVCase[] }) {
   return (
     <div className="overflow-x-auto">
       <table className="w-full text-body">
-        <thead className="bg-gray-50 border-b border-border">
+        <thead className="bg-surface-container-low border-b border-outline-variant">
           <tr>
-            <th className="text-left px-4 py-3 text-label text-text-secondary">Projeto</th>
-            <th className="text-right px-4 py-3 text-label text-text-secondary">Total</th>
-            <th className="text-right px-4 py-3 text-label text-text-secondary">Abertos</th>
-            <th className="text-right px-4 py-3 text-label text-text-secondary">Encerrados</th>
-            <th className="text-right px-4 py-3 text-label text-text-secondary">Tx Encerramento</th>
-            <th className="text-right px-4 py-3 text-label text-text-secondary">Críticos</th>
-            <th className="text-right px-4 py-3 text-label text-text-secondary">Distritos</th>
+            <th className="text-left px-4 py-3 text-label text-on-surface-variant">Projeto</th>
+            <th className="text-right px-4 py-3 text-label text-on-surface-variant">Total</th>
+            <th className="text-right px-4 py-3 text-label text-on-surface-variant">Abertos</th>
+            <th className="text-right px-4 py-3 text-label text-on-surface-variant">Encerrados</th>
+            <th className="text-right px-4 py-3 text-label text-on-surface-variant">Tx Encerramento</th>
+            <th className="text-right px-4 py-3 text-label text-on-surface-variant">Críticos</th>
+            <th className="text-right px-4 py-3 text-label text-on-surface-variant">Distritos</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-border">
           {rows.map(r => (
-            <tr key={r.name} className="hover:bg-gray-50">
+            <tr key={r.name} className="hover:bg-surface-container-low">
               <td className="px-4 py-3 font-medium">{r.name}</td>
               <td className="px-4 py-3 text-right">{r.total}</td>
               <td className="px-4 py-3 text-right">{r.open}</td>
               <td className="px-4 py-3 text-right">{r.closed}</td>
               <td className="px-4 py-3 text-right font-semibold">{r.closeRate}%</td>
               <td className={`px-4 py-3 text-right ${r.critical > 0 ? "text-critical font-semibold" : ""}`}>{r.critical}</td>
-              <td className="px-4 py-3 text-right text-text-secondary">{r.districts}</td>
+              <td className="px-4 py-3 text-right text-on-surface-variant">{r.districts}</td>
             </tr>
           ))}
         </tbody>

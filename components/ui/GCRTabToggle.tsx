@@ -14,7 +14,7 @@ export default function GCRTabToggle({ options, onChange, defaultValue }: Props)
   const [selected, setSelected] = useState(defaultValue || options[0]?.value);
 
   return (
-    <div className="inline-flex items-center gap-0.5 rounded-lg bg-gray-100 p-0.5">
+    <div className="inline-flex items-center gap-0.5 rounded-lg bg-surface-container p-0.5">
       {options.map((opt) => (
         <button
           key={opt.value}
@@ -24,8 +24,8 @@ export default function GCRTabToggle({ options, onChange, defaultValue }: Props)
           }}
           className={`px-3 py-1.5 text-label font-medium rounded-md transition-all ${
             selected === opt.value
-              ? "bg-white text-text-primary shadow-sm"
-              : "text-text-secondary hover:text-text-primary"
+              ? "bg-surface-container-lowest text-on-surface shadow-sm"
+              : "text-on-surface-variant hover:text-on-surface"
           }`}
         >
           {opt.label}

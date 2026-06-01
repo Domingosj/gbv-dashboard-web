@@ -53,3 +53,8 @@ out/
 
 # Testing
 __tests__/coverage/
+
+# Raw data (contains sensitive survivor case data)
+raw data/
+*.xlsx
+*.xls

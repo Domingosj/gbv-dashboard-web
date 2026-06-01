@@ -10,6 +10,7 @@ import GCRBadge from "@/components/ui/GCRBadge";
 import { MonthlyChart } from "@/components/Charts";
 import { Carousel } from "@/components/ui/Carousel";
 import { StatCarousel } from "@/components/ui/StatCarousel";
+import { Activity, AlertTriangle, Clock, TrendingUp } from "lucide-react";
 
 const fetcher = (url: string) => fetch(url).then(r => r.json());
 
@@ -58,7 +59,7 @@ function computeRisk(cases: GBVCase[]) {
     critical: open.filter(c => c.priority_level === "CRÍTICO").length,
     unsafe: open.filter(c => (c.is_safe || "").trim().toLowerCase() === "não" || (c.is_safe || "").trim().toLowerCase() === "nao").length,
     noSafety: open.filter(c => !c.safety_measures || c.safety_measures.trim() === "").length,
-    minor: open.filter(c => (c.age_group || "").includes("0-11") || (c.age_group || "").includes("12-17")).length,
+    minor: open.filter(c => (c.age_group || "").includes("10 - 14") || (c.age_group || "").includes("15 - 19")).length,
     prev: open.filter(c => (c.previous_incident || "").trim().toLowerCase() === "sim").length,
     familyPerp: open.filter(c => {
       const rel = (c.perpetrator_relationship || "").toLowerCase();
@@ -94,11 +95,11 @@ export default function OperationsPage() {
   }, []);
   const { data: cases } = useSWR<GBVCase[]>("/api/cases", fetcher, { refreshInterval: 300000 });
   const { data: openCases } = useSWR<GBVCase[]>("/api/cases?filter=open", fetcher, { refreshInterval: 300000 });
-  if (!cases || !openCases) return <p className="text-text-secondary p-8">Carregando...</p>;
+  if (!cases || !openCases) return <p className="text-on-surface-variant p-8">Carregando...</p>;
 
   return (
     <div>
-      <h1 className="text-page-title text-text-primary mb-1">Operações</h1>
+      <h1 className="text-page-title text-on-surface mb-1">Operações</h1>
       <ModuleTabs tabs={TABS} activeTab={tab} onTabChange={setTab} />
 
       {tab === "daily" && <DailyTab cases={openCases} />}
@@ -114,10 +115,10 @@ function DailyTab({ cases }: { cases: GBVCase[] }) {
 
   // Prepare carousel items
   const carouselStats = [
-    { label: "Casos Ativos", value: s.total, color: "primary" as const, icon: "📊" },
-    { label: "Críticos", value: s.critical, color: "critical" as const, icon: "🔴" },
-    { label: "Sem Referência", value: s.noRef, color: "warning" as const, icon: "⚠️" },
-    { label: "Abertos >30d", value: s.open30, color: "warning" as const, icon: "📅" },
+    { label: "Casos Ativos", value: s.total, color: "primary" as const, icon: <Activity className="w-6 h-6" /> },
+    { label: "Críticos", value: s.critical, color: "critical" as const, icon: <AlertTriangle className="w-6 h-6" /> },
+    { label: "Sem Referência", value: s.noRef, color: "warning" as const, icon: <Clock className="w-6 h-6" /> },
+    { label: "Abertos >30d", value: s.open30, color: "warning" as const, icon: <TrendingUp className="w-6 h-6" /> },
   ];
 
   return (
@@ -134,10 +135,10 @@ function DailyTab({ cases }: { cases: GBVCase[] }) {
           { label: "Críticos", value: s.critical, color: "text-critical" },
           { label: "Sem Referência", value: s.noRef, color: "text-warning" },
           { label: "Abertos >30d", value: s.open30, color: "text-warning" },
-          { label: "Sem Atualização", value: s.stale, color: "text-text-secondary" },
+          { label: "Sem Atualização", value: s.stale, color: "text-on-surface-variant" },
         ].map(({ label, value, color }) => (
           <a key={label} href="/cases" className="gcr-card p-4 text-center block hover:shadow-card-hover transition-shadow">
-            <p className="text-label text-text-secondary mb-1">{label}</p>
+            <p className="text-label text-on-surface-variant mb-1">{label}</p>
             <p className={`text-metric ${color}`}>{value}</p>
           </a>
         ))}
@@ -154,10 +155,10 @@ function DailyTab({ cases }: { cases: GBVCase[] }) {
             ].map(({ label, value, pct, color }) => (
               <div key={label}>
                 <div className="flex justify-between text-label mb-1">
-                  <span className="text-text-secondary">{label}</span>
+                  <span className="text-on-surface-variant">{label}</span>
                   <span className="font-semibold">{value}</span>
                 </div>
-                <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                <div className="h-2 bg-surface-container rounded-full overflow-hidden">
                   <div className={`h-full rounded-full ${color}`} style={{ width: `${pct}%` }} />
                 </div>
               </div>
@@ -178,10 +179,10 @@ function WorkloadTab({ cases }: { cases: GBVCase[] }) {
           {rows.slice(0, 10).map(r => (
             <div key={r.name}>
               <div className="flex justify-between text-label mb-1">
-                <span className="text-text-secondary truncate">{r.name}</span>
+                <span className="text-on-surface-variant truncate">{r.name}</span>
                 <span className="font-semibold">{r.active}</span>
               </div>
-              <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+              <div className="h-2 bg-surface-container rounded-full overflow-hidden">
                 <div className="h-full rounded-full" style={{ width: `${(r.active / Math.max(rows[0]?.active, 1)) * 100}%`, backgroundColor: r.critical > 0 ? "#C65A5A" : "#256B5A" }} />
               </div>
             </div>
@@ -191,17 +192,17 @@ function WorkloadTab({ cases }: { cases: GBVCase[] }) {
       <GCRCard title="Casos por Gestor">
         <div className="overflow-x-auto">
           <table className="w-full text-body">
-            <thead className="bg-gray-50 border-b border-border">
+            <thead className="bg-surface-container-low border-b border-outline-variant">
               <tr>
-                <th className="text-left px-4 py-3 text-label text-text-secondary">Gestor</th>
-                <th className="text-right px-4 py-3 text-label text-text-secondary">Ativos</th>
-                <th className="text-right px-4 py-3 text-label text-text-secondary">Críticos</th>
-                <th className="text-right px-4 py-3 text-label text-text-secondary">Sem Ref.</th>
+                <th className="text-left px-4 py-3 text-label text-on-surface-variant">Gestor</th>
+                <th className="text-right px-4 py-3 text-label text-on-surface-variant">Ativos</th>
+                <th className="text-right px-4 py-3 text-label text-on-surface-variant">Críticos</th>
+                <th className="text-right px-4 py-3 text-label text-on-surface-variant">Sem Ref.</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
               {rows.map(r => (
-                <tr key={r.name} className="hover:bg-gray-50">
+                <tr key={r.name} className="hover:bg-surface-container-low">
                   <td className="px-4 py-3 font-medium">{r.name}</td>
                   <td className="px-4 py-3 text-right font-semibold">{r.active}</td>
                   <td className={`px-4 py-3 text-right ${r.critical > 0 ? "text-critical font-semibold" : ""}`}>{r.critical}</td>
@@ -230,7 +231,7 @@ function RiskTab({ cases }: { cases: GBVCase[] }) {
           { label: "Perpetrador Familiar", value: s.familyPerp, color: "text-critical" },
         ].map(({ label, value, color }) => (
           <a key={label} href="/cases" className="gcr-card p-4 text-center block hover:shadow-card-hover transition-shadow">
-            <p className="text-label text-text-secondary mb-1">{label}</p>
+            <p className="text-label text-on-surface-variant mb-1">{label}</p>
             <p className={`text-metric ${color}`}>{value}</p>
           </a>
         ))}
@@ -243,8 +244,8 @@ function RiskTab({ cases }: { cases: GBVCase[] }) {
             { label: "Perpetrador familiar/parceiro", value: s.familyPerp },
             { label: "Com histórico anterior", value: s.prev },
           ].map(({ label, value }) => (
-            <div key={label} className="flex justify-between py-2 px-3 rounded-lg bg-gray-50">
-              <span className="text-body text-text-secondary">{label}</span>
+            <div key={label} className="flex justify-between py-2 px-3 rounded-lg bg-surface-container-low">
+              <span className="text-body text-on-surface-variant">{label}</span>
               <span className="font-semibold">{value}</span>
             </div>
           ))}
@@ -266,7 +267,7 @@ function ProgressTab({ cases }: { cases: GBVCase[] }) {
           { label: "Encerrados", value: s.closed, color: "text-success" },
         ].map(({ label, value, color }) => (
           <a key={label} href="/cases" className="gcr-card p-4 text-center block hover:shadow-card-hover transition-shadow">
-            <p className="text-label text-text-secondary mb-1">{label}</p>
+            <p className="text-label text-on-surface-variant mb-1">{label}</p>
             <p className={`text-metric ${color}`}>{value}</p>
           </a>
         ))}
@@ -278,8 +279,8 @@ function ProgressTab({ cases }: { cases: GBVCase[] }) {
             { label: "Taxa Referência", value: `${s.total ? ((s.referred / s.total) * 100).toFixed(0) : 0}%` },
             { label: "Taxa Encerramento", value: `${s.total ? ((s.closed / s.total) * 100).toFixed(0) : 0}%` },
           ].map(({ label, value }) => (
-            <div key={label} className="text-center flex-1 p-4 rounded-lg bg-gray-50">
-              <p className="text-label text-text-secondary">{label}</p>
+            <div key={label} className="text-center flex-1 p-4 rounded-lg bg-surface-container-low">
+              <p className="text-label text-on-surface-variant">{label}</p>
               <p className="text-subhead font-bold text-primary mt-1">{value}</p>
             </div>
           ))}
