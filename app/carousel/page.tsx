@@ -4,8 +4,12 @@ import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import useSWR from "swr";
+import dynamic from "next/dynamic";
 import { GBVCase } from "@/lib/types";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import { fuzzyCoord, getCoord, normalizeDistrict } from "@/lib/map-data";
+
+const MapContainer = dynamic(() => import("@/components/ui/map/MapContainer"), { ssr: false });
 import {
   ChevronLeft, ChevronRight, Pause, Play,
   Maximize2, Minimize2, X,
@@ -141,6 +145,19 @@ export default function CarouselPage() {
     const keys = Array.from(new Set([...Object.keys(ident), ...Object.keys(intv)])).sort();
     return keys.map(m => ({ month: m.slice(0, 7), identificacao: ident[m] || 0, entrevista: intv[m] || 0 }));
   }, [cases]);
+
+  const mapMarkers = useMemo(() => {
+    const src = provFilter ? open : open;
+    const byDistrict: Record<string, number> = {};
+    for (const c of src) {
+      const d = c.district?.trim();
+      const key = d ? normalizeDistrict(d) : null;
+      if (key) byDistrict[key] = (byDistrict[key] || 0) + 1;
+    }
+    return Object.entries(byDistrict)
+      .filter(([label]) => !!(getCoord(label) || fuzzyCoord(label)))
+      .map(([label, count]) => ({ label, count }));
+  }, [open, provFilter]);
 
   const noRefCount = useMemo(() => open.filter(c => !c.has_referral).length, [open]);
   const criticalCount = useMemo(() => open.filter(c => c.priority_level === "CRÍTICO").length, [open]);
@@ -296,9 +313,21 @@ export default function CarouselPage() {
           </div>
         ),
       },
+      {
+        id: "map",
+        label: "Mapa de Casos",
+        content: (
+          <div className="h-full w-full flex flex-col">
+            <SlideHeading title="Distribuição Geográfica — Casos Abertos" />
+            <div className="flex-1 rounded-xl overflow-hidden">
+              <MapContainer markers={mapMarkers} />
+            </div>
+          </div>
+        ),
+      },
     ];
   }, [cases, open, trendData, sexData, ageData, provData, violData, perpData,
-      noRefCount, criticalCount, closedCount, unsafeCount]);
+      mapMarkers, noRefCount, criticalCount, closedCount, unsafeCount]);
 
   const total = slides.length;
 
