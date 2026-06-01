@@ -125,12 +125,6 @@ export default function CarouselPage() {
     return Object.entries(m).sort((a, b) => b[1] - a[1]).slice(0, 6);
   }, [open]);
 
-  const mgrData = useMemo(() => {
-    const m: Record<string, number> = {};
-    for (const c of open) { const n = c.case_manager || "Sem gestor"; m[n] = (m[n] || 0) + 1; }
-    return Object.entries(m).sort((a, b) => b[1] - a[1]).slice(0, 8);
-  }, [open]);
-
   const perpData = useMemo(() => {
     const m: Record<string, number> = {};
     for (const c of open) { if (c.perpetrator_relationship) { m[c.perpetrator_relationship] = (m[c.perpetrator_relationship] || 0) + 1; } }
@@ -268,19 +262,6 @@ export default function CarouselPage() {
         ),
       },
       {
-        id: "workload",
-        label: "Carga por Gestor",
-        content: (
-          <div className="flex flex-col items-center justify-center h-full gap-4 max-w-xl mx-auto w-full">
-            <SlideHeading title="Carga por Gestor (casos abertos)" />
-            {mgrData.map(([l, c]) => (
-              <BigBar key={l} label={l} value={c} max={mgrData[0]?.[1] || 1}
-                color={c > 15 ? "#C65A5A" : "#256B5A"} />
-            ))}
-          </div>
-        ),
-      },
-      {
         id: "perpetrator",
         label: "Relação com Perpetrador",
         content: (
@@ -295,7 +276,7 @@ export default function CarouselPage() {
         ),
       },
     ];
-  }, [cases, open, sexData, ageData, provData, violData, mgrData, perpData,
+  }, [cases, open, sexData, ageData, provData, violData, perpData,
       noRefCount, criticalCount, closedCount, unsafeCount]);
 
   const total = slides.length;
