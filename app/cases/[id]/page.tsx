@@ -43,8 +43,27 @@ export default function SurvivorJourneyPage() {
   const { data: cases } = useSWR<GBVCase[]>("/api/cases", fetcher);
   const { data: services } = useSWR<Service[]>("/api/services", fetcher, { refreshInterval: 300000 });
 
+  const c = cases?.find(c => c.case_id === id || c.record_id === id);
+
+  // Hooks must be called before any early return
+  const districtServices = useMemo(() => {
+    if (!services || !c?.district) return [];
+    return services.filter(s =>
+      s.district?.toLowerCase() === c.district?.toLowerCase() ||
+      s.district?.toLowerCase() === c.district?.toLowerCase().replace(/^cidade de /, "")
+    );
+  }, [services, c]);
+
+  const suggestions = useMemo(() => {
+    if (!c) return [];
+    return REFERRAL_TYPES.map(rt => {
+      const alreadyReferred = /sim/i.test((c as any)[rt.key] || "");
+      const matching = districtServices.filter(s => matchServiceCategory(s.service_category, rt.needsKeywords));
+      return { ...rt, alreadyReferred, matching };
+    }).filter(s => !s.alreadyReferred);
+  }, [c, districtServices]);
+
   if (!cases) return <p className="text-on-surface-variant p-8">Carregando...</p>;
-  const c = cases.find(c => c.case_id === id || c.record_id === id);
   if (!c) return <p className="text-on-surface-variant p-8">Caso não encontrado</p>;
 
   const ref = calculateDaysSinceReferral(c);
@@ -79,22 +98,6 @@ export default function SurvivorJourneyPage() {
     if (/indisponível|indisponivel/i.test(s)) return "Indisponível";
     return s;
   };
-
-  const districtServices = useMemo(() => {
-    if (!services || !c.district) return [];
-    return services.filter(s =>
-      s.district?.toLowerCase() === c.district?.toLowerCase() ||
-      s.district?.toLowerCase() === c.district?.toLowerCase().replace(/^cidade de /, "")
-    );
-  }, [services, c.district]);
-
-  const suggestions = useMemo(() => {
-    return REFERRAL_TYPES.map(rt => {
-      const alreadyReferred = /sim/i.test((c as any)[rt.key] || "");
-      const matching = districtServices.filter(s => matchServiceCategory(s.service_category, rt.needsKeywords));
-      return { ...rt, alreadyReferred, matching };
-    }).filter(s => !s.alreadyReferred);
-  }, [c, districtServices]);
 
 
 

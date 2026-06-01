@@ -74,14 +74,9 @@ export default function ReferralPathwaysPage() {
   const [catFilter, setCatFilter] = useState("");
   const { data: services } = useSWR<Service[]>("/api/services", fetcher, { refreshInterval: 300000 });
 
-  if (!services) {
-    return <p className="text-on-surface-variant p-8">Carregando...</p>;
-  }
-
-  const provinces = uniqueStrings(services.map(s => s.province));
-  const categories = uniqueStrings(services.map(s => s.service_category));
-
+  // Hooks must be called before any early return
   const filtered = useMemo(() => {
+    if (!services) return [];
     let r = [...services];
     if (search) {
       const q = search.toLowerCase();
@@ -96,6 +91,7 @@ export default function ReferralPathwaysPage() {
   }, [services, search, provFilter, catFilter]);
 
   const byProvince = useMemo(() => {
+    if (!services) return [];
     const m: Record<string, number> = {};
     for (const s of services) {
       m[s.province] = (m[s.province] || 0) + 1;
@@ -104,6 +100,7 @@ export default function ReferralPathwaysPage() {
   }, [services]);
 
   const byDistrict = useMemo(() => {
+    if (!services) return [];
     const m: Record<string, { total: number; categories: Set<string> }> = {};
     for (const s of services) {
       const key = `${s.province} > ${s.district}`;
@@ -115,6 +112,13 @@ export default function ReferralPathwaysPage() {
       .map(([k, v]) => ({ key: k, total: v.total, categories: v.categories.size }))
       .sort((a, b) => a.total - b.total);
   }, [services]);
+
+  if (!services) {
+    return <p className="text-on-surface-variant p-8">Carregando...</p>;
+  }
+
+  const provinces = uniqueStrings(services.map(s => s.province));
+  const categories = uniqueStrings(services.map(s => s.service_category));
 
   const totalDistricts = byDistrict.length;
   const districtsWithSingleService = byDistrict.filter(d => d.total === 1).length;
