@@ -29,6 +29,7 @@ const NORMALIZE: Record<string, string> = {
   "mágoe": "Mágoe",
   "marrumeu": "Marrumeu",
   "chiúre": "Chiúre",
+  "chiure": "Chiúre",
   "mecanhelas": "Mecanhelas",
   "mecula": "Mecula",
   "mavago": "Mavago",
