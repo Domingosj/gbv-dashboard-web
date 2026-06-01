@@ -115,13 +115,13 @@ export default function CarouselPage() {
 
   const provData = useMemo(() => {
     const m: Record<string, number> = {};
-    for (const c of cases) { const p = c.province || "N/E"; m[p] = (m[p] || 0) + 1; }
+    for (const c of cases) { if (c.province) { m[c.province] = (m[c.province] || 0) + 1; } }
     return Object.entries(m).sort((a, b) => b[1] - a[1]);
   }, [cases]);
 
   const violData = useMemo(() => {
     const m: Record<string, number> = {};
-    for (const c of open) { const v = c.violence_type_short || c.violence_type || "N/E"; m[v] = (m[v] || 0) + 1; }
+    for (const c of open) { const v = c.violence_type_short || c.violence_type; if (v) { m[v] = (m[v] || 0) + 1; } }
     return Object.entries(m).sort((a, b) => b[1] - a[1]).slice(0, 6);
   }, [open]);
 
@@ -133,7 +133,7 @@ export default function CarouselPage() {
 
   const perpData = useMemo(() => {
     const m: Record<string, number> = {};
-    for (const c of open) { const r = c.perpetrator_relationship || "N/E"; m[r] = (m[r] || 0) + 1; }
+    for (const c of open) { if (c.perpetrator_relationship) { m[c.perpetrator_relationship] = (m[c.perpetrator_relationship] || 0) + 1; } }
     return Object.entries(m).sort((a, b) => b[1] - a[1]).slice(0, 6);
   }, [open]);
 
