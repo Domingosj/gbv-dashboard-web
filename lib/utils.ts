@@ -33,8 +33,8 @@ export function getDistricts(cases: GBVCase[]): string[] {
 export function groupByField<T>(items: T[], keyFn: (item: T) => string | undefined): Record<string, number> {
   const result: Record<string, number> = {};
   for (const item of items) {
-    const k = keyFn(item) || "N/A";
-    result[k] = (result[k] || 0) + 1;
+    const k = keyFn(item);
+    if (k) result[k] = (result[k] || 0) + 1;
   }
   return result;
 }

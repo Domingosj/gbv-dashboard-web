@@ -109,7 +109,7 @@ export default function CarouselPage() {
 
   const ageData = useMemo(() => {
     const m: Record<string, number> = {};
-    for (const c of cases) { const a = c.age_group || "N/E"; m[a] = (m[a] || 0) + 1; }
+    for (const c of cases) { if (c.age_group) { m[c.age_group] = (m[c.age_group] || 0) + 1; } }
     return Object.entries(m).sort((a, b) => b[1] - a[1]);
   }, [cases]);
 

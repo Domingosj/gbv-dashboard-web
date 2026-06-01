@@ -73,15 +73,15 @@ export default function SummaryPage() {
   const disabilityMental = filtered.filter(c => (c.disability || "").includes("Mental")).length;
 
   const provCounts: Record<string, number> = {};
-  for (const c of filtered) { const p = c.province || "N/E"; provCounts[p] = (provCounts[p] || 0) + 1; }
+  for (const c of filtered) { if (c.province) { provCounts[c.province] = (provCounts[c.province] || 0) + 1; } }
   const provData = Object.entries(provCounts).sort((a, b) => b[1] - a[1]);
 
   const violCounts: Record<string, number> = {};
-  for (const c of filtered) { const v = c.violence_type_short || c.violence_type || "N/E"; violCounts[v] = (violCounts[v] || 0) + 1; }
+  for (const c of filtered) { const v = c.violence_type_short || c.violence_type; if (v) { violCounts[v] = (violCounts[v] || 0) + 1; } }
   const violData = Object.entries(violCounts).sort((a, b) => b[1] - a[1]).slice(0, 6);
 
   const perpCounts: Record<string, number> = {};
-  for (const c of filtered) { const r = c.perpetrator_relationship || "N/E"; perpCounts[r] = (perpCounts[r] || 0) + 1; }
+  for (const c of filtered) { if (c.perpetrator_relationship) { perpCounts[c.perpetrator_relationship] = (perpCounts[c.perpetrator_relationship] || 0) + 1; } }
   const perpData = Object.entries(perpCounts).sort((a, b) => b[1] - a[1]).slice(0, 6);
 
   // All districts: total + open counts, grouped by province
@@ -405,12 +405,12 @@ export default function SummaryPage() {
           {(() => {
             const ageGender: Record<string, { f: number; m: number }> = {};
             for (const c of filtered) {
-              const a = c.age_group || "N/E";
-              const isF = /femenino|feminino|f/i.test(c.sex || "");
+              if (!c.age_group) continue;
+              const a = c.age_group;
+              const isF = /femenino|feminino/i.test(c.sex || "");
               if (!ageGender[a]) ageGender[a] = { f: 0, m: 0 };
               if (isF) ageGender[a].f++;
-              else if (c.sex) ageGender[a].m++;
-              else ageGender[a].m++;
+              else if (/masculino/i.test(c.sex || "")) ageGender[a].m++;
             }
             const sorted = Object.entries(ageGender).sort((a, b) => (a[1].f + a[1].m) - (b[1].f + b[1].m));
             const maxF = Math.max(...sorted.map(([, v]) => v.f), 1);

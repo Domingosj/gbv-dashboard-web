@@ -85,7 +85,7 @@ function TrendsTab({ cases }: { cases: GBVCase[] }) {
 
   const open = cases.filter(c => c.case_status === "Aberto");
   const viol: Record<string, number> = {};
-  for (const c of open) { const v = c.violence_type_short || c.violence_type || "N/A"; viol[v] = (viol[v] || 0) + 1; }
+  for (const c of open) { const v = c.violence_type_short || c.violence_type; if (v) { viol[v] = (viol[v] || 0) + 1; } }
   const topViol = Object.entries(viol).sort((a, b) => b[1] - a[1]).slice(0, 8);
 
   return (
@@ -131,7 +131,7 @@ function TrendsTab({ cases }: { cases: GBVCase[] }) {
         </GCRCard>
         <GCRCard title="Distribuição por Projeto">
           <div className="space-y-2">
-            {Object.entries(open.reduce((acc: Record<string, number>, c) => { const p = c.project || "N/A"; acc[p] = (acc[p] || 0) + 1; return acc; }, {})).sort((a, b) => b[1] - a[1]).map(([l, c]) => (
+            {Object.entries(open.reduce((acc: Record<string, number>, c) => { if (c.project) { acc[c.project] = (acc[c.project] || 0) + 1; } return acc; }, {})).sort((a, b) => b[1] - a[1]).map(([l, c]) => (
               <div key={l} className="flex items-center justify-between py-1.5 border-b border-outline-variant last:border-0">
                 <span className="text-body text-on-surface-variant truncate mr-2">{l}</span>
                 <GCRBadge color="blue">{c}</GCRBadge>
