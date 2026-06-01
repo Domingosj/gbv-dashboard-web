@@ -8,6 +8,7 @@ import GCRCard from "@/components/ui/GCRCard";
 import GCRBadge from "@/components/ui/GCRBadge";
 import FilterBar from "@/components/FilterBar";
 import { MonthlyChart } from "@/components/Charts";
+import { X } from "lucide-react";
 
 const fetcher = (url: string) => fetch(url).then(r => r.json());
 
@@ -417,40 +418,208 @@ function PathwaysTab({ cases }: { cases: GBVCase[] }) {
   );
 }
 
-function PartnersTab({ cases }: { cases: GBVCase[] }) {
-  const partners: Record<string, { total: number; open: number; closed: number }> = {};
-  for (const c of cases) {
-    const p = c.project || "Sem projeto";
-    if (!partners[p]) partners[p] = { total: 0, open: 0, closed: 0 };
-    partners[p].total++;
-    if (c.case_status === "Aberto") partners[p].open++;
-    if (c.case_status === "Encerrado") partners[p].closed++;
-  }
-  const rows = Object.entries(partners).map(([name, d]) => ({ name, ...d, rate: d.total ? ((d.closed / d.total) * 100).toFixed(1) : "0" })).sort((a, b) => b.total - a.total);
+const MONTH_LABELS = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
+
+function heatBg(count: number, max: number): string {
+  if (count === 0) return "";
+  const t = count / max;
+  return `rgba(0,82,67,${(0.12 + t * 0.78).toFixed(2)})`;
+}
+function heatFg(count: number, max: number): string {
+  if (count === 0) return "#9aa5a0";
+  return count / max > 0.55 ? "#ffffff" : "#003d32";
+}
+
+function HeatMatrix({
+  rowLabel, rows, matrix, maxVal, year,
+  onSelect,
+}: {
+  rowLabel: string;
+  rows: string[];
+  matrix: Record<string, Record<number, GBVCase[]>>;
+  maxVal: number;
+  year: number;
+  onSelect: (label: string, cases: GBVCase[]) => void;
+}) {
   return (
     <div className="overflow-x-auto">
-      <table className="w-full text-body">
-        <thead className="bg-surface-container-low border-b border-outline-variant">
+      <table className="w-full text-sm border-collapse">
+        <thead>
           <tr>
-            <th className="text-left px-4 py-3 text-label text-on-surface-variant">Projeto</th>
-            <th className="text-right px-4 py-3 text-label text-on-surface-variant">Total</th>
-            <th className="text-right px-4 py-3 text-label text-on-surface-variant">Abertos</th>
-            <th className="text-right px-4 py-3 text-label text-on-surface-variant">Encerrados</th>
-            <th className="text-right px-4 py-3 text-label text-on-surface-variant">Taxa</th>
+            <th className="text-left px-3 py-2 text-label text-on-surface-variant bg-surface-container-low border border-outline-variant/40 min-w-[160px] sticky left-0 z-10">
+              {rowLabel}
+            </th>
+            {MONTH_LABELS.map((m, i) => (
+              <th key={i} className="px-2 py-2 text-center text-label text-on-surface-variant bg-surface-container-low border border-outline-variant/40 min-w-[46px]">{m}</th>
+            ))}
+            <th className="px-3 py-2 text-center text-label text-on-surface-variant bg-surface-container-low border border-outline-variant/40 font-bold">Total</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-border">
-          {rows.map(r => (
-            <tr key={r.name} className="hover:bg-surface-container-low">
-              <td className="px-4 py-3 font-medium">{r.name}</td>
-              <td className="px-4 py-3 text-right">{r.total}</td>
-              <td className="px-4 py-3 text-right">{r.open}</td>
-              <td className="px-4 py-3 text-right">{r.closed}</td>
-              <td className="px-4 py-3 text-right font-semibold">{r.rate}%</td>
-            </tr>
-          ))}
+        <tbody>
+          {rows.map(row => {
+            const rowTotal = Object.values(matrix[row]).reduce((s, arr) => s + arr.length, 0);
+            return (
+              <tr key={row}>
+                <td className="px-3 py-2 text-label font-medium text-on-surface border border-outline-variant/40 bg-surface-container-lowest sticky left-0 z-10 max-w-[200px] truncate" title={row}>
+                  {row}
+                </td>
+                {Array.from({ length: 12 }, (_, i) => {
+                  const cellCases = matrix[row][i] || [];
+                  const count = cellCases.length;
+                  return (
+                    <td key={i}
+                      className={`px-2 py-2 text-center border border-outline-variant/40 text-label font-semibold transition-all ${count > 0 ? "cursor-pointer hover:ring-2 hover:ring-inset hover:ring-primary/60" : ""}`}
+                      style={{ backgroundColor: heatBg(count, maxVal), color: heatFg(count, maxVal) }}
+                      onClick={() => count > 0 && onSelect(`${row} — ${MONTH_LABELS[i]} ${year}`, cellCases)}
+                      title={count > 0 ? `${count} casos` : undefined}
+                    >
+                      {count > 0 ? count : ""}
+                    </td>
+                  );
+                })}
+                <td className="px-3 py-2 text-center font-bold text-on-surface border border-outline-variant/40 bg-surface-container-low">
+                  {rowTotal}
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
+    </div>
+  );
+}
+
+function PartnersTab({ cases }: { cases: GBVCase[] }) {
+  const currentYear = new Date().getFullYear();
+  const [year, setYear] = useState(currentYear);
+  const [subTab, setSubTab] = useState<"projects" | "geo">("projects");
+  const [selection, setSelection] = useState<{ label: string; cases: GBVCase[] } | null>(null);
+
+  const availableYears = useMemo(() => {
+    const ys = new Set<number>();
+    for (const c of cases) {
+      if (c.identification_date) ys.add(new Date(c.identification_date).getFullYear());
+    }
+    return Array.from(ys).sort((a, b) => b - a);
+  }, [cases]);
+
+  const yearCases = useMemo(() =>
+    cases.filter(c => c.identification_date && new Date(c.identification_date).getFullYear() === year),
+    [cases, year]
+  );
+
+  const { projectRows, projectMatrix, projectMax } = useMemo(() => {
+    const rows = Array.from(new Set(yearCases.map(c => c.project).filter(Boolean) as string[])).sort();
+    const matrix: Record<string, Record<number, GBVCase[]>> = {};
+    for (const r of rows) matrix[r] = {};
+    for (const c of yearCases) {
+      if (!c.project || !c.identification_date) continue;
+      const m = new Date(c.identification_date).getMonth();
+      if (!matrix[c.project][m]) matrix[c.project][m] = [];
+      matrix[c.project][m].push(c);
+    }
+    const max = Math.max(1, ...rows.flatMap(r => Object.values(matrix[r]).map(a => a.length)));
+    return { projectRows: rows, projectMatrix: matrix, projectMax: max };
+  }, [yearCases]);
+
+  const { geoRows, geoMatrix, geoMax } = useMemo(() => {
+    const rows = Array.from(new Set(yearCases.map(c => c.province).filter(Boolean) as string[])).sort();
+    const matrix: Record<string, Record<number, GBVCase[]>> = {};
+    for (const r of rows) matrix[r] = {};
+    for (const c of yearCases) {
+      if (!c.province || !c.identification_date) continue;
+      const m = new Date(c.identification_date).getMonth();
+      if (!matrix[c.province][m]) matrix[c.province][m] = [];
+      matrix[c.province][m].push(c);
+    }
+    const max = Math.max(1, ...rows.flatMap(r => Object.values(matrix[r]).map(a => a.length)));
+    return { geoRows: rows, geoMatrix: matrix, geoMax: max };
+  }, [yearCases]);
+
+  function handleSelect(label: string, selected: GBVCase[]) {
+    setSelection(prev => prev?.label === label ? null : { label, cases: selected });
+  }
+
+  return (
+    <div className="space-y-5">
+      {/* Year filter */}
+      <div className="flex items-center gap-3">
+        <span className="text-label text-on-surface-variant">Ano:</span>
+        <div className="flex items-center gap-1 p-1 bg-surface-container rounded-lg">
+          {availableYears.map(y => (
+            <button key={y} onClick={() => { setYear(y); setSelection(null); }}
+              className={`px-3 py-1.5 text-label font-medium rounded-md transition-all ${year === y ? "bg-white text-on-surface shadow-sm" : "text-on-surface-variant hover:text-on-surface"}`}>
+              {y}
+            </button>
+          ))}
+        </div>
+        <span className="text-caption text-on-surface-variant">{yearCases.length} casos</span>
+      </div>
+
+      {/* Sub-tabs */}
+      <div className="flex gap-0 border-b border-outline-variant">
+        {[{ key: "projects", label: "Desempenho dos Projetos" }, { key: "geo", label: "Análise Geográfica" }].map(t => (
+          <button key={t.key}
+            onClick={() => { setSubTab(t.key as "projects" | "geo"); setSelection(null); }}
+            className={`px-5 py-2.5 text-label font-medium border-b-2 -mb-px transition-all ${subTab === t.key ? "border-primary text-primary" : "border-transparent text-on-surface-variant hover:text-on-surface"}`}>
+            {t.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Matrix */}
+      {subTab === "projects" ? (
+        <GCRCard title={`Projetos × Mês — ${year}`}>
+          <p className="text-caption text-on-surface-variant mb-3">Clique numa célula para ver os casos desse projeto/mês</p>
+          {projectRows.length > 0
+            ? <HeatMatrix rowLabel="Projeto" rows={projectRows} matrix={projectMatrix} maxVal={projectMax} year={year} onSelect={handleSelect} />
+            : <p className="text-on-surface-variant text-sm py-4 text-center">Sem dados para {year}</p>}
+        </GCRCard>
+      ) : (
+        <GCRCard title={`Províncias × Mês — ${year}`}>
+          <p className="text-caption text-on-surface-variant mb-3">Clique numa célula para ver os casos dessa província/mês</p>
+          {geoRows.length > 0
+            ? <HeatMatrix rowLabel="Província" rows={geoRows} matrix={geoMatrix} maxVal={geoMax} year={year} onSelect={handleSelect} />
+            : <p className="text-on-surface-variant text-sm py-4 text-center">Sem dados para {year}</p>}
+        </GCRCard>
+      )}
+
+      {/* Selected cases panel */}
+      {selection && (
+        <GCRCard title={`${selection.label} — ${selection.cases.length} casos`}>
+          <div className="flex justify-between items-center mb-3">
+            <p className="text-caption text-on-surface-variant">Clique num caso para ver detalhes</p>
+            <button onClick={() => setSelection(null)} className="text-caption text-on-surface-variant hover:text-on-surface flex items-center gap-1">
+              <X className="w-3.5 h-3.5" /> Fechar
+            </button>
+          </div>
+          <div className="space-y-1.5 max-h-96 overflow-y-auto pr-1">
+            {selection.cases.map(c => (
+              <a key={c.record_id || c.case_id}
+                href={`/cases/${c.record_id || encodeURIComponent(c.case_id || "")}`}
+                className="flex items-center justify-between py-2 px-3 rounded-lg bg-surface-container-low hover:bg-surface-container transition-colors">
+                <div className="min-w-0 flex-1">
+                  <span className="text-primary font-mono text-caption font-semibold">{c.case_id || c.record_id || "N/A"}</span>
+                  <div className="flex items-center gap-2 text-caption text-on-surface-variant mt-0.5">
+                    <span>{c.district || "N/A"}</span>
+                    <span>·</span>
+                    <span>{c.case_manager || "Sem gestor"}</span>
+                    <span>·</span>
+                    <span>{c.project || "—"}</span>
+                  </div>
+                </div>
+                <span className={`shrink-0 ml-3 text-caption px-2 py-0.5 rounded-full font-medium ${
+                  c.priority_level === "CRÍTICO" ? "bg-critical/10 text-critical" :
+                  c.priority_level === "ALTO" ? "bg-warning/10 text-warning" :
+                  "bg-primary/10 text-primary"
+                }`}>
+                  {c.priority_level || c.case_status || "—"}
+                </span>
+              </a>
+            ))}
+          </div>
+        </GCRCard>
+      )}
     </div>
   );
 }
