@@ -26,9 +26,13 @@ export function AnalysisPanel({ cases }: { cases: GBVCase[] }) {
   const closed = cases.filter(c => c.case_status === "Encerrado");
   const total = cases.length;
 
-  const sexCounts: Record<string, number> = {};
-  for (const c of cases) { const x = c.sex || "N/E"; sexCounts[x] = (sexCounts[x] || 0) + 1; }
-  const sexData = Object.entries(sexCounts).sort((a, b) => b[1] - a[1]);
+  const sexCounts: Record<string, number> = { Feminino: 0, Masculino: 0 };
+  for (const c of cases) {
+    if (!c.sex) continue;
+    if (/femenino|feminino/i.test(c.sex)) sexCounts.Feminino++;
+    else if (/masculino/i.test(c.sex)) sexCounts.Masculino++;
+  }
+  const sexData = Object.entries(sexCounts).filter(([, v]) => v > 0).sort((a, b) => b[1] - a[1]);
 
   const byProvince = groupByField(open, c => c.province);
   const provData = sortedEntries(byProvince);

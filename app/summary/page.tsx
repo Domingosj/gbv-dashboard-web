@@ -57,9 +57,13 @@ export default function SummaryPage() {
     const ly = thisMonth === 0 ? thisYear - 1 : thisYear;
     return d.getMonth() === lm && d.getFullYear() === ly;
   }).length;
-  const sexCounts: Record<string, number> = {};
-  for (const c of filtered) { const x = c.sex || "N/E"; sexCounts[x] = (sexCounts[x] || 0) + 1; }
-  const sexData = Object.entries(sexCounts).sort((a, b) => b[1] - a[1]);
+  const sexCounts: Record<string, number> = { Feminino: 0, Masculino: 0 };
+  for (const c of filtered) {
+    if (!c.sex) continue;
+    if (/femenino|feminino/i.test(c.sex)) sexCounts.Feminino++;
+    else if (/masculino/i.test(c.sex)) sexCounts.Masculino++;
+  }
+  const sexData = Object.entries(sexCounts).filter(([, v]) => v > 0).sort((a, b) => b[1] - a[1]);
 
   const disabilitySim = filtered.filter(c => {
     const d = (c.disability || "").trim().toLowerCase();
