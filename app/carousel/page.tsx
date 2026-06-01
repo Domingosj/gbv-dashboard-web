@@ -147,9 +147,8 @@ export default function CarouselPage() {
   }, [cases]);
 
   const mapMarkers = useMemo(() => {
-    const src = provFilter ? open : open;
     const byDistrict: Record<string, number> = {};
-    for (const c of src) {
+    for (const c of cases) {
       const d = c.district?.trim();
       const key = d ? normalizeDistrict(d) : null;
       if (key) byDistrict[key] = (byDistrict[key] || 0) + 1;
@@ -157,7 +156,7 @@ export default function CarouselPage() {
     return Object.entries(byDistrict)
       .filter(([label]) => !!(getCoord(label) || fuzzyCoord(label)))
       .map(([label, count]) => ({ label, count }));
-  }, [open, provFilter]);
+  }, [cases]);
 
   const noRefCount = useMemo(() => open.filter(c => !c.has_referral).length, [open]);
   const criticalCount = useMemo(() => open.filter(c => c.priority_level === "CRÍTICO").length, [open]);
@@ -318,7 +317,7 @@ export default function CarouselPage() {
         label: "Mapa de Casos",
         content: (
           <div className="h-full w-full flex flex-col">
-            <SlideHeading title="Distribuição Geográfica — Casos Abertos" />
+            <SlideHeading title="Distribuição Geográfica — Todos os Casos" />
             <div className="flex-1 rounded-xl overflow-hidden">
               <MapContainer markers={mapMarkers} />
             </div>
