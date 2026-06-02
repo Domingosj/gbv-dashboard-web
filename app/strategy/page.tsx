@@ -6,7 +6,10 @@ import { GBVCase } from "@/lib/types";
 import ModuleTabs from "@/components/ModuleTabs";
 import FilterBar from "@/components/FilterBar";
 import GCRCard from "@/components/ui/GCRCard";
-import { X } from "lucide-react";
+import { X, MapPin, FolderOpen, CheckCircle2, AlertTriangle } from "lucide-react";
+import {
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
+} from "recharts";
 
 const fetcher = (url: string) => fetch(url).then(r => r.json());
 
@@ -45,45 +48,118 @@ export default function StrategyPage() {
 }
 
 function PortfolioTab({ cases }: { cases: GBVCase[] }) {
-  const projects: Record<string, { total: number; open: number; closed: number; critical: number; districts: Set<string> }> = {};
-  for (const c of cases) {
-    const p = c.project || "Linha Fala sem Medo";
-    if (!projects[p]) projects[p] = { total: 0, open: 0, closed: 0, critical: 0, districts: new Set() };
-    projects[p].total++;
-    if (c.case_status === "Aberto") projects[p].open++;
-    if (c.case_status === "Encerrado") projects[p].closed++;
-    if (c.priority_level === "CRÍTICO") projects[p].critical++;
-    if (c.district) projects[p].districts.add(c.district);
-  }
-  const rows = Object.entries(projects).map(([name, d]) => ({ name, ...d, districts: d.districts.size, closeRate: d.total ? ((d.closed / d.total) * 100).toFixed(1) : "0" })).sort((a, b) => b.total - a.total);
+  const rows = useMemo(() => {
+    const projects: Record<string, { total: number; open: number; closed: number; critical: number; districts: Set<string> }> = {};
+    for (const c of cases) {
+      const p = c.project || "Linha Fala sem Medo";
+      if (!projects[p]) projects[p] = { total: 0, open: 0, closed: 0, critical: 0, districts: new Set() };
+      projects[p].total++;
+      if (c.case_status === "Aberto") projects[p].open++;
+      if (c.case_status === "Encerrado") projects[p].closed++;
+      if (c.priority_level === "CRÍTICO") projects[p].critical++;
+      if (c.district) projects[p].districts.add(c.district);
+    }
+    return Object.entries(projects)
+      .map(([name, d]) => ({
+        name,
+        total: d.total,
+        open: d.open,
+        closed: d.closed,
+        critical: d.critical,
+        districts: d.districts.size,
+        closeRate: d.total ? (d.closed / d.total) * 100 : 0,
+      }))
+      .sort((a, b) => b.total - a.total);
+  }, [cases]);
+
+  const globalTotal = cases.length;
+  const globalClosed = cases.filter(c => c.case_status === "Encerrado").length;
+  const globalCritical = cases.filter(c => c.priority_level === "CRÍTICO").length;
+  const activeProjects = rows.filter(r => r.open > 0).length;
+  const globalCloseRate = globalTotal > 0 ? ((globalClosed / globalTotal) * 100).toFixed(0) : "0";
+
+  const chartData = rows.map(r => ({ name: r.name.length > 20 ? r.name.slice(0, 18) + "…" : r.name, Abertos: r.open, Encerrados: r.closed }));
+
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full text-body">
-        <thead className="bg-surface-container-low border-b border-outline-variant">
-          <tr>
-            <th className="text-left px-4 py-3 text-label text-on-surface-variant">Projeto</th>
-            <th className="text-right px-4 py-3 text-label text-on-surface-variant">Total</th>
-            <th className="text-right px-4 py-3 text-label text-on-surface-variant">Abertos</th>
-            <th className="text-right px-4 py-3 text-label text-on-surface-variant">Encerrados</th>
-            <th className="text-right px-4 py-3 text-label text-on-surface-variant">Tx Encerramento</th>
-            <th className="text-right px-4 py-3 text-label text-on-surface-variant">Críticos</th>
-            <th className="text-right px-4 py-3 text-label text-on-surface-variant">Distritos</th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-border">
-          {rows.map(r => (
-            <tr key={r.name} className="hover:bg-surface-container-low">
-              <td className="px-4 py-3 font-medium">{r.name}</td>
-              <td className="px-4 py-3 text-right">{r.total}</td>
-              <td className="px-4 py-3 text-right">{r.open}</td>
-              <td className="px-4 py-3 text-right">{r.closed}</td>
-              <td className="px-4 py-3 text-right font-semibold">{r.closeRate}%</td>
-              <td className={`px-4 py-3 text-right ${r.critical > 0 ? "text-critical font-semibold" : ""}`}>{r.critical}</td>
-              <td className="px-4 py-3 text-right text-on-surface-variant">{r.districts}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div className="space-y-6">
+
+      {/* KPI cards */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {[
+          { label: "Total de Casos", value: globalTotal, icon: FolderOpen, color: "text-primary", bg: "bg-primary/8" },
+          { label: "Projectos Activos", value: activeProjects, icon: FolderOpen, color: "text-info", bg: "bg-info/8" },
+          { label: "Taxa de Encerramento", value: `${globalCloseRate}%`, icon: CheckCircle2, color: globalCloseRate >= "50" ? "text-success" : "text-warning", bg: globalCloseRate >= "50" ? "bg-success/8" : "bg-warning/8" },
+          { label: "Casos Críticos", value: globalCritical, icon: AlertTriangle, color: globalCritical > 0 ? "text-critical" : "text-on-surface-variant", bg: globalCritical > 0 ? "bg-critical/8" : "bg-surface-container" },
+        ].map(({ label, value, icon: Icon, color, bg }) => (
+          <div key={label} className={`gcr-card p-5 flex items-center gap-4 ${bg} border border-outline-variant/30`}>
+            <div className={`p-2.5 rounded-xl ${bg}`}>
+              <Icon className={`w-5 h-5 ${color}`} />
+            </div>
+            <div>
+              <p className="text-caption text-on-surface-variant">{label}</p>
+              <p className={`text-2xl font-bold ${color}`}>{value}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Project cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+        {rows.map(r => {
+          const closePct = r.closeRate;
+          const openPct = r.total > 0 ? (r.open / r.total) * 100 : 0;
+          return (
+            <GCRCard key={r.name}>
+              <div className="flex items-start justify-between mb-3">
+                <h3 className="text-label font-semibold text-on-surface leading-tight pr-2">{r.name}</h3>
+                {r.critical > 0 && (
+                  <span className="shrink-0 flex items-center gap-1 text-caption font-semibold text-critical bg-critical/10 px-2 py-0.5 rounded-full">
+                    <AlertTriangle className="w-3 h-3" /> {r.critical}
+                  </span>
+                )}
+              </div>
+
+              <p className="text-3xl font-bold text-on-surface mb-1">{r.total}</p>
+              <p className="text-caption text-on-surface-variant mb-4">casos identificados</p>
+
+              {/* Progress bar */}
+              <div className="h-2 rounded-full overflow-hidden bg-surface-container flex mb-2">
+                <div className="h-full bg-success transition-all" style={{ width: `${closePct}%` }} />
+                <div className="h-full bg-info/50 transition-all" style={{ width: `${openPct}%` }} />
+              </div>
+              <div className="flex items-center justify-between text-caption text-on-surface-variant mb-4">
+                <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-success inline-block" /> {r.closed} encerrados ({closePct.toFixed(0)}%)</span>
+                <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-info/50 inline-block" /> {r.open} abertos</span>
+              </div>
+
+              <div className="flex items-center gap-1 text-caption text-on-surface-variant border-t border-outline-variant/30 pt-3">
+                <MapPin className="w-3.5 h-3.5" />
+                <span>{r.districts} distrito{r.districts !== 1 ? "s" : ""}</span>
+              </div>
+            </GCRCard>
+          );
+        })}
+      </div>
+
+      {/* Horizontal stacked bar chart */}
+      <GCRCard title="Comparação entre Projectos">
+        <p className="text-caption text-on-surface-variant mb-4">Casos abertos vs encerrados por projecto</p>
+        <ResponsiveContainer width="100%" height={Math.max(180, rows.length * 52)}>
+          <BarChart data={chartData} layout="vertical" margin={{ top: 0, right: 24, left: 8, bottom: 0 }}>
+            <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="var(--color-outline-variant, #e0e0e0)" opacity={0.4} />
+            <XAxis type="number" tick={{ fontSize: 11 }} tickLine={false} axisLine={false} />
+            <YAxis type="category" dataKey="name" width={130} tick={{ fontSize: 11 }} tickLine={false} axisLine={false} />
+            <Tooltip
+              contentStyle={{ fontSize: 12, borderRadius: 8, border: "1px solid var(--color-outline-variant, #e0e0e0)" }}
+              cursor={{ fill: "rgba(0,82,67,0.05)" }}
+            />
+            <Legend wrapperStyle={{ fontSize: 12, paddingTop: 8 }} />
+            <Bar dataKey="Encerrados" stackId="a" fill="#16a34a" radius={[0, 0, 0, 0]} />
+            <Bar dataKey="Abertos" stackId="a" fill="#60a5fa" radius={[0, 4, 4, 0]} />
+          </BarChart>
+        </ResponsiveContainer>
+      </GCRCard>
+
     </div>
   );
 }
