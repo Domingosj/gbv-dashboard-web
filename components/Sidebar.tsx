@@ -20,6 +20,7 @@ const MAIN_NAV = [
   { href: "/referral-pathways", label: "Serviços e Referências", icon: Network, number: "6" },
   { href: "/closure", label: "Encerramento e Resultados", icon: CheckCircle2, number: "7" },
   { href: "/quality", label: "Qualidade de Dados", icon: ClipboardCheck, number: "8" },
+  { href: "/strategy", label: "Desempenho Projectos", icon: TrendingUp, number: "9" },
 ];
 
 const TOOLS_NAV = [
@@ -28,7 +29,6 @@ const TOOLS_NAV = [
 ];
 
 const REVIEW_NAV = [
-  { href: "/strategy", label: "Desempenho Projectos", icon: TrendingUp },
   { href: "/dashboard", label: "Painel Completo", icon: Monitor },
   { href: "/referral-assistant", label: "Assist. Referência", icon: HeartHandshake },
   { href: "/team", label: "Carga Equipa (Fase 2)", icon: UsersRound },
