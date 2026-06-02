@@ -6,7 +6,7 @@ import { GBVCase } from "@/lib/types";
 import ModuleTabs from "@/components/ModuleTabs";
 import FilterBar from "@/components/FilterBar";
 import GCRCard from "@/components/ui/GCRCard";
-import { X, MapPin, FolderOpen, CheckCircle2, AlertTriangle } from "lucide-react";
+import { X, FolderOpen, CheckCircle2, AlertTriangle } from "lucide-react";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
 } from "recharts";
@@ -101,44 +101,6 @@ function PortfolioTab({ cases }: { cases: GBVCase[] }) {
             </div>
           </div>
         ))}
-      </div>
-
-      {/* Project cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-        {rows.map(r => {
-          const closePct = r.closeRate;
-          const openPct = r.total > 0 ? (r.open / r.total) * 100 : 0;
-          return (
-            <GCRCard key={r.name}>
-              <div className="flex items-start justify-between mb-3">
-                <h3 className="text-label font-semibold text-on-surface leading-tight pr-2">{r.name}</h3>
-                {r.critical > 0 && (
-                  <span className="shrink-0 flex items-center gap-1 text-caption font-semibold text-critical bg-critical/10 px-2 py-0.5 rounded-full">
-                    <AlertTriangle className="w-3 h-3" /> {r.critical}
-                  </span>
-                )}
-              </div>
-
-              <p className="text-3xl font-bold text-on-surface mb-1">{r.total}</p>
-              <p className="text-caption text-on-surface-variant mb-4">casos identificados</p>
-
-              {/* Progress bar */}
-              <div className="h-2 rounded-full overflow-hidden bg-surface-container flex mb-2">
-                <div className="h-full bg-success transition-all" style={{ width: `${closePct}%` }} />
-                <div className="h-full bg-info/50 transition-all" style={{ width: `${openPct}%` }} />
-              </div>
-              <div className="flex items-center justify-between text-caption text-on-surface-variant mb-4">
-                <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-success inline-block" /> {r.closed} encerrados ({closePct.toFixed(0)}%)</span>
-                <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-info/50 inline-block" /> {r.open} abertos</span>
-              </div>
-
-              <div className="flex items-center gap-1 text-caption text-on-surface-variant border-t border-outline-variant/30 pt-3">
-                <MapPin className="w-3.5 h-3.5" />
-                <span>{r.districts} distrito{r.districts !== 1 ? "s" : ""}</span>
-              </div>
-            </GCRCard>
-          );
-        })}
       </div>
 
       {/* Horizontal stacked bar chart */}
