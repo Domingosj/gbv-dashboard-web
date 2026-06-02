@@ -128,7 +128,7 @@ export default function ReferralPathwaysPage() {
 
   return (
     <div>
-      <h1 className="text-page-title text-on-surface mb-1">Vias de Referência</h1>
+      <h1 className="text-page-title text-on-surface mb-1">Serviços e Referências</h1>
       <p className="text-body-sm text-on-surface-variant mb-6">
         Catálogo nacional de serviços para referência de casos VBG
       </p>

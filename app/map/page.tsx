@@ -107,7 +107,7 @@ export default function MapPage() {
 
   return (
     <div>
-      <h1 className="text-page-title text-on-surface mb-1">Mapa Geográfico</h1>
+      <h1 className="text-page-title text-on-surface mb-1">Cobertura Geográfica e Identificação</h1>
       <ModuleTabs tabs={TABS} activeTab={tab} onTabChange={setTab} />
 
       {tab === "open" && (

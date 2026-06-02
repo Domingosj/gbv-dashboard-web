@@ -32,7 +32,7 @@ export default function CasesPage() {
 
   return (
     <div>
-      <h1 className="text-page-title text-on-surface mb-1">Casos</h1>
+      <h1 className="text-page-title text-on-surface mb-1">Gestão de Casos</h1>
       <ModuleTabs tabs={TABS} activeTab={tab} onTabChange={setTab} />
       <FilterBar>
         <select className="gcr-input w-56" value={provFilter} onChange={e => setProvFilter(e.target.value)}>
