@@ -47,7 +47,7 @@ export default function StrategyPage() {
 function PortfolioTab({ cases }: { cases: GBVCase[] }) {
   const projects: Record<string, { total: number; open: number; closed: number; critical: number; districts: Set<string> }> = {};
   for (const c of cases) {
-    const p = c.project || "Sem projeto";
+    const p = c.project || "Linha Fala sem Medo";
     if (!projects[p]) projects[p] = { total: 0, open: 0, closed: 0, critical: 0, districts: new Set() };
     projects[p].total++;
     if (c.case_status === "Aberto") projects[p].open++;
@@ -295,7 +295,7 @@ function PivotTab({ cases }: { cases: GBVCase[] }) {
     const h: Record<string, Record<string, Record<string, GBVCase[]>>> = {};
     for (const c of cases) {
       const prov = c.province || "Desconhecido";
-      const proj = c.project || "Sem projeto";
+      const proj = c.project || "Linha Fala sem Medo";
       const dist = c.district || "Desconhecido";
       if (!h[prov]) h[prov] = {};
       if (!h[prov][proj]) h[prov][proj] = {};
