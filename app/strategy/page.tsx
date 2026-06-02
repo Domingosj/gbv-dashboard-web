@@ -19,6 +19,7 @@ const fetcher = (url: string) => fetch(url).then(r => r.json());
 
 const TABS = [
   { key: "portfolio", label: "Portfólio" },
+  { key: "pivot", label: "Matriz Pivot" },
   { key: "matrix", label: "Matrix Mensal" },
   { key: "partners", label: "Projetos" },
   { key: "geo", label: "Análise Geográfica" },
@@ -45,6 +46,7 @@ export default function StrategyPage() {
         </select>
       </FilterBar>
       {tab === "portfolio" && <PortfolioTab cases={filtered} />}
+      {tab === "pivot" && <PivotTab cases={filtered} />}
       {tab === "matrix" && <MatrixTab cases={filtered} timeRange={timeRange} setTimeRange={setTimeRange} />}
       {tab === "partners" && <PartnersTab cases={filtered} />}
       {tab === "geo" && <GeoTab cases={filtered} />}
@@ -284,6 +286,14 @@ function PortfolioTab({ cases }: { cases: GBVCase[] }) {
   );
 }
 
+// ── Pivot matrix helpers ──────────────────────────────────────────────────────
+
+function isReferred(c: GBVCase): boolean {
+  return ["referred_medical","referred_psychosocial","referred_police",
+    "referred_legal","referred_safe_house","referred_child_protection"]
+    .some(k => /sim/i.test((c as any)[k] || ""));
+}
+
 // ── Projetos heat matrix (moved from Analytics) ───────────────────────────────
 
 const MONTH_LABELS = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
@@ -447,6 +457,318 @@ function PartnersTab({ cases }: { cases: GBVCase[] }) {
       </GCRCard>
       {selection && <CaseDrillDown selection={selection} onClose={() => setSelection(null)} />}
     </div>
+  );
+}
+
+// ── Heat colour scales for each metric column ─────────────────────────────────
+
+function heatBgBlue(count: number, max: number): string {
+  if (count === 0) return "";
+  const t = count / max;
+  return `rgba(29,78,216,${(0.10 + t * 0.80).toFixed(2)})`;
+}
+function heatFgBlue(count: number, max: number): string {
+  if (count === 0) return "#9aa5a0";
+  return count / max > 0.50 ? "#ffffff" : "#1e3a8a";
+}
+function heatBgGreen(count: number, max: number): string {
+  if (count === 0) return "";
+  const t = count / max;
+  return `rgba(21,128,61,${(0.10 + t * 0.80).toFixed(2)})`;
+}
+function heatFgGreen(count: number, max: number): string {
+  if (count === 0) return "#9aa5a0";
+  return count / max > 0.50 ? "#ffffff" : "#14532d";
+}
+
+// ── Pivot Matrix Tab ──────────────────────────────────────────────────────────
+
+function PivotTab({ cases }: { cases: GBVCase[] }) {
+  const [collapsedProvs, setCollapsedProvs] = useState<Set<string>>(new Set());
+  const [collapsedProjs, setCollapsedProjs] = useState<Set<string>>(new Set());
+  const [selection, setSelection] = useState<{ label: string; cases: GBVCase[] } | null>(null);
+
+  // hierarchy[province][project][district] = GBVCase[]
+  const hierarchy = useMemo(() => {
+    const h: Record<string, Record<string, Record<string, GBVCase[]>>> = {};
+    for (const c of cases) {
+      const prov = c.province || "Desconhecido";
+      const proj = c.project || "Sem projeto";
+      const dist = c.district || "Desconhecido";
+      if (!h[prov]) h[prov] = {};
+      if (!h[prov][proj]) h[prov][proj] = {};
+      if (!h[prov][proj][dist]) h[prov][proj][dist] = [];
+      h[prov][proj][dist].push(c);
+    }
+    return h;
+  }, [cases]);
+
+  const { maxIdent, maxRef, maxClosed, grandTotal, sortedProvs } = useMemo(() => {
+    let mI = 1, mR = 1, mC = 1, gI = 0, gR = 0, gC = 0;
+    for (const provProjs of Object.values(hierarchy)) {
+      for (const projDists of Object.values(provProjs)) {
+        for (const dc of Object.values(projDists)) {
+          const i = dc.length;
+          const r = dc.filter(isReferred).length;
+          const c = dc.filter(x => x.case_status === "Encerrado").length;
+          if (i > mI) mI = i;
+          if (r > mR) mR = r;
+          if (c > mC) mC = c;
+          gI += i; gR += r; gC += c;
+        }
+      }
+    }
+    const sp = Object.keys(hierarchy).sort((a, b) => {
+      const ca = Object.values(hierarchy[a]).flatMap(Object.values).flat().length;
+      const cb = Object.values(hierarchy[b]).flatMap(Object.values).flat().length;
+      return cb - ca;
+    });
+    return { maxIdent: mI, maxRef: mR, maxClosed: mC, grandTotal: { identified: gI, referred: gR, closed: gC }, sortedProvs: sp };
+  }, [hierarchy]);
+
+  const pct = (n: number, d: number) => d > 0 ? `${((n / d) * 100).toFixed(0)}%` : "–";
+
+  const toggleProv = (prov: string) => setCollapsedProvs(prev => {
+    const next = new Set(prev); next.has(prov) ? next.delete(prov) : next.add(prov); return next;
+  });
+  const toggleProj = (key: string) => setCollapsedProjs(prev => {
+    const next = new Set(prev); next.has(key) ? next.delete(key) : next.add(key); return next;
+  });
+
+  return (
+    <div className="space-y-4">
+      <p className="text-caption text-on-surface-variant">
+        {cases.length} casos · {sortedProvs.length} províncias · Clique em ▼/▶ para expandir/recolher · Clique num número para ver os casos
+      </p>
+
+      {/* Legend */}
+      <div className="flex items-center gap-6 text-caption text-on-surface-variant">
+        <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-sm" style={{ background: "rgba(0,82,67,0.6)" }} /> Identificados</span>
+        <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-sm" style={{ background: "rgba(29,78,216,0.6)" }} /> Referenciados</span>
+        <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-sm" style={{ background: "rgba(21,128,61,0.6)" }} /> Encerrados</span>
+        <span className="text-outline-variant">Cor mais intensa = mais casos</span>
+      </div>
+
+      <GCRCard>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm border-collapse">
+            <thead>
+              <tr>
+                <th className="text-left px-3 py-2.5 text-label text-on-surface-variant bg-surface-container-low border border-outline-variant/40 min-w-[260px] sticky left-0 z-10">
+                  Localização
+                </th>
+                <th className="px-3 py-2.5 text-center text-label font-semibold bg-surface-container-low border border-outline-variant/40 min-w-[90px]" style={{ color: "#005243" }}>
+                  Identificados
+                </th>
+                <th className="px-3 py-2.5 text-center text-label font-semibold bg-surface-container-low border border-outline-variant/40 min-w-[90px]" style={{ color: "#1d4ed8" }}>
+                  Referenciados
+                </th>
+                <th className="px-3 py-2.5 text-center text-label font-semibold bg-surface-container-low border border-outline-variant/40 min-w-[90px]" style={{ color: "#15803d" }}>
+                  Encerrados
+                </th>
+                <th className="px-3 py-2.5 text-center text-label text-on-surface-variant bg-surface-container-low border border-outline-variant/40 min-w-[54px]">
+                  % Ref.
+                </th>
+                <th className="px-3 py-2.5 text-center text-label text-on-surface-variant bg-surface-container-low border border-outline-variant/40 min-w-[54px]">
+                  % Enc.
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {sortedProvs.flatMap(prov => {
+                const provProjects = hierarchy[prov];
+                const isProvCollapsed = collapsedProvs.has(prov);
+                const allProvCases = Object.values(provProjects).flatMap(Object.values).flat();
+                const pI = allProvCases.length;
+                const pR = allProvCases.filter(isReferred).length;
+                const pC = allProvCases.filter(c => c.case_status === "Encerrado").length;
+                const sortedProjs = Object.keys(provProjects).sort((a, b) =>
+                  Object.values(provProjects[b]).flat().length - Object.values(provProjects[a]).flat().length
+                );
+
+                const rows: React.ReactElement[] = [
+                  <tr key={`prov-${prov}`}
+                    className="bg-surface-container hover:bg-surface-container-high transition-colors cursor-pointer select-none"
+                    onClick={() => toggleProv(prov)}
+                  >
+                    <td className="px-3 py-2.5 sticky left-0 bg-surface-container border border-outline-variant/40 z-10">
+                      <span className="flex items-center gap-2 font-bold text-on-surface text-[12px] uppercase tracking-wide">
+                        <span className="text-[9px] text-on-surface-variant w-3 shrink-0">{isProvCollapsed ? "▶" : "▼"}</span>
+                        {prov}
+                      </span>
+                    </td>
+                    <td className="px-3 py-2.5 text-center font-bold text-on-surface border border-outline-variant/40 bg-surface-container">{pI}</td>
+                    <td className="px-3 py-2.5 text-center font-bold text-on-surface border border-outline-variant/40 bg-surface-container">{pR}</td>
+                    <td className="px-3 py-2.5 text-center font-bold text-on-surface border border-outline-variant/40 bg-surface-container">{pC}</td>
+                    <td className="px-3 py-2.5 text-center text-caption text-on-surface-variant border border-outline-variant/40 bg-surface-container">{pct(pR, pI)}</td>
+                    <td className="px-3 py-2.5 text-center text-caption text-on-surface-variant border border-outline-variant/40 bg-surface-container">{pct(pC, pI)}</td>
+                  </tr>,
+                ];
+
+                if (!isProvCollapsed) {
+                  for (const proj of sortedProjs) {
+                    const projKey = `${prov}||${proj}`;
+                    const isProjCollapsed = collapsedProjs.has(projKey);
+                    const projDists = provProjects[proj];
+                    const allProjCases = Object.values(projDists).flat();
+                    const jI = allProjCases.length;
+                    const jR = allProjCases.filter(isReferred).length;
+                    const jC = allProjCases.filter(c => c.case_status === "Encerrado").length;
+                    const sortedDists = Object.keys(projDists).sort((a, b) => projDists[b].length - projDists[a].length);
+
+                    rows.push(
+                      <tr key={`proj-${projKey}`}
+                        className="bg-surface-container-low hover:bg-surface-container transition-colors cursor-pointer select-none"
+                        onClick={e => { e.stopPropagation(); toggleProj(projKey); }}
+                      >
+                        <td className="px-3 py-2 sticky left-0 bg-surface-container-low border border-outline-variant/40 z-10">
+                          <span className="flex items-center gap-2 pl-5 font-semibold text-on-surface text-[12px]">
+                            <span className="text-[9px] text-on-surface-variant w-3 shrink-0">{isProjCollapsed ? "▶" : "▼"}</span>
+                            {proj}
+                          </span>
+                        </td>
+                        <td className="px-3 py-2 text-center font-semibold text-on-surface border border-outline-variant/40 text-[12px]">{jI}</td>
+                        <td className="px-3 py-2 text-center font-semibold text-on-surface border border-outline-variant/40 text-[12px]">{jR}</td>
+                        <td className="px-3 py-2 text-center font-semibold text-on-surface border border-outline-variant/40 text-[12px]">{jC}</td>
+                        <td className="px-3 py-2 text-center text-caption text-on-surface-variant border border-outline-variant/40">{pct(jR, jI)}</td>
+                        <td className="px-3 py-2 text-center text-caption text-on-surface-variant border border-outline-variant/40">{pct(jC, jI)}</td>
+                      </tr>
+                    );
+
+                    if (!isProjCollapsed) {
+                      for (const dist of sortedDists) {
+                        const dc = projDists[dist];
+                        const dI = dc.length;
+                        const dR = dc.filter(isReferred).length;
+                        const dC = dc.filter(c => c.case_status === "Encerrado").length;
+                        const rowLabel = `${prov} › ${proj} › ${dist}`;
+                        const isSel = selection?.label.startsWith(rowLabel) ?? false;
+                        const selLabel = (metric: string) => `${rowLabel} — ${metric}`;
+                        const clickCell = (metric: string, subset: GBVCase[]) => (e: React.MouseEvent) => {
+                          e.stopPropagation();
+                          const label = selLabel(metric);
+                          setSelection(prev => prev?.label === label ? null : { label, cases: subset });
+                        };
+
+                        rows.push(
+                          <tr key={`dist-${prov}-${proj}-${dist}`}
+                            className={`transition-colors ${isSel ? "ring-1 ring-inset ring-primary/40" : ""}`}
+                          >
+                            <td className={`px-3 py-1.5 sticky left-0 border border-outline-variant/40 z-10 ${isSel ? "bg-primary/5" : "bg-surface-container-lowest"}`}>
+                              <span className="flex items-center gap-1 pl-11 text-[11px] text-on-surface-variant">
+                                <span className={isSel ? "text-primary font-medium" : ""}>{dist}</span>
+                                {isSel && <span className="text-primary/60 ml-1 text-[10px]">◀</span>}
+                              </span>
+                            </td>
+                            <td className="px-3 py-1.5 text-center text-label font-semibold border border-outline-variant/40 cursor-pointer hover:brightness-90 transition-all"
+                              style={{ backgroundColor: heatBg(dI, maxIdent), color: heatFg(dI, maxIdent) }}
+                              onClick={clickCell("Identificados", dc)}
+                              title={dI > 0 ? `${dI} casos identificados — clique para ver` : undefined}>
+                              {dI > 0 ? dI : <span className="opacity-25">–</span>}
+                            </td>
+                            <td className="px-3 py-1.5 text-center text-label font-semibold border border-outline-variant/40 cursor-pointer hover:brightness-90 transition-all"
+                              style={{ backgroundColor: heatBgBlue(dR, maxRef), color: heatFgBlue(dR, maxRef) }}
+                              onClick={clickCell("Referenciados", dc.filter(isReferred))}
+                              title={dR > 0 ? `${dR} casos referenciados — clique para ver` : undefined}>
+                              {dR > 0 ? dR : <span className="opacity-25">–</span>}
+                            </td>
+                            <td className="px-3 py-1.5 text-center text-label font-semibold border border-outline-variant/40 cursor-pointer hover:brightness-90 transition-all"
+                              style={{ backgroundColor: heatBgGreen(dC, maxClosed), color: heatFgGreen(dC, maxClosed) }}
+                              onClick={clickCell("Encerrados", dc.filter(c => c.case_status === "Encerrado"))}
+                              title={dC > 0 ? `${dC} casos encerrados — clique para ver` : undefined}>
+                              {dC > 0 ? dC : <span className="opacity-25">–</span>}
+                            </td>
+                            <td className="px-3 py-1.5 text-center text-caption text-on-surface-variant border border-outline-variant/40">{pct(dR, dI)}</td>
+                            <td className="px-3 py-1.5 text-center text-caption text-on-surface-variant border border-outline-variant/40">{pct(dC, dI)}</td>
+                          </tr>
+                        );
+                      }
+                    }
+                  }
+                }
+
+                return rows;
+              })}
+            </tbody>
+            <tfoot className="border-t-2 border-outline-variant/60">
+              <tr className="bg-surface-container-low">
+                <td className="px-3 py-2.5 font-bold text-on-surface text-[12px] uppercase tracking-wide sticky left-0 bg-surface-container-low border border-outline-variant/40 z-10">
+                  Total Geral
+                </td>
+                <td className="px-3 py-2.5 text-center font-bold text-on-surface border border-outline-variant/40">{grandTotal.identified}</td>
+                <td className="px-3 py-2.5 text-center font-bold text-on-surface border border-outline-variant/40">{grandTotal.referred}</td>
+                <td className="px-3 py-2.5 text-center font-bold text-on-surface border border-outline-variant/40">{grandTotal.closed}</td>
+                <td className="px-3 py-2.5 text-center text-caption font-semibold text-on-surface border border-outline-variant/40">{pct(grandTotal.referred, grandTotal.identified)}</td>
+                <td className="px-3 py-2.5 text-center text-caption font-semibold text-on-surface border border-outline-variant/40">{pct(grandTotal.closed, grandTotal.identified)}</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </GCRCard>
+
+      {selection && <PivotDrillDown selection={selection} onClose={() => setSelection(null)} />}
+    </div>
+  );
+}
+
+function PivotDrillDown({ selection, onClose }: { selection: { label: string; cases: GBVCase[] }; onClose: () => void }) {
+  const sorted = useMemo(
+    () => [...selection.cases].sort((a, b) => {
+      const da = a.identification_date ? new Date(a.identification_date).getTime() : 0;
+      const db = b.identification_date ? new Date(b.identification_date).getTime() : 0;
+      return db - da;
+    }),
+    [selection.cases]
+  );
+
+  return (
+    <GCRCard title={`${selection.label} — ${selection.cases.length} caso${selection.cases.length !== 1 ? "s" : ""}`}>
+      <div className="flex justify-between items-center mb-3">
+        <p className="text-caption text-on-surface-variant">Ordenado do mais recente ao mais antigo</p>
+        <button onClick={onClose} className="text-caption text-on-surface-variant hover:text-on-surface flex items-center gap-1">
+          <X className="w-3.5 h-3.5" /> Fechar
+        </button>
+      </div>
+      <div className="overflow-x-auto max-h-96 overflow-y-auto">
+        <table className="w-full text-caption">
+          <thead>
+            <tr className="border-b border-outline-variant bg-surface-container-low text-left">
+              <th className="py-2 px-3 font-medium text-on-surface-variant">Código</th>
+              <th className="py-2 px-3 font-medium text-on-surface-variant">Data Identificação</th>
+              <th className="py-2 px-3 font-medium text-on-surface-variant">Distrito</th>
+              <th className="py-2 px-3 font-medium text-on-surface-variant">Tipo de Violência</th>
+              <th className="py-2 px-3 font-medium text-on-surface-variant">Estado</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-outline-variant/50">
+            {sorted.map(c => (
+              <tr key={c.record_id || c.case_id} className="hover:bg-surface-container-low transition-colors">
+                <td className="py-2 px-3">
+                  <a href={`/cases/${c.record_id || encodeURIComponent(c.case_id || "")}`}
+                    className="text-primary font-mono font-semibold hover:underline">
+                    {c.case_id || c.record_id || "N/A"}
+                  </a>
+                </td>
+                <td className="py-2 px-3 text-on-surface-variant">
+                  {c.identification_date ? new Date(c.identification_date).toLocaleDateString("pt-MZ") : "—"}
+                </td>
+                <td className="py-2 px-3 text-on-surface-variant">{c.district || c.province || "—"}</td>
+                <td className="py-2 px-3 text-on-surface-variant max-w-[200px] truncate" title={c.violence_type ?? undefined}>
+                  {c.violence_type || "—"}
+                </td>
+                <td className="py-2 px-3">
+                  <span className={`px-2 py-0.5 rounded-full font-medium ${
+                    c.case_status === "Encerrado" ? "bg-success/10 text-success" : "bg-info/10 text-info"
+                  }`}>
+                    {c.case_status || "—"}
+                  </span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </GCRCard>
   );
 }
 
